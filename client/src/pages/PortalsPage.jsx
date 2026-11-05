@@ -16,10 +16,10 @@ export default function PortalsPage({ onSelectPortal, onBackToLanding, initialRo
     <div style={{ minHeight: '100vh', backgroundColor: '#FFFFFF', color: '#0F172A', overflowX: 'hidden', display: 'flex', flexDirection: 'column' }}>
       {/* Top Header matching s img2 */}
       <header style={{
-        maxWidth: '1280px',
+        maxWidth: '1580px',
         width: '100%',
         margin: '0 auto',
-        padding: '24px',
+        padding: '24px 36px',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between'
@@ -69,7 +69,7 @@ export default function PortalsPage({ onSelectPortal, onBackToLanding, initialRo
       </header>
 
       {/* Main Choose Your Portal Container */}
-      <main style={{ maxWidth: '1280px', width: '100%', margin: '0 auto', padding: '24px 24px 60px', flex: 1 }}>
+      <main style={{ maxWidth: '1580px', width: '100%', margin: '0 auto', padding: '24px 36px 60px', flex: 1 }}>
         <div style={{ textAlign: 'center', marginBottom: '44px' }}>
           <div style={{ fontSize: '0.8125rem', fontWeight: 800, color: '#4F46E5', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: '8px' }}>
             WELCOME TO CAREERSYNC

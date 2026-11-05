@@ -40,9 +40,9 @@ export default function LandingPage({ onGetStarted, onSelectPortal, onOpenLogin 
     <div style={{ minHeight: '100vh', backgroundColor: '#FFFFFF', color: '#0F172A', overflowX: 'hidden' }}>
       {/* Top Navbar matching s img1 */}
       <nav style={{
-        maxWidth: '1280px',
+        maxWidth: '1580px',
         margin: '0 auto',
-        padding: '20px 24px',
+        padding: '20px 36px',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
@@ -127,12 +127,12 @@ export default function LandingPage({ onGetStarted, onSelectPortal, onOpenLogin 
 
       {/* Hero Section matching s img1 */}
       <section id="hero" style={{
-        maxWidth: '1280px',
+        maxWidth: '1580px',
         margin: '0 auto',
-        padding: '48px 24px 64px',
+        padding: '48px 36px 64px',
         display: 'grid',
-        gridTemplateColumns: '1.1fr 1fr',
-        gap: '48px',
+        gridTemplateColumns: '1.15fr 1fr',
+        gap: '40px',
         alignItems: 'center'
       }}>
         <div>
@@ -141,14 +141,14 @@ export default function LandingPage({ onGetStarted, onSelectPortal, onOpenLogin 
             <span>Job Matching Agent</span>
           </div>
 
-          <h1 style={{ fontSize: '3.5rem', fontWeight: 800, lineHeight: 1.1, letterSpacing: '-0.03em', marginBottom: '20px' }}>
+          <h1 style={{ fontSize: '3.625rem', fontWeight: 800, lineHeight: 1.1, letterSpacing: '-0.03em', marginBottom: '20px' }}>
             Smarter Matches.<br />
             <span style={{ background: 'linear-gradient(135deg, #4F46E5 0%, #7C3AED 50%, #06B6D4 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
               Brighter Futures.
             </span>
           </h1>
 
-          <p style={{ fontSize: '1.125rem', color: '#64748B', lineHeight: 1.6, marginBottom: '32px', maxWidth: '520px' }}>
+          <p style={{ fontSize: '1.125rem', color: '#64748B', lineHeight: 1.6, marginBottom: '32px', maxWidth: '560px' }}>
             An AI-powered placement intelligence platform that connects students, companies and institutions — based on skills, interests and real outcomes.
           </p>
 
@@ -177,7 +177,7 @@ export default function LandingPage({ onGetStarted, onSelectPortal, onOpenLogin 
           </div>
 
           {/* Stat Pillars */}
-          <div style={{ display: 'flex', gap: '32px', borderTop: '1px solid #F1F5F9', paddingTop: '24px' }}>
+          <div style={{ display: 'flex', gap: '40px', borderTop: '1px solid #F1F5F9', paddingTop: '24px' }}>
             <div>
               <div style={{ fontSize: '1.625rem', fontWeight: 800, color: '#0F172A' }}>10K+</div>
               <div style={{ fontSize: '0.8125rem', color: '#64748B' }}>Students Empowered</div>
@@ -287,7 +287,7 @@ export default function LandingPage({ onGetStarted, onSelectPortal, onOpenLogin 
       </section>
 
       {/* Trusted By Leading Companies matching s img1 bottom */}
-      <section style={{ maxWidth: '1280px', margin: '0 auto', padding: '48px 24px', textAlign: 'center' }}>
+      <section style={{ maxWidth: '1580px', margin: '0 auto', padding: '48px 36px', textAlign: 'center' }}>
         <p style={{ fontSize: '0.75rem', fontWeight: 700, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '24px' }}>
           Trusted by leading companies for campus placements
         </p>
