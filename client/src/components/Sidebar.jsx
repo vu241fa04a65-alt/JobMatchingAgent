@@ -71,17 +71,16 @@ export default function Sidebar({ activePage, currentView, onNavigate, isCollaps
       {/* Brand Header */}
       <div className="sidebar-header">
         <div className="sidebar-brand-wrapper">
-          <div className="sidebar-logo-icon" style={{ padding: '2px', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'transparent' }}>
-            <img src="/jobmatch-symbol.png" alt="JobMatch AI" style={{ width: '34px', height: '34px', objectFit: 'contain' }} />
+          <div className="sidebar-logo-icon" style={{ padding: '2px', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'transparent', width: '36px', height: '36px' }}>
+            <img src="/career-sync-icon.png" alt="CareerSync" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
           </div>
           {!isCollapsed && (
             <div className="sidebar-brand-text">
-              <h2 className="sidebar-title" style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '1.0625rem', fontWeight: 800 }}>
-                <span>JobMatch</span>
-                <span style={{ color: '#F43F5E', fontWeight: 900 }}>AI</span>
+              <h2 className="sidebar-title" style={{ fontSize: '1.1875rem', fontWeight: 800, color: '#8DC21F', letterSpacing: '-0.02em', lineHeight: 1.1 }}>
+                CareerSync
               </h2>
               <div className="sidebar-subtitle">
-                <span className="sidebar-agent-badge">
+                <span className="sidebar-agent-badge" style={{ color: '#A3E635' }}>
                   Agent 50
                 </span>
                 <span className="sidebar-dot">•</span>

@@ -105,24 +105,13 @@ export default function LoginPage({ initialRole = 'STUDENT', onLoginSuccess, onB
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div
             onClick={onBackToLanding}
-            style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}
+            style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}
           >
-            <div style={{
-              width: '46px',
-              height: '46px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}>
-              <img src="/jobmatch-symbol.png" alt="JobMatch AI" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
-            </div>
-            <div>
-              <div style={{ fontSize: '1.3125rem', fontWeight: 800, letterSpacing: '-0.02em', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                <span>JobMatch</span>
-                <span style={{ color: '#F43F5E', fontWeight: 900 }}>AI</span>
-              </div>
-              <div style={{ fontSize: '0.6875rem', color: '#94A3B8' }}>Connect • Match • Build • Futures</div>
-            </div>
+            <img 
+              src="/career-sync-logo.png" 
+              alt="CareerSync" 
+              style={{ height: '48px', width: 'auto', objectFit: 'contain' }} 
+            />
           </div>
         </div>
 

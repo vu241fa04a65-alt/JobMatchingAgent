@@ -51,29 +51,16 @@ export default function LandingPage({ onGetStarted, onSelectPortal, onOpenLogin 
         backdropFilter: 'blur(8px)',
         zIndex: 50
       }}>
-        {/* Brand Logo */}
+        {/* Brand Logo - CareerSync */}
         <div 
           onClick={() => scrollToSection('hero')} 
-          style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}
+          style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}
         >
-          <div style={{
-            width: '42px',
-            height: '42px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center'
-          }}>
-            <img src="/jobmatch-symbol.png" alt="JobMatch AI" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
-          </div>
-          <div>
-            <span style={{ fontSize: '1.25rem', fontWeight: 800, color: '#0F172A', letterSpacing: '-0.02em', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-              <span>JobMatch</span>
-              <span style={{ color: '#F43F5E', fontWeight: 900 }}>AI</span>
-            </span>
-            <span style={{ fontSize: '0.75rem', color: '#64748B', marginLeft: '8px', borderLeft: '1px solid #CBD5E1', paddingLeft: '8px' }}>
-              Intelligence Behind Every Placement
-            </span>
-          </div>
+          <img 
+            src="/career-sync-logo.png" 
+            alt="CareerSync" 
+            style={{ height: '46px', width: 'auto', objectFit: 'contain', display: 'block' }} 
+          />
         </div>
 
         {/* Navigation Items (Only Home, About, Features) */}
@@ -233,7 +220,7 @@ export default function LandingPage({ onGetStarted, onSelectPortal, onOpenLogin 
               padding: '12px'
             }}>
               <Sparkles size={24} style={{ marginBottom: '4px' }} />
-              <div style={{ fontWeight: 800, fontSize: '0.9375rem' }}>JobMatch AI</div>
+              <div style={{ fontWeight: 800, fontSize: '0.9375rem' }}>CareerSync</div>
               <div style={{ fontSize: '0.625rem', color: '#C7D2FE', marginTop: '2px' }}>Skills → Opportunities → Better Outcomes</div>
             </div>
 
@@ -352,7 +339,7 @@ export default function LandingPage({ onGetStarted, onSelectPortal, onOpenLogin 
                   <Sparkles size={22} />
                 </div>
                 <div>
-                  <h3 style={{ fontSize: '1.375rem', fontWeight: 800, color: '#0F172A' }}>JobMatch AI & Agent 50 Overview</h3>
+                  <h3 style={{ fontSize: '1.375rem', fontWeight: 800, color: '#0F172A' }}>CareerSync & Agent 50 Overview</h3>
                   <p style={{ fontSize: '0.8125rem', color: '#64748B' }}>How intelligent multi-factor matching transforms campus recruitment</p>
                 </div>
               </div>

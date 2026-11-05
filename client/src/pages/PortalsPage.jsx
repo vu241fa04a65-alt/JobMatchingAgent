@@ -17,26 +17,13 @@ export default function PortalsPage({ onSelectPortal, onBackToLanding }) {
         {/* Brand */}
         <div 
           onClick={onBackToLanding}
-          style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}
+          style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}
         >
-          <div style={{
-            width: '44px',
-            height: '44px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center'
-          }}>
-            <img src="/jobmatch-symbol.png" alt="JobMatch AI" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
-          </div>
-          <div>
-            <div style={{ fontSize: '1.25rem', fontWeight: 800, color: '#0F172A', letterSpacing: '-0.02em', lineHeight: 1.1, display: 'flex', alignItems: 'center', gap: '4px' }}>
-              <span>JobMatch</span>
-              <span style={{ color: '#F43F5E', fontWeight: 900 }}>AI</span>
-            </div>
-            <div style={{ fontSize: '0.6875rem', color: '#64748B', fontWeight: 500 }}>
-              Agent 50 | Placement Intelligence Platform
-            </div>
-          </div>
+          <img 
+            src="/career-sync-logo.png" 
+            alt="CareerSync" 
+            style={{ height: '48px', width: 'auto', objectFit: 'contain' }} 
+          />
         </div>
 
         {/* Right side tag and Back link */}
@@ -75,7 +62,7 @@ export default function PortalsPage({ onSelectPortal, onBackToLanding }) {
       <main style={{ maxWidth: '1280px', width: '100%', margin: '0 auto', padding: '24px 24px 60px', flex: 1 }}>
         <div style={{ textAlign: 'center', marginBottom: '44px' }}>
           <div style={{ fontSize: '0.8125rem', fontWeight: 800, color: '#4F46E5', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: '8px' }}>
-            WELCOME TO JOBMATCH AI
+            WELCOME TO CAREERSYNC
           </div>
           <h1 style={{ fontSize: '3.25rem', fontWeight: 800, letterSpacing: '-0.03em', marginBottom: '12px' }}>
             Choose Your <span style={{ background: 'linear-gradient(135deg, #2563EB 0%, #7C3AED 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Portal</span>
