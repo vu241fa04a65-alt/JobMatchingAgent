@@ -163,6 +163,7 @@ function MainApp() {
     if (currentView === 'portals') {
       return (
         <PortalsPage 
+          initialRole={loginRole}
           onSelectPortal={(portalRole) => {
             setLoginRole(portalRole || 'STUDENT');
             navigate('login');

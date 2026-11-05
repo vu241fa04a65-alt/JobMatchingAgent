@@ -1,7 +1,17 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Sparkles, ArrowRight, Building2, Users, GraduationCap, ShieldCheck, Target, Briefcase, Award, ArrowLeft } from 'lucide-react';
 
-export default function PortalsPage({ onSelectPortal, onBackToLanding }) {
+export default function PortalsPage({ onSelectPortal, onBackToLanding, initialRole }) {
+  const [selectedPortal, setSelectedPortal] = useState(initialRole || 'STUDENT');
+  const [hoveredPortal, setHoveredPortal] = useState(null);
+
+  const isStudentActive = (hoveredPortal === 'STUDENT') || (!hoveredPortal && selectedPortal === 'STUDENT');
+  const isTPActive = (hoveredPortal === 'T_AND_P') || (!hoveredPortal && selectedPortal === 'T_AND_P');
+  const isHODActive = (hoveredPortal === 'HOD') || (!hoveredPortal && selectedPortal === 'HOD');
+
+  const handleCardClick = (role) => {
+    setSelectedPortal(role);
+  };
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#FFFFFF', color: '#0F172A', overflowX: 'hidden', display: 'flex', flexDirection: 'column' }}>
       {/* Top Header matching s img2 */}
@@ -75,18 +85,28 @@ export default function PortalsPage({ onSelectPortal, onBackToLanding }) {
         {/* 3 Tall Vertical Portal Cards matching s img2 */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '28px', textAlign: 'left', marginBottom: '48px' }}>
           {/* 1. Student Portal Card */}
-          <div className="card" style={{
-            padding: '32px 28px',
-            borderRadius: '24px',
-            backgroundColor: '#FFFFFF',
-            boxShadow: '0 10px 35px rgba(37, 99, 235, 0.06)',
-            border: '1.5px solid #E2E8F0',
-            display: 'flex',
-            flexDirection: 'column',
-            position: 'relative',
-            overflow: 'hidden',
-            transition: 'transform 0.2s ease, box-shadow 0.2s ease'
-          }}>
+          <div 
+            onClick={() => handleCardClick('STUDENT')}
+            onMouseEnter={() => setHoveredPortal('STUDENT')}
+            onMouseLeave={() => setHoveredPortal(null)}
+            className="card portal-selection-card" 
+            style={{
+              padding: '32px 28px',
+              borderRadius: '24px',
+              backgroundColor: '#FFFFFF',
+              boxShadow: isStudentActive 
+                ? '0 18px 45px rgba(37, 99, 235, 0.18)' 
+                : '0 10px 35px rgba(15, 23, 42, 0.05)',
+              border: isStudentActive ? '2.5px solid #2563EB' : '1.5px solid #E2E8F0',
+              transform: isStudentActive ? 'translateY(-6px)' : 'translateY(0)',
+              display: 'flex',
+              flexDirection: 'column',
+              position: 'relative',
+              overflow: 'hidden',
+              cursor: 'pointer',
+              transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)'
+            }}
+          >
             <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '20px' }}>
               <div style={{
                 width: '52px',
@@ -97,7 +117,8 @@ export default function PortalsPage({ onSelectPortal, onBackToLanding }) {
                 alignItems: 'center',
                 justifyContent: 'center',
                 color: '#2563EB',
-                boxShadow: '0 4px 12px rgba(37, 99, 235, 0.15)'
+                boxShadow: isStudentActive ? '0 6px 16px rgba(37, 99, 235, 0.25)' : '0 4px 12px rgba(37, 99, 235, 0.15)',
+                transition: 'all 0.2s ease'
               }}>
                 <GraduationCap size={28} />
               </div>
@@ -146,7 +167,11 @@ export default function PortalsPage({ onSelectPortal, onBackToLanding }) {
             </div>
 
             <button
-              onClick={() => onSelectPortal && onSelectPortal('STUDENT')}
+              onClick={(e) => {
+                e.stopPropagation();
+                setSelectedPortal('STUDENT');
+                if (onSelectPortal) onSelectPortal('STUDENT');
+              }}
               className="btn btn-primary"
               style={{ width: '100%', padding: '14px', background: 'linear-gradient(135deg, #1D4ED8 0%, #2563EB 100%)', borderRadius: '12px', fontSize: '0.9375rem', fontWeight: 700 }}
             >
@@ -156,18 +181,28 @@ export default function PortalsPage({ onSelectPortal, onBackToLanding }) {
           </div>
 
           {/* 2. T&P Cell Portal Card */}
-          <div className="card" style={{
-            padding: '32px 28px',
-            borderRadius: '24px',
-            backgroundColor: '#FFFFFF',
-            boxShadow: '0 10px 35px rgba(124, 58, 237, 0.06)',
-            border: '2px solid #818CF8',
-            display: 'flex',
-            flexDirection: 'column',
-            position: 'relative',
-            overflow: 'hidden',
-            transition: 'transform 0.2s ease, box-shadow 0.2s ease'
-          }}>
+          <div 
+            onClick={() => handleCardClick('T_AND_P')}
+            onMouseEnter={() => setHoveredPortal('T_AND_P')}
+            onMouseLeave={() => setHoveredPortal(null)}
+            className="card portal-selection-card" 
+            style={{
+              padding: '32px 28px',
+              borderRadius: '24px',
+              backgroundColor: '#FFFFFF',
+              boxShadow: isTPActive 
+                ? '0 18px 45px rgba(124, 58, 237, 0.18)' 
+                : '0 10px 35px rgba(15, 23, 42, 0.05)',
+              border: isTPActive ? '2.5px solid #7C3AED' : '1.5px solid #E2E8F0',
+              transform: isTPActive ? 'translateY(-6px)' : 'translateY(0)',
+              display: 'flex',
+              flexDirection: 'column',
+              position: 'relative',
+              overflow: 'hidden',
+              cursor: 'pointer',
+              transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)'
+            }}
+          >
             <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '20px' }}>
               <div style={{
                 width: '52px',
@@ -178,7 +213,8 @@ export default function PortalsPage({ onSelectPortal, onBackToLanding }) {
                 alignItems: 'center',
                 justifyContent: 'center',
                 color: '#7C3AED',
-                boxShadow: '0 4px 12px rgba(124, 58, 237, 0.15)'
+                boxShadow: isTPActive ? '0 6px 16px rgba(124, 58, 237, 0.25)' : '0 4px 12px rgba(124, 58, 237, 0.15)',
+                transition: 'all 0.2s ease'
               }}>
                 <Building2 size={28} />
               </div>
@@ -227,7 +263,11 @@ export default function PortalsPage({ onSelectPortal, onBackToLanding }) {
             </div>
 
             <button
-              onClick={() => onSelectPortal && onSelectPortal('T_AND_P')}
+              onClick={(e) => {
+                e.stopPropagation();
+                setSelectedPortal('T_AND_P');
+                if (onSelectPortal) onSelectPortal('T_AND_P');
+              }}
               className="btn btn-primary"
               style={{ width: '100%', padding: '14px', background: 'linear-gradient(135deg, #6366F1 0%, #7C3AED 100%)', borderRadius: '12px', fontSize: '0.9375rem', fontWeight: 700 }}
             >
@@ -237,18 +277,28 @@ export default function PortalsPage({ onSelectPortal, onBackToLanding }) {
           </div>
 
           {/* 3. Head of Department Portal Card */}
-          <div className="card" style={{
-            padding: '32px 28px',
-            borderRadius: '24px',
-            backgroundColor: '#FFFFFF',
-            boxShadow: '0 10px 35px rgba(5, 150, 105, 0.06)',
-            border: '1.5px solid #E2E8F0',
-            display: 'flex',
-            flexDirection: 'column',
-            position: 'relative',
-            overflow: 'hidden',
-            transition: 'transform 0.2s ease, box-shadow 0.2s ease'
-          }}>
+          <div 
+            onClick={() => handleCardClick('HOD')}
+            onMouseEnter={() => setHoveredPortal('HOD')}
+            onMouseLeave={() => setHoveredPortal(null)}
+            className="card portal-selection-card" 
+            style={{
+              padding: '32px 28px',
+              borderRadius: '24px',
+              backgroundColor: '#FFFFFF',
+              boxShadow: isHODActive 
+                ? '0 18px 45px rgba(5, 150, 105, 0.18)' 
+                : '0 10px 35px rgba(15, 23, 42, 0.05)',
+              border: isHODActive ? '2.5px solid #059669' : '1.5px solid #E2E8F0',
+              transform: isHODActive ? 'translateY(-6px)' : 'translateY(0)',
+              display: 'flex',
+              flexDirection: 'column',
+              position: 'relative',
+              overflow: 'hidden',
+              cursor: 'pointer',
+              transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)'
+            }}
+          >
             <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '20px' }}>
               <div style={{
                 width: '52px',
@@ -259,7 +309,8 @@ export default function PortalsPage({ onSelectPortal, onBackToLanding }) {
                 alignItems: 'center',
                 justifyContent: 'center',
                 color: '#059669',
-                boxShadow: '0 4px 12px rgba(5, 150, 105, 0.15)'
+                boxShadow: isHODActive ? '0 6px 16px rgba(5, 150, 105, 0.25)' : '0 4px 12px rgba(5, 150, 105, 0.15)',
+                transition: 'all 0.2s ease'
               }}>
                 <Users size={28} />
               </div>
@@ -308,7 +359,11 @@ export default function PortalsPage({ onSelectPortal, onBackToLanding }) {
             </div>
 
             <button
-              onClick={() => onSelectPortal && onSelectPortal('HOD')}
+              onClick={(e) => {
+                e.stopPropagation();
+                setSelectedPortal('HOD');
+                if (onSelectPortal) onSelectPortal('HOD');
+              }}
               className="btn btn-primary"
               style={{ width: '100%', padding: '14px', background: 'linear-gradient(135deg, #059669 0%, #10B981 100%)', borderRadius: '12px', fontSize: '0.9375rem', fontWeight: 700 }}
             >
