@@ -237,33 +237,21 @@ export default function LoginPage({ initialRole = 'STUDENT', onLoginSuccess, onB
             <p className="student-card-sub">{currentRole.desc}</p>
           </div>
 
-          {/* Active Portal Role Banner */}
-          <div className="student-role-banner">
-            <div className="student-role-iconbox">
-              <RoleIcon size={22} />
-            </div>
-            <div style={{ flex: 1 }}>
-              <div className="student-role-tag">{currentRole.bannerTag}</div>
-              <div className="student-role-title">{currentRole.bannerTitle}</div>
-            </div>
-            <ArrowRight size={18} color="#4F46E5" strokeWidth={2.5} />
-          </div>
-
           {/* Error Alert */}
           {error && (
             <div style={{
               backgroundColor: '#FEF2F2',
               border: '1px solid #FECACA',
               color: '#DC2626',
-              padding: '10px 14px',
-              borderRadius: '12px',
-              fontSize: '0.8125rem',
-              marginBottom: '16px',
+              padding: '12px 16px',
+              borderRadius: '14px',
+              fontSize: '0.85rem',
+              marginBottom: '20px',
               display: 'flex',
               alignItems: 'center',
-              gap: '8px'
+              gap: '10px'
             }} role="alert">
-              <AlertCircle size={16} style={{ flexShrink: 0 }} />
+              <AlertCircle size={18} style={{ flexShrink: 0 }} />
               <span>{error}</span>
             </div>
           )}
@@ -274,12 +262,12 @@ export default function LoginPage({ initialRole = 'STUDENT', onLoginSuccess, onB
             <div className="student-form-group">
               <div className="student-form-label-row">
                 <label className="student-form-label" htmlFor="student-identifier">
-                  <Mail size={14} color="#64748B" />
+                  <Mail size={15} color="#4F46E5" />
                   <span>{currentRole.label}</span>
                 </label>
               </div>
               <div className="student-input-box">
-                <User size={16} className="student-input-icon" />
+                <User size={18} className="student-input-icon" />
                 <input
                   id="student-identifier"
                   type="text"
@@ -301,7 +289,7 @@ export default function LoginPage({ initialRole = 'STUDENT', onLoginSuccess, onB
             <div className="student-form-group">
               <div className="student-form-label-row">
                 <label className="student-form-label" htmlFor="student-password">
-                  <Lock size={14} color="#64748B" />
+                  <Lock size={15} color="#4F46E5" />
                   <span>Password</span>
                 </label>
                 <button
@@ -316,7 +304,7 @@ export default function LoginPage({ initialRole = 'STUDENT', onLoginSuccess, onB
                 </button>
               </div>
               <div className="student-input-box">
-                <Lock size={16} className="student-input-icon" />
+                <Lock size={18} className="student-input-icon" />
                 <input
                   id="student-password"
                   type={showPassword ? 'text' : 'password'}
@@ -339,7 +327,7 @@ export default function LoginPage({ initialRole = 'STUDENT', onLoginSuccess, onB
                   aria-label={showPassword ? 'Hide password' : 'Show password'}
                   tabIndex={-1}
                 >
-                  {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
             </div>
@@ -363,17 +351,6 @@ export default function LoginPage({ initialRole = 'STUDENT', onLoginSuccess, onB
               )}
             </button>
           </form>
-
-          {/* Predefined Authorized Account Format Banner */}
-          <div className="student-predefined-banner">
-            <div className="student-predefined-title">
-              <Info size={14} color="#4F46E5" />
-              <span>Predefined Authorized Account Format:</span>
-            </div>
-            <div className="student-predefined-text">
-              • Identifier: <strong>{currentRole.sampleId}</strong>
-            </div>
-          </div>
         </div>
       </section>
 
