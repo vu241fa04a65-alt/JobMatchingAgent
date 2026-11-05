@@ -6,8 +6,8 @@ import { authenticateToken, requireRole, denyHODMutation } from '../middleware/a
 
 const router = express.Router();
 
-// Get list of all students for T&P / HOD with skills array & readiness
-router.get('/', authenticateToken, async (req, res) => {
+// Get list of all students (T&P and HOD Only)
+router.get('/', authenticateToken, requireRole(['T_AND_P', 'HOD']), async (req, res) => {
     try {
         const students = await db.query(`
             SELECT s.*, u.avatar_url as user_avatar,
@@ -134,14 +134,23 @@ router.post('/', authenticateToken, requireRole(['T_AND_P']), denyHODMutation, a
     }
 });
 
-// Get single student profile by ID (for T&P / HOD / Student)
+// Get single student profile by ID (Strict Role & Isolation Rules)
 router.get('/:id', authenticateToken, async (req, res) => {
     try {
         let studentId = req.params.id;
-        if (studentId === 'profile' || studentId === 'me') {
-            const student = await db.get('SELECT id FROM people_students WHERE user_id = ?', [req.user.id]);
-            if (student) studentId = student.id;
-            else studentId = 'std_subbu';
+
+        // If role is STUDENT, strictly enforce data isolation: student can only fetch their own profile
+        if (req.user.role_name === 'STUDENT') {
+            const selfStudent = await db.get('SELECT * FROM people_students WHERE user_id = ?', [req.user.id]);
+            if (!selfStudent) {
+                return res.status(404).json({ error: 'Student profile not found for authenticated user' });
+            }
+            if (studentId !== 'profile' && studentId !== 'me' && studentId !== selfStudent.id && studentId !== selfStudent.user_id) {
+                return res.status(403).json({ error: 'Unauthorized: Students are restricted from accessing other students\' profiles.' });
+            }
+            studentId = selfStudent.id;
+        } else if (studentId === 'profile' || studentId === 'me') {
+            return res.status(400).json({ error: 'Specific student ID required for administrative profile lookup' });
         }
 
         const student = await db.get(`
@@ -159,10 +168,18 @@ router.get('/:id', authenticateToken, async (req, res) => {
 
         const skills = await db.query('SELECT * FROM student_skills WHERE student_id = ? ORDER BY score DESC', [realStudentId]);
         const projects = await db.query('SELECT * FROM student_projects WHERE student_id = ?', [realStudentId]);
-        const parsedProjects = projects.map(p => ({
-            ...p,
-            tech_stack: typeof p.tech_stack === 'string' ? JSON.parse(p.tech_stack) : p.tech_stack
-        }));
+        const parsedProjects = projects.map(p => {
+            let techStack = [];
+            try {
+                techStack = typeof p.tech_stack === 'string' ? JSON.parse(p.tech_stack) : p.tech_stack;
+            } catch {
+                techStack = p.tech_stack ? [p.tech_stack] : [];
+            }
+            return {
+                ...p,
+                tech_stack: techStack
+            };
+        });
 
         const certs = await db.query('SELECT * FROM student_certifications WHERE student_id = ?', [realStudentId]);
         const preferences = await db.get('SELECT * FROM student_preferences WHERE student_id = ?', [realStudentId]);
@@ -216,7 +233,7 @@ router.get('/:id', authenticateToken, async (req, res) => {
                 interviews_scheduled: applications.filter(a => a.status === 'INTERVIEW_SCHEDULED').length,
                 offers_count: offers.length,
                 learning_hours: 36,
-                skills_improved: 4,
+                skills_improved: skills.length,
                 profile_completeness: 92
             }
         });
@@ -226,22 +243,34 @@ router.get('/:id', authenticateToken, async (req, res) => {
     }
 });
 
-// Update student profile (Self or T&P)
-router.put('/profile', authenticateToken, async (req, res) => {
+// Update student profile (Self or Authorized T&P, HOD blocked)
+router.put('/profile', authenticateToken, denyHODMutation, async (req, res) => {
     try {
-        let studentId = req.body.student_id;
-        let userId = req.user?.id;
+        let studentId = null;
+        let userId = null;
 
-        if (req.user?.role_name === 'STUDENT') {
-            const student = await db.get('SELECT id, user_id FROM people_students WHERE user_id = ?', [req.user.id]);
-            if (student) {
-                studentId = student.id;
-                userId = student.user_id;
+        if (req.user.role_name === 'STUDENT') {
+            const selfStudent = await db.get('SELECT id, user_id FROM people_students WHERE user_id = ?', [req.user.id]);
+            if (!selfStudent) {
+                return res.status(404).json({ error: 'Student profile not found' });
             }
+            studentId = selfStudent.id;
+            userId = selfStudent.user_id;
+        } else if (req.user.role_name === 'T_AND_P') {
+            studentId = req.body.student_id;
+            if (!studentId) {
+                return res.status(400).json({ error: 'student_id is required for T&P profile updates' });
+            }
+            const targetStudent = await db.get('SELECT id, user_id FROM people_students WHERE id = ?', [studentId]);
+            if (!targetStudent) {
+                return res.status(404).json({ error: 'Target student not found' });
+            }
+            userId = targetStudent.user_id;
+        } else {
+            return res.status(403).json({ error: 'Unauthorized role for profile modification' });
         }
-        if (!studentId) studentId = 'std_subbu';
 
-        const { full_name, bio, linkedin_url, github_url, phone, avatar_url, skills, career_goals, preferred_roles, preferred_locations } = req.body;
+        const { full_name, bio, linkedin_url, github_url, phone, avatar_url, preferred_roles, preferred_locations } = req.body;
 
         await db.run(
             `UPDATE people_students 

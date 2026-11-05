@@ -5,15 +5,33 @@ import { authenticateToken, requireRole, denyHODMutation } from '../middleware/a
 
 const router = express.Router();
 
-// Get applications for current student
+// Helper to resolve student for user
+async function getSelfStudent(userId) {
+    return await db.get('SELECT * FROM people_students WHERE user_id = ?', [userId]);
+}
+
+// Get applications for current student (Strict Data Isolation)
 router.get('/my-applications', authenticateToken, async (req, res) => {
     try {
         let studentId = req.query.student_id;
-        if (!studentId && req.user.role_name === 'STUDENT') {
-            const student = await db.get('SELECT id FROM people_students WHERE user_id = ?', [req.user.id]);
-            if (student) studentId = student.id;
+
+        if (req.user.role_name === 'STUDENT') {
+            const selfStudent = await getSelfStudent(req.user.id);
+            if (!selfStudent) {
+                return res.status(404).json({ error: 'Student profile not found for authenticated user' });
+            }
+            if (studentId && studentId !== selfStudent.id) {
+                return res.status(403).json({ error: 'Unauthorized: Students are restricted from accessing other students\' applications.' });
+            }
+            studentId = selfStudent.id;
+        } else if (!studentId) {
+            const firstStudent = await db.get('SELECT id FROM people_students ORDER BY cgpa DESC LIMIT 1');
+            studentId = firstStudent?.id;
         }
-        if (!studentId) studentId = 'std_subbu';
+
+        if (!studentId) {
+            return res.status(404).json({ error: 'No student identifier available' });
+        }
 
         const applications = await db.query(`
             SELECT a.*, j.title as job_title, j.location as job_location, j.role_type, j.ctc_display,
@@ -64,8 +82,8 @@ router.get('/my-applications', authenticateToken, async (req, res) => {
     }
 });
 
-// Get all applications for T&P / HOD
-router.get('/all', authenticateToken, async (req, res) => {
+// Get all applications (T&P and HOD Only)
+router.get('/all', authenticateToken, requireRole(['T_AND_P', 'HOD']), async (req, res) => {
     try {
         const applications = await db.query(`
             SELECT a.*, s.full_name as student_name, s.usn as student_usn, s.branch as student_branch, s.cgpa as student_cgpa,
@@ -89,17 +107,39 @@ router.get('/all', authenticateToken, async (req, res) => {
     }
 });
 
-// Apply to a job opening (Student)
-router.post('/apply', authenticateToken, async (req, res) => {
+// Apply to a job opening (Student Only, cannot apply for other students)
+router.post('/apply', authenticateToken, denyHODMutation, async (req, res) => {
     try {
-        const { job_opening_id, student_id } = req.body;
-        let targetStudentId = student_id;
-
-        if (!targetStudentId && req.user.role_name === 'STUDENT') {
-            const student = await db.get('SELECT id FROM people_students WHERE user_id = ?', [req.user.id]);
-            if (student) targetStudentId = student.id;
+        const { job_opening_id } = req.body;
+        if (!job_opening_id) {
+            return res.status(400).json({ error: 'job_opening_id is required' });
         }
-        if (!targetStudentId) targetStudentId = 'std_subbu';
+
+        let targetStudentId = null;
+
+        if (req.user.role_name === 'STUDENT') {
+            const selfStudent = await getSelfStudent(req.user.id);
+            if (!selfStudent) {
+                return res.status(404).json({ error: 'Student profile not found' });
+            }
+            targetStudentId = selfStudent.id;
+        } else if (req.user.role_name === 'T_AND_P') {
+            targetStudentId = req.body.student_id;
+            if (!targetStudentId) {
+                return res.status(400).json({ error: 'student_id is required when application is submitted by T&P' });
+            }
+        } else {
+            return res.status(403).json({ error: 'Unauthorized role for job application' });
+        }
+
+        // Verify opening exists and is active
+        const job = await db.get('SELECT id, status FROM placement_job_openings WHERE id = ?', [job_opening_id]);
+        if (!job) {
+            return res.status(404).json({ error: 'Job opening not found' });
+        }
+        if (job.status !== 'ACTIVE') {
+            return res.status(400).json({ error: 'This placement opening is no longer accepting applications' });
+        }
 
         // Check if already applied
         const existing = await db.get('SELECT id FROM placement_drive_applications WHERE student_id = ? AND job_opening_id = ?', [targetStudentId, job_opening_id]);
@@ -139,7 +179,7 @@ router.post('/apply', authenticateToken, async (req, res) => {
     }
 });
 
-// Update Placement Lifecycle Stage (T&P Authorized)
+// Update Placement Lifecycle Stage (T&P Authorized Only)
 router.put('/:id/stage', authenticateToken, requireRole(['T_AND_P']), denyHODMutation, async (req, res) => {
     try {
         const { stage, status, progress, notes, interview, offer } = req.body;
@@ -208,11 +248,13 @@ router.put('/:id/stage', authenticateToken, requireRole(['T_AND_P']), denyHODMut
         }
 
         // Notify Student
-        const notifId = 'notif_' + crypto.randomBytes(6).toString('hex');
-        await db.run(`
-            INSERT INTO system_notifications (id, user_id, role_target, title, message, type, is_read, link_view)
-            VALUES (?, ?, 'STUDENT', ?, ?, 'DRIVE', 0, 'student-applications')
-        `, [notifId, app.student_user_id, `Application Update: ${app.company_name}`, `Your application for ${app.job_title} has advanced to: ${newStageTitle}.`]);
+        if (app.student_user_id) {
+            const notifId = 'notif_' + crypto.randomBytes(6).toString('hex');
+            await db.run(`
+                INSERT INTO system_notifications (id, user_id, role_target, title, message, type, is_read, link_view)
+                VALUES (?, ?, 'STUDENT', ?, ?, 'DRIVE', 0, 'student-applications')
+            `, [notifId, app.student_user_id, `Application Update: ${app.company_name}`, `Your application for ${app.job_title} has advanced to: ${newStageTitle}.`]);
+        }
 
         res.json({
             message: `Candidate application successfully advanced to ${newStageTitle}.`,
@@ -226,7 +268,7 @@ router.put('/:id/stage', authenticateToken, requireRole(['T_AND_P']), denyHODMut
     }
 });
 
-// Dynamic Application Status Timeline
+// Dynamic Application Status Timeline (Authorized access only)
 router.get('/timeline/:appId', authenticateToken, async (req, res) => {
     try {
         const app = await db.get(`
@@ -241,6 +283,14 @@ router.get('/timeline/:appId', authenticateToken, async (req, res) => {
 
         if (!app) {
             return res.status(404).json({ error: 'Application not found' });
+        }
+
+        // Authorization check: students can only view their own applications
+        if (req.user.role_name === 'STUDENT') {
+            const selfStudent = await getSelfStudent(req.user.id);
+            if (!selfStudent || selfStudent.id !== app.student_id) {
+                return res.status(403).json({ error: 'Unauthorized: You cannot access other students\' application timelines.' });
+            }
         }
 
         let stageHistory = [];
@@ -260,7 +310,7 @@ router.get('/timeline/:appId', authenticateToken, async (req, res) => {
     }
 });
 
-// Detailed Interview Preparation & Schedule Info
+// Detailed Interview Preparation & Schedule Info (Authorized access only)
 router.get('/interview-details/:appId', authenticateToken, async (req, res) => {
     try {
         const app = await db.get(`
@@ -277,6 +327,14 @@ router.get('/interview-details/:appId', authenticateToken, async (req, res) => {
             return res.status(404).json({ error: 'Application not found' });
         }
 
+        // Authorization check: students can only view their own interview details
+        if (req.user.role_name === 'STUDENT') {
+            const selfStudent = await getSelfStudent(req.user.id);
+            if (!selfStudent || selfStudent.id !== app.student_id) {
+                return res.status(403).json({ error: 'Unauthorized: You cannot view other students\' interview records.' });
+            }
+        }
+
         res.json({
             interview: {
                 application_id: app.id,
@@ -284,33 +342,32 @@ router.get('/interview-details/:appId', authenticateToken, async (req, res) => {
                 company_logo: app.company_logo,
                 role: app.job_title,
                 round_name: app.round_name || 'Technical Round 1',
-                scheduled_date: '18 Sep 2026',
+                scheduled_date: 'Upcoming Round',
                 scheduled_time: app.scheduled_time || '10:00 AM – 11:30 AM (IST)',
-                mode: app.mode || 'Google Meet (Virtual)',
-                meeting_link: app.meeting_link || 'https://meet.google.com/rvc-job-match',
-                interviewer: app.interviewer_name || 'Senior Technical Evaluation Panel',
-                feedback: app.feedback || 'Review core system design, data structures, and multithreading.'
+                mode: app.mode || 'Virtual Meeting',
+                meeting_link: app.meeting_link || '',
+                interviewer: app.interviewer_name || 'Technical Evaluation Panel',
+                feedback: app.feedback || 'Review core technical skills, data structures, and practical projects.'
             },
             preparation_checklist: [
-                { task: 'Revise Data Structures & Algorithms', completed: true },
-                { task: 'Practice system design basics and scaling bottlenecks', completed: true },
-                { task: "Go through company's engineering core principles", completed: true },
-                { task: 'Solve mock interview questions with timer', completed: true },
-                { task: 'Prepare for behavioral questions (STAR method)', completed: false },
-                { task: 'Test technical setup (internet, camera, mic)', completed: false }
+                { task: 'Revise core data structures and problem-solving patterns', completed: true },
+                { task: 'Practice system architecture fundamentals and scalability concepts', completed: true },
+                { task: 'Review company tech stack and engineering principles', completed: true },
+                { task: 'Solve hands-on technical problems within time constraints', completed: true },
+                { task: 'Prepare structured examples using the STAR methodology', completed: false },
+                { task: 'Verify webcam, microphone, and coding development environment', completed: false }
             ],
             practice_questions: [
-                'Given an array, find the longest subarray with sum K.',
-                'Design a data structure to support LRU cache in O(1) time complexity.',
-                'Given a binary tree, find the lowest common ancestor of two nodes.',
-                'Implement a function to detect and remove a cycle in a singly linked list.',
-                'Solve two sum problem in a sorted rotated array.'
+                'Explain how you would optimize database queries and indexes for high concurrency.',
+                'Design an in-memory cache with eviction policy and thread safety.',
+                'Describe the trade-offs between monolithic architectures and microservices.',
+                'Walk through how you debugged a critical production bottleneck in a project.'
             ],
             interview_tips: [
-                { title: 'Be Clear', text: 'Think aloud and explain your approach step-by-step before writing code.' },
-                { title: 'Be Structured', text: 'Break down complex problems into modular helper functions.' },
-                { title: 'Be Honest', text: "It's okay to ask clarifying questions about constraints and edge cases." },
-                { title: 'Be Confident', text: 'Demonstrate genuine enthusiasm for scalable software engineering.' }
+                { title: 'Communicate Intent', text: 'Talk through your problem-solving thought process before implementing code.' },
+                { title: 'Modular Design', text: 'Break down complex logic into clean, testable helper functions.' },
+                { title: 'Clarify Constraints', text: 'Confirm input sizes, bounds, edge conditions, and complexity targets up front.' },
+                { title: 'Demonstrate Ownership', text: 'Highlight specific technical contributions you personally made in projects.' }
             ]
         });
     } catch (err) {

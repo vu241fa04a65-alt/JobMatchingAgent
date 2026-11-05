@@ -8,11 +8,23 @@ const router = express.Router();
 router.get('/summary', authenticateToken, async (req, res) => {
     try {
         let studentId = req.query.student_id;
-        if (!studentId && req.user.role_name === 'STUDENT') {
+        if (req.user.role_name === 'STUDENT') {
             const student = await db.get('SELECT id FROM people_students WHERE user_id = ?', [req.user.id]);
-            if (student) studentId = student.id;
+            if (!student) {
+                return res.status(404).json({ error: 'Student profile not found' });
+            }
+            if (studentId && studentId !== student.id) {
+                return res.status(403).json({ error: 'Unauthorized: Students are restricted from accessing other students\' preparation summaries.' });
+            }
+            studentId = student.id;
+        } else if (!studentId) {
+            const firstStudent = await db.get('SELECT id FROM people_students ORDER BY cgpa DESC LIMIT 1');
+            studentId = firstStudent?.id;
         }
-        if (!studentId) studentId = 'std_subbu';
+
+        if (!studentId) {
+            return res.status(404).json({ error: 'No student specified' });
+        }
 
         const readiness = await db.get('SELECT * FROM placement_readiness_summary WHERE student_id = ?', [studentId]);
 

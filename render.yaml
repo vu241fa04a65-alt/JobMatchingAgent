@@ -5,8 +5,24 @@ services:
     plan: free
     buildCommand: npm install && npm run build
     startCommand: npm start
+    healthCheckPath: /api/health
     envVars:
       - key: NODE_ENV
         value: production
       - key: JWT_SECRET
         generateValue: true
+      - key: GROQ_MODEL
+        value: llama-3.3-70b-versatile
+      - key: GROQ_API_KEY
+        sync: false
+      - key: DB_PATH
+        value: ./server/data/jobmatch.db
+      - key: ALLOWED_ORIGINS
+        value: https://jobmatchingagent.onrender.com
+
+# Optional Managed Persistent PostgreSQL on Render (Recommended for scalable persistent storage)
+# databases:
+#   - name: jobmatch-postgres
+#     plan: free
+#     databaseName: jobmatch
+#     user: jobmatch_user

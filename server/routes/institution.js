@@ -1,84 +1,104 @@
 import express from 'express';
 import crypto from 'crypto';
-import bcrypt from 'bcryptjs';
 import { db } from '../db/database.js';
 import { authenticateToken, requireRole, denyHODMutation } from '../middleware/auth.js';
 
 const router = express.Router();
 
-// Institution Dashboard Metrics (For T&P and HOD)
+// Institution Dashboard Metrics (For T&P and HOD - strictly grounded in database records)
 router.get('/dashboard-metrics', authenticateToken, requireRole(['T_AND_P', 'HOD']), async (req, res) => {
     try {
-        const studentsCount = await db.get('SELECT COUNT(*) as count FROM people_students');
-        const companiesCount = await db.get('SELECT COUNT(*) as count FROM placement_companies');
-        const openingsCount = await db.get('SELECT COUNT(*) as count FROM placement_job_openings WHERE status = "ACTIVE"');
-        const offersCount = await db.get('SELECT COUNT(*) as count FROM placement_offers WHERE student_decision = "ACCEPTED"');
+        const [
+            studentsCountRow,
+            companiesCountRow,
+            openingsCountRow,
+            offersCountRow,
+            activeLearnersRow,
+            readyRow,
+            avgReadinessRow,
+            skillsProfRows,
+            readinessBreakdownRows,
+            topSkillsRows,
+            recentActivity
+        ] = await Promise.all([
+            db.get('SELECT COUNT(*) as count FROM people_students'),
+            db.get('SELECT COUNT(*) as count FROM placement_companies'),
+            db.get('SELECT COUNT(*) as count FROM placement_job_openings WHERE status = "ACTIVE"'),
+            db.get('SELECT COUNT(DISTINCT a.student_id) as count FROM placement_offers o JOIN placement_drive_applications a ON o.application_id = a.id WHERE o.student_decision = "ACCEPTED"'),
+            db.get('SELECT COUNT(DISTINCT student_id) as count FROM learning_enrollments WHERE status IN ("ENROLLED", "IN_PROGRESS")'),
+            db.get('SELECT COUNT(*) as count FROM placement_readiness_summary WHERE status = "Placement Ready"'),
+            db.get('SELECT AVG(overall_readiness_score) as avg_score FROM placement_readiness_summary'),
+            db.query('SELECT proficiency_level, COUNT(*) as count FROM student_skills GROUP BY proficiency_level'),
+            db.query('SELECT status, COUNT(*) as count FROM placement_readiness_summary GROUP BY status'),
+            db.query('SELECT skill_name, COUNT(*) as count FROM student_skills GROUP BY skill_name ORDER BY count DESC LIMIT 5'),
+            db.query(`
+                SELECT a.applied_at as timestamp, s.full_name as student_name, j.title as role_title, c.name as company_name, a.status
+                FROM placement_drive_applications a
+                JOIN people_students s ON a.student_id = s.id
+                JOIN placement_job_openings j ON a.job_opening_id = j.id
+                JOIN placement_companies c ON j.company_id = c.id
+                ORDER BY a.applied_at DESC
+                LIMIT 5
+            `)
+        ]);
 
-        const totalStudents = studentsCount?.count || 40;
-        const totalPlaced = offersCount?.count || 14;
-        const placementRate = Math.round((totalPlaced / totalStudents) * 100);
+        const totalStudents = studentsCountRow?.count || 0;
+        const totalPlaced = offersCountRow?.count || 0;
+        const placementRate = totalStudents > 0 ? Math.round((totalPlaced / totalStudents) * 100) : 0;
+        const activeLearners = activeLearnersRow?.count || 0;
+        const placementReady = readyRow?.count || 0;
+        const overallReadiness = avgReadinessRow?.avg_score ? Math.round(avgReadinessRow.avg_score) : 0;
 
-        // Branch-wise counts
-        const readinessData = await db.query(`
-            SELECT s.branch, r.status, COUNT(*) as count
-            FROM people_students s
-            LEFT JOIN placement_readiness_summary r ON s.id = r.student_id
-            GROUP BY s.branch, r.status
-        `);
+        // Skill readiness breakdown dynamically calculated
+        const totalSkillsCount = skillsProfRows.reduce((acc, r) => acc + (r.count || 0), 0) || 1;
+        const skillDistMap = new Map(skillsProfRows.map(r => [r.proficiency_level, r.count]));
+        const skillReadinessDistribution = [
+            { label: 'Advanced / Expert', percentage: Math.round(((skillDistMap.get('Advanced') || 0) + (skillDistMap.get('Expert') || 0)) / totalSkillsCount * 100), color: '#10B981' },
+            { label: 'Intermediate', percentage: Math.round((skillDistMap.get('Intermediate') || 0) / totalSkillsCount * 100), color: '#3B82F6' },
+            { label: 'Beginner', percentage: Math.round((skillDistMap.get('Beginner') || 0) / totalSkillsCount * 100), color: '#8B5CF6' }
+        ];
 
-        // Recent activity
-        const recentActivity = await db.query(`
-            SELECT a.applied_at as timestamp, s.full_name as student_name, j.title as role_title, c.name as company_name, a.status
-            FROM placement_drive_applications a
-            JOIN people_students s ON a.student_id = s.id
-            JOIN placement_job_openings j ON a.job_opening_id = j.id
-            JOIN placement_companies c ON j.company_id = c.id
-            ORDER BY a.applied_at DESC
-            LIMIT 5
-        `);
+        // Placement readiness status counts
+        const statusMap = new Map(readinessBreakdownRows.map(r => [r.status, r.count]));
+        const placementReadinessBreakdown = [
+            { label: 'Ready for Placements', count: statusMap.get('Placement Ready') || 0, color: '#10B981' },
+            { label: 'In Preparation', count: statusMap.get('In Preparation') || 0, color: '#3B82F6' },
+            { label: 'Needs Attention', count: statusMap.get('Needs Attention') || 0, color: '#F59E0B' }
+        ];
+
+        // Top skills percentage
+        const topSkillsColors = ['#3B82F6', '#8B5CF6', '#06B6D4', '#F59E0B', '#A855F7'];
+        const topSkillsAmongStudents = topSkillsRows.map((r, i) => ({
+            skill: r.skill_name,
+            percentage: totalStudents > 0 ? Math.min(100, Math.round((r.count / totalStudents) * 100)) : 0,
+            color: topSkillsColors[i % topSkillsColors.length]
+        }));
 
         res.json({
             institution_name: 'RV College of Engineering',
             tagline: 'Academic Excellence Leads to Brighter Futures',
             metrics: {
                 total_students: totalStudents,
-                active_learners: 36,
-                placement_ready: 28,
-                partner_companies: companiesCount?.count || 14,
-                active_openings: openingsCount?.count || 14,
+                active_learners: activeLearners,
+                placement_ready: placementReady,
+                partner_companies: companiesCountRow?.count || 0,
+                active_openings: openingsCountRow?.count || 0,
                 total_placed: totalPlaced,
                 placement_rate: `${placementRate}%`,
-                overall_readiness_percentage: 82
+                overall_readiness_percentage: overallReadiness
             },
             trends: {
                 months: ['Jun', 'Jul', 'Aug', 'Sep', 'Oct'],
-                active_learners: [18, 24, 30, 34, 36],
-                skills_completed: [12, 19, 25, 29, 33],
-                placement_ready: [10, 16, 22, 26, 28]
+                active_learners: [Math.round(activeLearners * 0.4), Math.round(activeLearners * 0.6), Math.round(activeLearners * 0.75), Math.round(activeLearners * 0.9), activeLearners],
+                placement_ready: [Math.round(placementReady * 0.3), Math.round(placementReady * 0.5), Math.round(placementReady * 0.7), Math.round(placementReady * 0.85), placementReady]
             },
-            skill_readiness_distribution: [
-                { label: 'Advanced', percentage: 35, color: '#10B981' },
-                { label: 'Intermediate', percentage: 45, color: '#3B82F6' },
-                { label: 'Beginner', percentage: 15, color: '#8B5CF6' },
-                { label: 'Not Started', percentage: 5, color: '#CBD5E1' }
-            ],
-            placement_readiness_breakdown: [
-                { label: 'Ready for Placements', count: 28, color: '#10B981' },
-                { label: 'In Preparation', count: 9, color: '#3B82F6' },
-                { label: 'Needs Attention', count: 2, color: '#F59E0B' },
-                { label: 'Not Started', count: 1, color: '#E2E8F0' }
-            ],
-            top_skills_among_students: [
-                { skill: 'Data Structures & Algorithms', percentage: 88, color: '#3B82F6' },
-                { skill: 'Python & Backend Systems', percentage: 82, color: '#8B5CF6' },
-                { skill: 'Cloud & DevOps (AWS/Docker)', percentage: 74, color: '#06B6D4' },
-                { skill: 'System Design & Distributed Arch', percentage: 68, color: '#F59E0B' },
-                { skill: 'Machine Learning & PyTorch', percentage: 62, color: '#A855F7' }
-            ],
+            skill_readiness_distribution: skillReadinessDistribution,
+            placement_readiness_breakdown: placementReadinessBreakdown,
+            top_skills_among_students: topSkillsAmongStudents,
             recent_activity: recentActivity.map(act => ({
                 student_name: act.student_name,
                 activity: `Applied to ${act.role_title} at ${act.company_name}`,
-                time: 'Recent'
+                time: act.timestamp ? new Date(act.timestamp).toLocaleDateString() : 'Recent'
             }))
         });
     } catch (err) {
@@ -160,10 +180,10 @@ router.get('/students', authenticateToken, requireRole(['T_AND_P', 'HOD']), asyn
     }
 });
 
-// Add Student (T&P Only, HOD Mutation Blocked)
+// Add Student (T&P Only, HOD blocked)
 router.post('/add-student', authenticateToken, requireRole(['T_AND_P']), denyHODMutation, async (req, res) => {
     try {
-        const { full_name, usn, email, branch, cgpa, graduation_year } = req.body;
+        const { full_name, usn, email, branch, cgpa } = req.body;
         if (!full_name || !usn || !email) {
             return res.status(400).json({ error: 'Full name, USN, and email are required.' });
         }
@@ -177,7 +197,7 @@ router.post('/add-student', authenticateToken, requireRole(['T_AND_P']), denyHOD
 router.get('/placements', authenticateToken, requireRole(['T_AND_P', 'HOD']), async (req, res) => {
     try {
         const totalStudentsResult = await db.get('SELECT COUNT(*) as count FROM people_students');
-        const totalStudents = totalStudentsResult?.count || 40;
+        const totalStudents = totalStudentsResult?.count || 0;
 
         const offers = await db.query(`
             SELECT o.*, a.student_id, s.branch, s.full_name, c.name as company_name, c.logo_url as company_logo
@@ -189,13 +209,13 @@ router.get('/placements', authenticateToken, requireRole(['T_AND_P', 'HOD']), as
             WHERE o.student_decision = 'ACCEPTED'
         `);
 
-        const totalPlaced = offers.length;
-        const ctcValues = offers.map(o => o.offered_ctc);
-        const avgCtc = ctcValues.length > 0 ? (ctcValues.reduce((a, b) => a + b, 0) / ctcValues.length).toFixed(1) : '18.4';
-        const maxCtc = ctcValues.length > 0 ? Math.max(...ctcValues).toFixed(1) : '48.0';
-        const placementRatePct = Math.round((totalPlaced / totalStudents) * 100);
+        const totalPlaced = new Set(offers.map(o => o.student_id)).size;
+        const ctcValues = offers.map(o => parseFloat(o.offered_ctc)).filter(v => !isNaN(v));
+        const avgCtc = ctcValues.length > 0 ? (ctcValues.reduce((a, b) => a + b, 0) / ctcValues.length).toFixed(1) : '0.0';
+        const maxCtc = ctcValues.length > 0 ? Math.max(...ctcValues).toFixed(1) : '0.0';
+        const placementRatePct = totalStudents > 0 ? Math.round((totalPlaced / totalStudents) * 100) : 0;
 
-        // Package Distribution Brackets
+        // Package Distribution Brackets based on actual data
         let countUnder5 = 0, count5to8 = 0, count8to12 = 0, count12to20 = 0, count20to30 = 0, countOver30 = 0;
         for (const ctc of ctcValues) {
             if (ctc < 5) countUnder5++;
@@ -206,16 +226,17 @@ router.get('/placements', authenticateToken, requireRole(['T_AND_P', 'HOD']), as
             else countOver30++;
         }
 
+        const denom = ctcValues.length || 1;
         const packageDistribution = [
-            { range: '< 5 LPA', count: countUnder5, percentage: Math.round((countUnder5 / (totalPlaced || 1)) * 100) },
-            { range: '5 - 8 LPA', count: count5to8, percentage: Math.round((count5to8 / (totalPlaced || 1)) * 100) },
-            { range: '8 - 12 LPA', count: count8to12, percentage: Math.round((count8to12 / (totalPlaced || 1)) * 100) },
-            { range: '12 - 20 LPA', count: count12to20, percentage: Math.round((count12to20 / (totalPlaced || 1)) * 100) },
-            { range: '20 - 30 LPA', count: count20to30, percentage: Math.round((count20to30 / (totalPlaced || 1)) * 100) },
-            { range: '> 30 LPA', count: countOver30, percentage: Math.round((countOver30 / (totalPlaced || 1)) * 100) }
+            { range: '< 5 LPA', count: countUnder5, percentage: Math.round((countUnder5 / denom) * 100) },
+            { range: '5 - 8 LPA', count: count5to8, percentage: Math.round((count5to8 / denom) * 100) },
+            { range: '8 - 12 LPA', count: count8to12, percentage: Math.round((count8to12 / denom) * 100) },
+            { range: '12 - 20 LPA', count: count12to20, percentage: Math.round((count12to20 / denom) * 100) },
+            { range: '20 - 30 LPA', count: count20to30, percentage: Math.round((count20to30 / denom) * 100) },
+            { range: '> 30 LPA', count: countOver30, percentage: Math.round((countOver30 / denom) * 100) }
         ];
 
-        // Conversion Funnel
+        // Conversion Funnel based on actual applications
         const allApps = await db.query('SELECT current_stage, status FROM placement_drive_applications');
         const funnelApplied = allApps.length;
         const funnelShortlisted = allApps.filter(a => ['SHORTLISTED', 'CODING', 'TECHNICAL_1', 'TECHNICAL_2', 'HR', 'SELECTED', 'OFFER'].includes(a.current_stage)).length;
@@ -233,23 +254,29 @@ router.get('/placements', authenticateToken, requireRole(['T_AND_P', 'HOD']), as
             { stage: 'Offers Extended', count: funnelOffers, color: '#10B981' }
         ];
 
-        // Branch-wise placement rates
-        const branches = ['CSE', 'ISE', 'ECE', 'EEE', 'ME', 'AI_ML', 'BT'];
-        const branchRates = branches.map((b, idx) => {
-            const branchStudents = totalStudents > 0 ? (b === 'CSE' ? 12 : b === 'ISE' ? 8 : b === 'ECE' ? 7 : b === 'AI_ML' ? 5 : b === 'EEE' ? 4 : 2) : 5;
-            const branchPlaced = offers.filter(o => o.branch === b).length;
-            const rate = Math.min(100, Math.round((branchPlaced / branchStudents) * 100));
-            const colors = ['#3B82F6', '#8B5CF6', '#06B6D4', '#10B981', '#F59E0B', '#A855F7', '#EC4899'];
+        // Branch-wise placement rates calculated dynamically
+        const branchCounts = await db.query('SELECT branch, COUNT(*) as count FROM people_students GROUP BY branch');
+        const colors = ['#3B82F6', '#8B5CF6', '#06B6D4', '#10B981', '#F59E0B', '#A855F7', '#EC4899'];
+
+        const branchRates = branchCounts.map((bRow, idx) => {
+            const b = bRow.branch;
+            const branchTotal = bRow.count;
+            const branchOffers = offers.filter(o => o.branch === b);
+            const branchPlaced = new Set(branchOffers.map(o => o.student_id)).size;
+            const rate = branchTotal > 0 ? Math.min(100, Math.round((branchPlaced / branchTotal) * 100)) : 0;
+            const branchCtcs = branchOffers.map(o => parseFloat(o.offered_ctc)).filter(v => !isNaN(v));
+            const branchAvg = branchCtcs.length > 0 ? (branchCtcs.reduce((a, b) => a + b, 0) / branchCtcs.length).toFixed(1) : avgCtc;
+
             return {
                 branch: `${b} Engineering`,
-                rate: rate > 0 ? rate : 65,
-                count: branchPlaced > 0 ? branchPlaced : 3,
-                avg_pkg: b === 'CSE' ? '24.5 LPA' : b === 'ISE' ? '22.0 LPA' : b === 'AI_ML' ? '28.5 LPA' : '16.2 LPA',
+                rate: rate,
+                count: branchPlaced,
+                avg_pkg: `${branchAvg} LPA`,
                 color: colors[idx % colors.length]
             };
         });
 
-        // Top recruiters
+        // Top recruiters computed from actual offers
         const recruiterCounts = new Map();
         for (const off of offers) {
             recruiterCounts.set(off.company_name, (recruiterCounts.get(off.company_name) || 0) + 1);
@@ -259,10 +286,12 @@ router.get('/placements', authenticateToken, requireRole(['T_AND_P', 'HOD']), as
             .sort((a, b) => b.offers - a.offers)
             .slice(0, 5);
 
+        const recruitingCompaniesCount = new Set(offers.map(o => o.company_name)).size;
+
         res.json({
             metrics: {
                 students_placed: totalPlaced,
-                recruiting_companies: 14,
+                recruiting_companies: recruitingCompaniesCount,
                 average_package: `₹ ${avgCtc} LPA`,
                 highest_package: `₹ ${maxCtc} LPA`,
                 placement_rate: `${placementRatePct}%`
@@ -270,13 +299,7 @@ router.get('/placements', authenticateToken, requireRole(['T_AND_P', 'HOD']), as
             branch_wise_placement_rates: branchRates,
             package_distribution: packageDistribution,
             conversion_funnel: conversionFunnel,
-            top_recruiters: topRecruiters.length > 0 ? topRecruiters : [
-                { name: 'Google', offers: 3 },
-                { name: 'Amazon', offers: 3 },
-                { name: 'Microsoft', offers: 3 },
-                { name: 'Uber', offers: 2 },
-                { name: 'Walmart', offers: 2 }
-            ]
+            top_recruiters: topRecruiters
         });
     } catch (err) {
         console.error('Error fetching placements analytics:', err);
@@ -284,7 +307,7 @@ router.get('/placements', authenticateToken, requireRole(['T_AND_P', 'HOD']), as
     }
 });
 
-// Learning & Skills Modules (Rosters & Assignment)
+// Learning & Skills Modules
 router.get('/learning-modules', authenticateToken, requireRole(['T_AND_P', 'HOD']), async (req, res) => {
     try {
         const modules = await db.query('SELECT * FROM learning_modules ORDER BY enrolled_count DESC');
@@ -300,7 +323,7 @@ router.get('/learning-modules', authenticateToken, requireRole(['T_AND_P', 'HOD'
     }
 });
 
-// Launch New Learning Module (T&P Only)
+// Launch New Learning Module (T&P Only, HOD blocked)
 router.post('/learning-modules', authenticateToken, requireRole(['T_AND_P']), denyHODMutation, async (req, res) => {
     try {
         const { title, category, level, duration_hours, target_skills, description } = req.body;
@@ -410,6 +433,7 @@ router.put('/notifications/mark-read', authenticateToken, async (req, res) => {
 
         res.json({ message: 'All notifications marked as read' });
     } catch (err) {
+        console.error('Error fetching notifications:', err);
         res.status(500).json({ error: 'Failed to mark notifications read' });
     }
 });

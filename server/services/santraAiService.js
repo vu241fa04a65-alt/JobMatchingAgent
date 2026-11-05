@@ -4,8 +4,8 @@ import { agent50 } from '../engine/agent50.js';
 
 export class SantraAiService {
   constructor() {
-    this.primaryModel = process.env.GROQ_MODEL || 'openai/gpt-oss-120b';
-    this.fallbackModel = 'openai/gpt-oss-20b';
+    this.primaryModel = process.env.GROQ_MODEL || 'llama-3.3-70b-versatile';
+    this.fallbackModel = 'llama-3.1-8b-instant';
     this.apiUrl = 'https://api.groq.com/openai/v1/chat/completions';
   }
 

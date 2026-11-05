@@ -2,11 +2,41 @@ import express from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { db } from '../db/database.js';
-import { JWT_SECRET, authenticateToken } from '../middleware/auth.js';
+import { JWT_SECRET, authenticateToken, requireRole } from '../middleware/auth.js';
 
 const router = express.Router();
 
-// Helper to generate JWT token
+// Rate limiter state for login endpoint (in-memory sliding window)
+const loginAttempts = new Map();
+const RATE_LIMIT_WINDOW_MS = 60 * 1000; // 1 minute window
+const MAX_ATTEMPTS = 10; // max 10 attempts per minute per key
+
+function isRateLimited(key) {
+    const now = Date.now();
+    const entry = loginAttempts.get(key);
+    if (!entry) {
+        loginAttempts.set(key, { count: 1, firstAttempt: now });
+        return false;
+    }
+    if (now - entry.firstAttempt > RATE_LIMIT_WINDOW_MS) {
+        loginAttempts.set(key, { count: 1, firstAttempt: now });
+        return false;
+    }
+    entry.count++;
+    return entry.count > MAX_ATTEMPTS;
+}
+
+// Periodic cleanup of rate limiter entries
+setInterval(() => {
+    const now = Date.now();
+    for (const [key, entry] of loginAttempts.entries()) {
+        if (now - entry.firstAttempt > RATE_LIMIT_WINDOW_MS * 2) {
+            loginAttempts.delete(key);
+        }
+    }
+}, 5 * 60 * 1000).unref();
+
+// Helper to generate JWT token with expiration and validated role
 function generateToken(user) {
     return jwt.sign(
         { userId: user.id, email: user.email, role: user.role_name },
@@ -17,15 +47,25 @@ function generateToken(user) {
 
 /**
  * POST /api/auth/login
- * Strict Authentication: Only predefined users in the database can log in.
- * Supports:
- * - Student: USN (e.g. 1RV23CS184) or Email + Password (Student@123)
- * - T&P: Employee ID (e.g. TP-OFFICER-01) or Email + Password (TPCell@123)
- * - HOD: Faculty ID (e.g. HOD-CSE-01) or Email + Password (HOD@123)
+ * Strict Authentication:
+ * - Rate limited per IP/identifier
+ * - Exclusively verifies submitted password against stored bcrypt hash
+ * - Generic error responses preventing user enumeration
+ * - Role tab enforcement prevents privilege elevation
  */
 router.post('/login', async (req, res) => {
     try {
-        const { identifier, password, role } = req.body;
+        const { identifier, password, role, role_override } = req.body;
+        const requestedRole = role || role_override;
+
+        const clientIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress || 'unknown';
+        const rateLimitKey = `${clientIp}:${(identifier || '').trim().toLowerCase()}`;
+
+        if (isRateLimited(rateLimitKey)) {
+            return res.status(429).json({ 
+                error: 'Too many login attempts. Please wait a moment before trying again.' 
+            });
+        }
 
         if (!identifier || !password) {
             return res.status(400).json({ error: 'Identifier (USN / ID / Email) and Password are required.' });
@@ -33,7 +73,7 @@ router.post('/login', async (req, res) => {
 
         const trimmedId = identifier.trim();
 
-        // 1. Search user by Email, Identifier Code (USN / Emp ID / Faculty ID), or Student USN
+        // 1. Search user by Email, Identifier Code (USN / Emp ID / Faculty ID)
         let user = await db.get(
             `SELECT u.id, u.identifier_code, u.email, u.password_hash, u.full_name, u.role_id, u.avatar_url, r.name as role_name 
              FROM identity_users u 
@@ -56,44 +96,44 @@ router.post('/login', async (req, res) => {
             }
         }
 
-        // If user is not in predefined database
+        // Return generic error if user does not exist (prevents user enumeration)
         if (!user) {
             return res.status(401).json({ 
-                error: 'Invalid credentials. Access is restricted to authorized predefined accounts in the system.' 
+                error: 'Invalid identifier or password. Please verify your credentials and try again.' 
             });
         }
 
-        // 2. Validate role tab match if role is provided
-        if (role && user.role_name !== role) {
+        // 2. Validate password exclusively via bcrypt compare against stored password_hash
+        const isMatch = await bcrypt.compare(password, user.password_hash);
+        if (!isMatch) {
+            return res.status(401).json({ 
+                error: 'Invalid identifier or password. Please verify your credentials and try again.' 
+            });
+        }
+
+        // 3. Validate role tab match if role is provided
+        if (requestedRole && user.role_name !== requestedRole) {
             const roleLabels = {
                 'STUDENT': 'Student Portal',
                 'T_AND_P': 'Training & Placement Portal',
                 'HOD': 'Head of Department Portal'
             };
             return res.status(403).json({
-                error: `This account belongs to ${user.role_name}. Please switch to the ${roleLabels[user.role_name] || user.role_name} tab to log in.`
+                error: `This account is authorized for ${roleLabels[user.role_name] || user.role_name}. Please switch to the correct portal tab to log in.`
             });
         }
 
-        // 3. Verify password with bcrypt
-        let isMatch = await bcrypt.compare(password, user.password_hash);
-        
-        // Fallback for standard master test password
-        if (!isMatch && (password === 'password123' || password === 'Student@123' || password === 'TPCell@123' || password === 'HOD@123')) {
-            isMatch = true;
-        }
-
-        if (!isMatch) {
-            return res.status(401).json({ error: 'Incorrect password. Please verify your credentials and try again.' });
-        }
-
-        // 4. Generate token and fetch profile if student
+        // 4. Generate token with role derived STRICTLY from database record
         const token = generateToken(user);
         let studentProfile = null;
         if (user.role_name === 'STUDENT') {
             studentProfile = await db.get('SELECT * FROM people_students WHERE user_id = ?', [user.id]);
         }
 
+        // Successful login: reset rate limit for this key
+        loginAttempts.delete(rateLimitKey);
+
+        // Passwords and hashes are strictly excluded from response
         res.json({
             message: 'Login successful',
             token,
@@ -145,11 +185,12 @@ router.get('/me', authenticateToken, async (req, res) => {
     }
 });
 
-// Authorized Predefined Accounts Directory (Reference)
-router.get('/predefined-accounts', async (req, res) => {
+// Authorized Predefined Accounts Directory (Admin / T&P Only)
+// Never exposes password hashes, tokens, or private phone/personal details
+router.get('/predefined-accounts', authenticateToken, requireRole(['T_AND_P']), async (req, res) => {
     try {
         const users = await db.query(`
-            SELECT u.id, u.identifier_code, u.email, u.full_name, r.name as role
+            SELECT u.id, u.identifier_code, u.full_name, r.name as role
             FROM identity_users u
             JOIN identity_roles r ON u.role_id = r.id
             ORDER BY r.name, u.full_name

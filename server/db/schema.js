@@ -305,4 +305,23 @@ CREATE TABLE IF NOT EXISTS institution_events (
     registered_count INTEGER DEFAULT 0,
     mode TEXT DEFAULT 'Offline'
 );
+
+-- Performance & Query Optimization Indexes
+CREATE INDEX IF NOT EXISTS idx_users_email ON identity_users(email);
+CREATE INDEX IF NOT EXISTS idx_users_identifier ON identity_users(identifier_code);
+CREATE INDEX IF NOT EXISTS idx_users_role_id ON identity_users(role_id);
+CREATE INDEX IF NOT EXISTS idx_students_user_id ON people_students(user_id);
+CREATE INDEX IF NOT EXISTS idx_students_usn ON people_students(usn);
+CREATE INDEX IF NOT EXISTS idx_students_branch ON people_students(branch);
+CREATE INDEX IF NOT EXISTS idx_student_skills_student_id ON student_skills(student_id);
+CREATE INDEX IF NOT EXISTS idx_student_skills_name ON student_skills(skill_name);
+CREATE INDEX IF NOT EXISTS idx_student_projects_student_id ON student_projects(student_id);
+CREATE INDEX IF NOT EXISTS idx_placement_apps_student_id ON placement_drive_applications(student_id);
+CREATE INDEX IF NOT EXISTS idx_placement_apps_job_id ON placement_drive_applications(job_opening_id);
+CREATE INDEX IF NOT EXISTS idx_placement_apps_status ON placement_drive_applications(status);
+CREATE INDEX IF NOT EXISTS idx_placement_jobs_company_id ON placement_job_openings(company_id);
+CREATE INDEX IF NOT EXISTS idx_placement_jobs_status ON placement_job_openings(status);
+CREATE INDEX IF NOT EXISTS idx_placement_offers_app_id ON placement_offers(application_id);
+CREATE INDEX IF NOT EXISTS idx_learning_enr_student_id ON learning_enrollments(student_id);
+CREATE INDEX IF NOT EXISTS idx_learning_enr_module_id ON learning_enrollments(module_id);
 `;

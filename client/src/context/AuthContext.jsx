@@ -41,7 +41,7 @@ export function AuthProvider({ children }) {
     verifySession();
   }, [token]);
 
-  const login = async (identifier, password, roleOverride = null) => {
+  const login = async (identifier, password, role = null) => {
     setLoading(true);
     try {
       const res = await fetch('/api/auth/login', {
@@ -50,7 +50,7 @@ export function AuthProvider({ children }) {
         body: JSON.stringify({
           identifier,
           password,
-          role_override: roleOverride
+          role
         })
       });
       const data = await res.json();

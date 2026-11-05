@@ -1,11 +1,11 @@
 import express from 'express';
 import { db } from '../db/database.js';
-import { authenticateToken } from '../middleware/auth.js';
+import { authenticateToken, requireRole } from '../middleware/auth.js';
 
 const router = express.Router();
 
-// Get recent Agent 50 execution runs and provenance logs
-router.get('/logs', authenticateToken, async (req, res) => {
+// Get recent Agent 50 execution runs and provenance logs (T&P and HOD Only)
+router.get('/logs', authenticateToken, requireRole(['T_AND_P', 'HOD']), async (req, res) => {
     try {
         const runs = await db.query(`
             SELECT r.*, a.agent_code, a.name as agent_name, o.match_score, o.skill_score, o.project_score, o.is_eligible,

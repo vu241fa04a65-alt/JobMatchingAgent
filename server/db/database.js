@@ -7,18 +7,22 @@ import { SCHEMA_SQL } from './schema.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const DATA_DIR = path.join(__dirname, '..', 'data');
-if (!fs.existsSync(DATA_DIR)) {
-    fs.mkdirSync(DATA_DIR, { recursive: true });
+function getDatabasePath() {
+    if (process.env.DB_PATH) {
+        return path.resolve(process.env.DB_PATH);
+    }
+    const defaultDataDir = path.join(__dirname, '..', 'data');
+    return path.join(defaultDataDir, 'jobmatch.db');
 }
-
-const DB_PATH = path.join(DATA_DIR, 'jobmatch.db');
 
 export class SQLiteDatabase {
     constructor() {
         this.SQL = null;
         this.db = null;
         this.initialized = false;
+        this.dbPath = getDatabasePath();
+        this.persistTimeout = null;
+        this.isDirty = false;
     }
 
     async init() {
@@ -27,22 +31,37 @@ export class SQLiteDatabase {
         }
 
         try {
+            this.dbPath = getDatabasePath();
+            const dbDir = path.dirname(this.dbPath);
+            if (!fs.existsSync(dbDir)) {
+                fs.mkdirSync(dbDir, { recursive: true });
+            }
+
             this.SQL = await initSqlJs();
             
-            if (fs.existsSync(DB_PATH) && fs.statSync(DB_PATH).size > 0) {
-                const fileBuffer = fs.readFileSync(DB_PATH);
-                this.db = new this.SQL.Database(fileBuffer);
-                console.log('Connected to existing SQLite database at', DB_PATH);
+            if (fs.existsSync(this.dbPath) && fs.statSync(this.dbPath).size > 0) {
+                try {
+                    const fileBuffer = fs.readFileSync(this.dbPath);
+                    this.db = new this.SQL.Database(fileBuffer);
+                    console.log('Connected to existing SQLite database at', this.dbPath);
+                } catch (readErr) {
+                    if (process.env.NODE_ENV === 'production') {
+                        console.error('FATAL: Failed to read existing production database at', this.dbPath, readErr);
+                        throw new Error(`Production database at ${this.dbPath} failed to load: ${readErr.message}`);
+                    }
+                    console.warn('Warning: Could not read existing DB file in dev mode, creating fresh DB:', readErr.message);
+                    this.db = new this.SQL.Database();
+                }
             } else {
                 this.db = new this.SQL.Database();
-                console.log('Created fresh in-memory SQLite database, syncing to', DB_PATH);
+                console.log('Created fresh SQLite database, syncing to', this.dbPath);
             }
 
             this.db.run('PRAGMA foreign_keys = ON');
             this.db.run(SCHEMA_SQL);
-            this.persist();
+            this.flush();
             this.initialized = true;
-            console.log('Database schema verified & ready.');
+            console.log('Database schema verified & indexed.');
             return Promise.resolve();
         } catch (err) {
             console.error('Database initialization error:', err);
@@ -50,12 +69,29 @@ export class SQLiteDatabase {
         }
     }
 
-    persist() {
+    /**
+     * Debounced persist to disk: batches multiple write operations and avoids
+     * full database exports on every single mutation.
+     */
+    schedulePersist() {
+        this.isDirty = true;
+        if (this.persistTimeout) return;
+        this.persistTimeout = setTimeout(() => {
+            this.persistTimeout = null;
+            this.flush();
+        }, 300);
+    }
+
+    /**
+     * Immediately write in-memory SQLite state to disk
+     */
+    flush() {
         try {
             if (this.db) {
                 const data = this.db.export();
                 const buffer = Buffer.from(data);
-                fs.writeFileSync(DB_PATH, buffer);
+                fs.writeFileSync(this.dbPath, buffer);
+                this.isDirty = false;
             }
         } catch (err) {
             console.error('Error persisting database to disk:', err);
@@ -108,7 +144,7 @@ export class SQLiteDatabase {
             } else {
                 this.db.run(sql, params);
             }
-            this.persist();
+            this.schedulePersist();
 
             let lastID = null;
             let changes = 0;
@@ -119,7 +155,7 @@ export class SQLiteDatabase {
                     changes = res[0].values[0][1];
                 }
             } catch (e) {
-                // Ignore metadata fetch errors for complex scripts
+                // Ignore metadata fetch errors for complex DDL scripts
             }
 
             return Promise.resolve({ id: lastID, changes });
@@ -137,10 +173,16 @@ export class SQLiteDatabase {
 
     async close() {
         try {
-            if (this.db) {
-                this.persist();
-                this.db.close();
+            if (this.persistTimeout) {
+                clearTimeout(this.persistTimeout);
+                this.persistTimeout = null;
             }
+            if (this.db) {
+                this.flush();
+                this.db.close();
+                this.db = null;
+            }
+            this.initialized = false;
             return Promise.resolve();
         } catch (err) {
             return Promise.reject(err);
