@@ -136,51 +136,42 @@ export default function LoginPage({ initialRole = 'STUDENT', onLoginSuccess, onB
   return (
     <div className="student-auth-viewport">
       {/* ====================================================================
-          LEFT COLUMN: BRANDING, HEADLINE, 3D GRADUATION CAP & BOOKS ARTWORK
+          LEFT COLUMN: BRANDING, HEADLINE & 3D GRADUATION ARTWORK
           ==================================================================== */}
       <section className="student-auth-left">
-        {/* Soft Flowing Waves SVG Overlay in the Background */}
-        <svg 
-          className="student-left-wave-bg" 
-          viewBox="0 0 500 700" 
-          fill="none" 
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path 
-            d="M500 0C400 120 320 180 340 320C360 480 200 520 100 580C30 620 0 680 0 700H500V0Z" 
-            fill="url(#wave-gradient-1)" 
-            opacity="0.3"
-          />
-          <path 
-            d="M500 0C440 80 380 140 400 250C420 380 300 440 220 500C140 560 50 640 0 700H500V0Z" 
-            fill="url(#wave-gradient-2)" 
-            opacity="0.2"
-          />
-          <defs>
-            <linearGradient id="wave-gradient-1" x1="500" y1="0" x2="100" y2="700" gradientUnits="userSpaceOnUse">
-              <stop stopColor="#818CF8" />
-              <stop offset="1" stopColor="#C7D2FE" />
-            </linearGradient>
-            <linearGradient id="wave-gradient-2" x1="500" y1="0" x2="200" y2="700" gradientUnits="userSpaceOnUse">
-              <stop stopColor="#A78BFA" />
-              <stop offset="1" stopColor="#E0E7FF" />
-            </linearGradient>
-          </defs>
-        </svg>
-
         {/* Content Block */}
         <div className="student-left-content">
-          {/* Top Brand Logo */}
+          {/* Top Brand Logo matching exact mockup blue/violet palette */}
           <div 
             onClick={onBackToLanding} 
             className="student-brand-logo"
             title="Return to CareerSync Home"
           >
-            <img 
-              src="/career-sync-logo.png" 
-              alt="CareerSync" 
-              style={{ height: '46px', width: 'auto', objectFit: 'contain' }} 
-            />
+            <svg width="34" height="34" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect width="36" height="36" rx="9" fill="url(#logo-bg-grad)" />
+              <path d="M18 7L27 12V22L18 27L9 22V12L18 7Z" fill="url(#logo-cube-top)" />
+              <path d="M18 17L27 12V22L18 27V17Z" fill="url(#logo-cube-right)" opacity="0.9" />
+              <path d="M9 12L18 17V27L9 22V12Z" fill="url(#logo-cube-left)" opacity="0.82" />
+              <defs>
+                <linearGradient id="logo-bg-grad" x1="0" y1="0" x2="36" y2="36" gradientUnits="userSpaceOnUse">
+                  <stop stopColor="#6366F1" />
+                  <stop offset="1" stopColor="#4F46E5" />
+                </linearGradient>
+                <linearGradient id="logo-cube-top" x1="9" y1="7" x2="27" y2="17" gradientUnits="userSpaceOnUse">
+                  <stop stopColor="#A5B4FC" />
+                  <stop offset="1" stopColor="#818CF8" />
+                </linearGradient>
+                <linearGradient id="logo-cube-right" x1="18" y1="12" x2="27" y2="27" gradientUnits="userSpaceOnUse">
+                  <stop stopColor="#C084FC" />
+                  <stop offset="1" stopColor="#7C3AED" />
+                </linearGradient>
+                <linearGradient id="logo-cube-left" x1="9" y1="12" x2="18" y2="27" gradientUnits="userSpaceOnUse">
+                  <stop stopColor="#38BDF8" />
+                  <stop offset="1" stopColor="#2563EB" />
+                </linearGradient>
+              </defs>
+            </svg>
+            <span className="student-brand-name">CareerSync</span>
           </div>
 
           <div className="student-brand-subtag">
@@ -198,10 +189,10 @@ export default function LoginPage({ initialRole = 'STUDENT', onLoginSuccess, onB
           </p>
         </div>
 
-        {/* Lower Left 3D Graduation Cap on Books Visual */}
+        {/* Lower Left 3D Graduation Cap & Campus Artwork (Clean without any text) */}
         <div className="student-left-art-container">
           <img 
-            src="/student-grad-art.png" 
+            src="/student-grad-clean.png" 
             alt="Student Placement Readiness" 
             className="student-grad-cap-img"
           />
@@ -209,11 +200,85 @@ export default function LoginPage({ initialRole = 'STUDENT', onLoginSuccess, onB
       </section>
 
       {/* ====================================================================
+          AURORA FLOW TRANSITION DIVIDER (Continuous Animated Liquid Waves)
+          ==================================================================== */}
+      <div className="aurora-flow-divider" aria-hidden="true">
+        {/* Soft Ambient Northern Lights Glow */}
+        <div className="aurora-layer-glow" />
+
+        {/* Layer 1: Deep Indigo / Violet Aurora Ribbon */}
+        <svg 
+          className="aurora-svg-layer aurora-wave-deep" 
+          viewBox="0 0 320 1000" 
+          preserveAspectRatio="none"
+          fill="none" 
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path 
+            d="M0 0 C 140 180, 290 320, 160 520 C 30 710, 240 850, 120 1000 L 320 1000 L 320 0 Z" 
+            fill="url(#aurora-grad-deep)" 
+          />
+          <defs>
+            <linearGradient id="aurora-grad-deep" x1="60" y1="0" x2="280" y2="1000" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stopColor="#818CF8" stopOpacity="0.55" />
+              <stop offset="35%" stopColor="#A78BFA" stopOpacity="0.45" />
+              <stop offset="70%" stopColor="#6366F1" stopOpacity="0.50" />
+              <stop offset="100%" stopColor="#C084FC" stopOpacity="0.40" />
+            </linearGradient>
+          </defs>
+        </svg>
+
+        {/* Layer 2: Soft Periwinkle & Lavender Refraction Wave */}
+        <svg 
+          className="aurora-svg-layer aurora-wave-mid" 
+          viewBox="0 0 320 1000" 
+          preserveAspectRatio="none"
+          fill="none" 
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path 
+            d="M40 0 C 200 160, 310 360, 190 560 C 70 760, 280 880, 180 1000 L 320 1000 L 320 0 Z" 
+            fill="url(#aurora-grad-mid)" 
+          />
+          <defs>
+            <linearGradient id="aurora-grad-mid" x1="100" y1="0" x2="300" y2="1000" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stopColor="#BAE6FD" stopOpacity="0.65" />
+              <stop offset="45%" stopColor="#C7D2FE" stopOpacity="0.50" />
+              <stop offset="80%" stopColor="#E0E7FF" stopOpacity="0.60" />
+              <stop offset="100%" stopColor="#DDD6FE" stopOpacity="0.45" />
+            </linearGradient>
+          </defs>
+        </svg>
+
+        {/* Layer 3: Icy Sky-Blue Liquid Sheen Ribbon */}
+        <svg 
+          className="aurora-svg-layer aurora-wave-light" 
+          viewBox="0 0 320 1000" 
+          preserveAspectRatio="none"
+          fill="none" 
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path 
+            d="M80 0 C 230 190, 330 400, 220 600 C 110 800, 300 910, 230 1000 L 320 1000 L 320 0 Z" 
+            fill="url(#aurora-grad-light)" 
+          />
+          <defs>
+            <linearGradient id="aurora-grad-light" x1="140" y1="0" x2="320" y2="1000" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.88" />
+              <stop offset="30%" stopColor="#EEF2FF" stopOpacity="0.75" />
+              <stop offset="70%" stopColor="#F5F3FF" stopOpacity="0.80" />
+              <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0.95" />
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+
+      {/* ====================================================================
           RIGHT COLUMN: WHITE FLOATING STUDENT LOGIN CARD
           ==================================================================== */}
       <section className="student-auth-right">
         <div className="student-auth-card">
-          {/* Card Top Navigation */}
+          {/* Card Top Navigation Row */}
           <div className="student-card-top-row">
             <button
               type="button"
@@ -269,7 +334,7 @@ export default function LoginPage({ initialRole = 'STUDENT', onLoginSuccess, onB
           )}
 
           {/* Form */}
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} style={{ width: '100%' }}>
             {/* USN / Student Email */}
             <div className="student-form-group">
               <div className="student-form-label-row">
@@ -297,7 +362,7 @@ export default function LoginPage({ initialRole = 'STUDENT', onLoginSuccess, onB
               </div>
             </div>
 
-            {/* Password */}
+            {/* Password with explicit label row spacing */}
             <div className="student-form-group">
               <div className="student-form-label-row">
                 <label className="student-form-label" htmlFor="student-password">
@@ -352,13 +417,13 @@ export default function LoginPage({ initialRole = 'STUDENT', onLoginSuccess, onB
             >
               {loading ? (
                 <>
-                  <Loader2 size={17} className="animate-spin" />
+                  <Loader2 size={18} className="animate-spin" />
                   <span>Authenticating...</span>
                 </>
               ) : (
                 <>
                   <span>Sign In</span>
-                  <ArrowRight size={17} />
+                  <ArrowRight size={18} />
                 </>
               )}
             </button>
@@ -448,42 +513,73 @@ export default function LoginPage({ initialRole = 'STUDENT', onLoginSuccess, onB
                   <button
                     type="button"
                     onClick={() => setShowRecoveryModal(false)}
-                    className="btn btn-outline"
-                    style={{ padding: '8px 16px', borderRadius: '8px' }}
+                    style={{
+                      padding: '9px 16px',
+                      borderRadius: '10px',
+                      border: '1px solid #CBD5E1',
+                      background: '#FFFFFF',
+                      color: '#475569',
+                      fontWeight: 600,
+                      fontSize: '0.8125rem',
+                      cursor: 'pointer'
+                    }}
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    disabled={recoveryLoading || !recoveryIdentifier.trim()}
-                    className="btn btn-primary"
-                    style={{ padding: '8px 18px', borderRadius: '8px' }}
+                    disabled={recoveryLoading}
+                    style={{
+                      padding: '9px 18px',
+                      borderRadius: '10px',
+                      border: 'none',
+                      background: 'linear-gradient(135deg, #6366F1 0%, #4F46E5 100%)',
+                      color: '#FFFFFF',
+                      fontWeight: 700,
+                      fontSize: '0.8125rem',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '6px'
+                    }}
                   >
-                    {recoveryLoading ? 'Routing Request...' : 'Send Guidance'}
+                    {recoveryLoading ? (
+                      <>
+                        <Loader2 size={14} className="animate-spin" />
+                        <span>Submitting...</span>
+                      </>
+                    ) : (
+                      'Request Reset Link'
+                    )}
                   </button>
                 </div>
               </form>
             ) : (
               <div style={{ textAlign: 'center', padding: '12px 0' }}>
-                <div style={{ width: '48px', height: '48px', borderRadius: '50%', backgroundColor: '#ECFDF5', color: '#059669', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px' }}>
-                  <CheckCircle2 size={24} />
+                <div style={{ width: '48px', height: '48px', borderRadius: '50%', backgroundColor: '#ECFDF5', color: '#10B981', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 14px' }}>
+                  <CheckCircle2 size={26} />
                 </div>
-                <h4 style={{ fontSize: '1rem', fontWeight: 700, color: '#0F172A', marginBottom: '6px' }}>
-                  Request Received
+                <h4 style={{ fontSize: '1.0625rem', fontWeight: 800, color: '#0F172A', marginBottom: '8px' }}>
+                  Instructions Dispatched
                 </h4>
-                <p style={{ fontSize: '0.8125rem', color: '#64748B', lineHeight: 1.5, marginBottom: '16px' }}>
-                  Instructions have been routed for <strong>{recoveryIdentifier}</strong> to your registered college email.
+                <p style={{ fontSize: '0.8125rem', color: '#64748B', lineHeight: 1.5, marginBottom: '20px' }}>
+                  If <strong>{recoveryIdentifier}</strong> is registered in the institutional directory, verification guidance has been forwarded to your registered contact.
                 </p>
-                <div style={{ backgroundColor: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: '10px', padding: '10px 14px', fontSize: '0.75rem', color: '#64748B', textAlign: 'left', marginBottom: '16px' }}>
-                  Need immediate help? Contact the T&P Cell Helpdesk at <strong>placement@rvce.edu.in</strong>.
-                </div>
                 <button
                   type="button"
                   onClick={() => setShowRecoveryModal(false)}
-                  className="btn btn-primary"
-                  style={{ width: '100%', borderRadius: '8px', padding: '10px' }}
+                  style={{
+                    padding: '9px 24px',
+                    borderRadius: '10px',
+                    border: 'none',
+                    background: 'linear-gradient(135deg, #6366F1 0%, #4F46E5 100%)',
+                    color: '#FFFFFF',
+                    fontWeight: 700,
+                    fontSize: '0.8125rem',
+                    cursor: 'pointer'
+                  }}
                 >
-                  Back to Sign In
+                  Done
                 </button>
               </div>
             )}

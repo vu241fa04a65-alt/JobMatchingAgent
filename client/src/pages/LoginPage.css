@@ -1,5 +1,6 @@
 /* ==========================================================================
    CareerSync — Student Login Page Styles (Exact match to design mockup)
+   Premium Aurora Flow Transition with Smooth Continuous Motion
    ========================================================================== */
 
 /* Main Split-Screen Container */
@@ -14,27 +15,16 @@
 }
 
 /* ==========================================================================
-   LEFT COLUMN: BRANDING, HEADLINE & GRADUATION CAP 3D ART
+   LEFT COLUMN: BRANDING, HEADLINE & 3D GRADUATION ARTWORK
    ========================================================================== */
 .student-auth-left {
   position: relative;
-  background: linear-gradient(145deg, #EEF4FF 0%, #E0E7FF 55%, #EDE9FE 100%);
-  padding: 48px 56px 36px;
+  background: linear-gradient(145deg, #EEF4FF 0%, #E0E7FF 52%, #EDE9FE 100%);
+  padding: 48px 56px 0;
   display: flex;
   flex-direction: column;
   justifyContent: space-between;
   overflow: hidden;
-  border-right: 1px solid rgba(226, 232, 240, 0.8);
-}
-
-/* Organic Soft Flowing Waves in the Background */
-.student-left-wave-bg {
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
   z-index: 1;
 }
 
@@ -42,12 +32,13 @@
 .student-left-content {
   position: relative;
   z-index: 2;
-  max-width: 480px;
+  max-width: 490px;
 }
 
 .student-brand-logo {
   display: inline-flex;
   align-items: center;
+  gap: 10px;
   cursor: pointer;
   margin-bottom: 8px;
   transition: opacity 0.2s ease;
@@ -57,21 +48,29 @@
   opacity: 0.9;
 }
 
+.student-brand-name {
+  font-size: 1.45rem;
+  font-weight: 800;
+  color: #0F172A;
+  letter-spacing: -0.025em;
+}
+
 .student-brand-subtag {
   color: #475569;
   font-size: 0.875rem;
   font-weight: 500;
-  margin-bottom: 40px;
+  margin-bottom: 36px;
   letter-spacing: -0.01em;
 }
 
 .student-auth-headline {
-  font-size: 2.875rem;
+  font-size: 2.75rem;
   font-weight: 800;
   line-height: 1.15;
   color: #0F172A;
   letter-spacing: -0.03em;
   margin-bottom: 16px;
+  max-width: 500px;
 }
 
 .student-auth-headline-purple {
@@ -84,32 +83,153 @@
   color: #475569;
   font-size: 0.96875rem;
   line-height: 1.6;
-  max-width: 420px;
+  max-width: 440px;
   margin-bottom: 24px;
 }
 
-/* Lower 3D Graduation Cap & Books Artwork */
+/* Lower 3D Graduation Cap on Books Artwork (Clean & Natural) */
 .student-left-art-container {
   position: relative;
   z-index: 2;
   margin-top: auto;
-  padding-top: 20px;
+  width: 100%;
+  max-width: 480px;
   display: flex;
   align-items: flex-end;
+  pointer-events: none;
 }
 
 .student-grad-cap-img {
   width: 100%;
-  max-width: 380px;
   height: auto;
+  display: block;
   object-fit: contain;
-  border-radius: 16px;
-  box-shadow: 0 16px 36px -12px rgba(99, 102, 241, 0.2);
-  transition: transform 0.3s ease;
+  border-radius: 0;
+  box-shadow: none;
+  filter: drop-shadow(0 14px 28px rgba(99, 102, 241, 0.14));
 }
 
-.student-grad-cap-img:hover {
-  transform: translateY(-2px);
+/* ==========================================================================
+   PREMIUM AURORA FLOW TRANSITION (Liquid-Glass Northern Lights Waves)
+   ========================================================================== */
+.aurora-flow-divider {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 48.07%;
+  width: 290px;
+  height: 100%;
+  pointer-events: none;
+  z-index: 2;
+  overflow: hidden;
+  transform: translateX(-50%);
+}
+
+/* Soft Ambient Northern Lights Glow */
+.aurora-layer-glow {
+  position: absolute;
+  top: -10%;
+  left: 10%;
+  width: 130%;
+  height: 120%;
+  background: radial-gradient(
+    ellipse at 45% 50%,
+    rgba(167, 139, 250, 0.35) 0%,
+    rgba(99, 102, 241, 0.25) 35%,
+    rgba(186, 230, 253, 0.20) 65%,
+    transparent 82%
+  );
+  filter: blur(32px);
+  animation: auroraGlowBreathe 12s ease-in-out infinite alternate;
+  will-change: opacity, transform;
+}
+
+/* Translucent Aurora SVG Layers */
+.aurora-svg-layer {
+  position: absolute;
+  top: -5%;
+  left: 0;
+  width: 100%;
+  height: 110%;
+  will-change: transform;
+}
+
+/* Layer 1: Deep Indigo / Violet Wave */
+.aurora-wave-deep {
+  animation: auroraWaveFloat1 16s ease-in-out infinite alternate;
+}
+
+/* Layer 2: Soft Periwinkle & Lavender Refraction Wave */
+.aurora-wave-mid {
+  animation: auroraWaveFloat2 21s ease-in-out infinite alternate;
+  opacity: 0.92;
+}
+
+/* Layer 3: Icy Sky-Blue Liquid Sheen Ribbon */
+.aurora-wave-light {
+  animation: auroraWaveFloat3 27s ease-in-out infinite alternate;
+  opacity: 0.96;
+}
+
+/* Animation Keyframes: Silky, Continuous, Non-Distracting Flow */
+@keyframes auroraWaveFloat1 {
+  0% {
+    transform: translate3d(0, 0, 0) scaleX(1) skewY(0deg);
+  }
+  50% {
+    transform: translate3d(-14px, 16px, 0) scaleX(1.04) skewY(-1.2deg);
+  }
+  100% {
+    transform: translate3d(12px, -18px, 0) scaleX(0.96) skewY(1.3deg);
+  }
+}
+
+@keyframes auroraWaveFloat2 {
+  0% {
+    transform: translate3d(0, 0, 0) scaleX(1) skewY(0deg);
+  }
+  50% {
+    transform: translate3d(16px, -15px, 0) scaleX(0.95) skewY(1.5deg);
+  }
+  100% {
+    transform: translate3d(-12px, 18px, 0) scaleX(1.05) skewY(-1deg);
+  }
+}
+
+@keyframes auroraWaveFloat3 {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(-10px, 12px, 0) scale(1.02);
+  }
+  100% {
+    transform: translate3d(12px, -12px, 0) scale(0.98);
+  }
+}
+
+@keyframes auroraGlowBreathe {
+  0% {
+    opacity: 0.65;
+    transform: scale(0.98) translate3d(0, 0, 0);
+  }
+  50% {
+    opacity: 0.95;
+    transform: scale(1.04) translate3d(-12px, 10px, 0);
+  }
+  100% {
+    opacity: 0.70;
+    transform: scale(1.01) translate3d(10px, -12px, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aurora-wave-deep,
+  .aurora-wave-mid,
+  .aurora-wave-light,
+  .aurora-layer-glow {
+    animation: none !important;
+  }
 }
 
 /* ==========================================================================
@@ -121,10 +241,12 @@
   justifyContent: center;
   padding: 44px 40px;
   background-color: #F8FAFC;
+  position: relative;
+  z-index: 3;
 }
 
 .student-auth-card {
-  max-width: 450px;
+  max-width: 440px;
   width: 100%;
   background-color: #FFFFFF;
   border-radius: 28px;
@@ -133,14 +255,16 @@
     0 25px 55px -12px rgba(15, 23, 42, 0.08), 
     0 0 1px 1px rgba(15, 23, 42, 0.03);
   padding: 36px 34px;
+  box-sizing: border-box;
   transition: box-shadow 0.25s ease;
 }
 
-/* Card Top Row */
+/* Card Top Navigation Row */
 .student-card-top-row {
-  display: flex;
-  align-items: center;
-  justifyContent: space-between;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  width: 100% !important;
   margin-bottom: 22px;
 }
 
@@ -179,6 +303,7 @@
 .student-card-header {
   text-align: center;
   margin-bottom: 22px;
+  width: 100%;
 }
 
 .student-card-title {
@@ -197,14 +322,16 @@
 
 /* Active Student Portal Banner */
 .student-role-banner {
-  display: flex;
-  align-items: center;
+  display: flex !important;
+  align-items: center !important;
   gap: 14px;
   padding: 14px 18px;
   border-radius: 16px;
   background-color: #EEF2FF;
   border: 1.5px solid rgba(79, 70, 229, 0.18);
   margin-bottom: 22px;
+  width: 100% !important;
+  box-sizing: border-box !important;
 }
 
 .student-role-iconbox {
@@ -225,7 +352,7 @@
   font-weight: 800;
   color: #4F46E5;
   text-transform: uppercase;
-  letter-spacing: 0.07em;
+  letter-spacing: 0.08em;
 }
 
 .student-role-title {
@@ -238,28 +365,31 @@
 /* Form Controls */
 .student-form-group {
   margin-bottom: 18px;
+  width: 100%;
 }
 
 .student-form-label-row {
-  display: flex;
-  align-items: center;
-  justifyContent: space-between;
-  margin-bottom: 6px;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  width: 100% !important;
+  margin-bottom: 6px !important;
 }
 
 .student-form-label {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 0.8125rem;
-  font-weight: 700;
-  color: #334155;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  font-size: 0.8125rem !important;
+  font-weight: 700 !important;
+  color: #334155 !important;
 }
 
 .student-input-box {
-  position: relative;
-  display: flex;
-  align-items: center;
+  position: relative !important;
+  display: flex !important;
+  align-items: center !important;
+  width: 100% !important;
 }
 
 .student-input-icon {
@@ -268,30 +398,32 @@
   color: #94A3B8;
   pointer-events: none;
   transition: color 0.15s ease;
+  z-index: 2;
 }
 
 .student-input-field {
-  width: 100%;
-  height: 46px;
-  padding: 0 14px 0 42px;
-  border-radius: 12px;
-  border: 1.5px solid #E2E8F0;
-  background-color: #FFFFFF;
-  color: #0F172A;
-  font-size: 0.875rem;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  outline: none;
+  width: 100% !important;
+  height: 48px !important;
+  padding: 0 44px 0 42px !important;
+  border-radius: 12px !important;
+  border: 1.5px solid #E2E8F0 !important;
+  background-color: #FFFFFF !important;
+  color: #0F172A !important;
+  font-size: 0.875rem !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  outline: none !important;
+  box-sizing: border-box !important;
 }
 
 .student-input-field:hover {
-  border-color: #CBD5E1;
-  background-color: #FAFAFC;
+  border-color: #CBD5E1 !important;
+  background-color: #FAFAFC !important;
 }
 
 .student-input-field:focus {
-  border-color: #4F46E5;
-  background-color: #FFFFFF;
-  box-shadow: 0 0 0 3.5px rgba(79, 70, 229, 0.14);
+  border-color: #4F46E5 !important;
+  background-color: #FFFFFF !important;
+  box-shadow: 0 0 0 3.5px rgba(79, 70, 229, 0.14) !important;
 }
 
 .student-input-box:focus-within .student-input-icon {
@@ -299,72 +431,78 @@
 }
 
 .student-forgot-btn {
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: #4F46E5;
-  background: none;
-  border: none;
-  padding: 0;
-  cursor: pointer;
-  transition: color 0.15s ease;
+  font-size: 0.75rem !important;
+  font-weight: 600 !important;
+  color: #4F46E5 !important;
+  background: none !important;
+  border: none !important;
+  padding: 0 !important;
+  cursor: pointer !important;
+  margin-left: auto !important;
+  transition: color 0.15s ease !important;
 }
 
 .student-forgot-btn:hover {
-  color: #3730A3;
-  text-decoration: underline;
+  color: #3730A3 !important;
+  text-decoration: underline !important;
 }
 
 .student-password-toggle {
-  position: absolute;
-  right: 12px;
-  background: none;
-  border: none;
-  padding: 6px;
-  cursor: pointer;
-  color: #94A3B8;
-  border-radius: 6px;
-  display: flex;
-  align-items: center;
-  justifyContent: center;
-  transition: color 0.15s ease;
+  position: absolute !important;
+  right: 12px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  background: none !important;
+  border: none !important;
+  padding: 6px !important;
+  cursor: pointer !important;
+  color: #94A3B8 !important;
+  border-radius: 6px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: color 0.15s ease !important;
+  z-index: 2;
 }
 
 .student-password-toggle:hover {
-  color: #475569;
+  color: #475569 !important;
 }
 
 /* Purple/Indigo Gradient Sign In Button matching mockup */
 .student-signin-btn {
-  width: 100%;
-  height: 48px;
-  border-radius: 12px;
-  background: linear-gradient(135deg, #6366F1 0%, #4F46E5 100%);
-  color: #FFFFFF;
-  font-size: 0.96875rem;
-  font-weight: 700;
-  border: none;
-  display: flex;
-  align-items: center;
-  justifyContent: center;
-  gap: 8px;
-  cursor: pointer;
-  margin-top: 6px;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 4px 16px rgba(79, 70, 229, 0.35);
+  width: 100% !important;
+  height: 50px !important;
+  border-radius: 12px !important;
+  background: linear-gradient(135deg, #6366F1 0%, #4F46E5 100%) !important;
+  color: #FFFFFF !important;
+  font-size: 0.96875rem !important;
+  font-weight: 700 !important;
+  border: none !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  cursor: pointer !important;
+  margin-top: 8px !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  box-shadow: 0 4px 16px rgba(79, 70, 229, 0.35) !important;
+  text-align: center !important;
+  box-sizing: border-box !important;
 }
 
 .student-signin-btn:hover:not(:disabled) {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 22px rgba(79, 70, 229, 0.45);
+  transform: translateY(-1px) !important;
+  box-shadow: 0 6px 22px rgba(79, 70, 229, 0.45) !important;
 }
 
 .student-signin-btn:active:not(:disabled) {
-  transform: translateY(0);
+  transform: translateY(0) !important;
 }
 
 .student-signin-btn:disabled {
-  opacity: 0.75;
-  cursor: not-allowed;
+  opacity: 0.75 !important;
+  cursor: not-allowed !important;
 }
 
 /* Predefined Authorized Format Box */
@@ -377,6 +515,8 @@
   font-size: 0.71875rem;
   color: #64748B;
   line-height: 1.45;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .student-predefined-title {
@@ -400,10 +540,13 @@
     grid-template-columns: 1fr 1fr;
   }
   .student-auth-left {
-    padding: 36px 36px 28px;
+    padding: 36px 36px 0;
   }
   .student-auth-headline {
-    font-size: 2.375rem;
+    font-size: 2.25rem;
+  }
+  .aurora-flow-divider {
+    left: 50%;
   }
 }
 
@@ -420,6 +563,9 @@
   }
   .student-auth-headline {
     font-size: 2rem;
+  }
+  .aurora-flow-divider {
+    display: none; /* Mobile stacks vertically without center vertical divider */
   }
   .student-left-art-container {
     display: none; /* Keep mobile view compact & clean */
