@@ -4,8 +4,17 @@ import { agent50 } from '../engine/agent50.js';
 
 export class SantraAiService {
   constructor() {
-    this.primaryModel = process.env.GROQ_MODEL || 'llama-3.3-70b-versatile';
-    this.fallbackModel = 'llama-3.1-8b-instant';
+    this.primaryModel = process.env.GROQ_MODEL || 'qwen/qwen3.8-27b';
+    this.modelHierarchy = [
+      process.env.GROQ_MODEL,
+      'qwen/qwen3.8-27b',
+      'openai/gpt-oss-120b',
+      'openai/gpt-oss-20b',
+      'llama-3.3-70b-versatile',
+      'llama-3.1-8b-instant'
+    ].filter(Boolean);
+    // Deduplicate
+    this.modelHierarchy = [...new Set(this.modelHierarchy)];
     this.apiUrl = 'https://api.groq.com/openai/v1/chat/completions';
   }
 
@@ -235,12 +244,15 @@ export class SantraAiService {
         contextParts.push(`Average CGPA: ${avgCgpa} | Average Readiness: ${avgReadiness}%`);
         contextParts.push(`Total Offers Placed: ${offers.length} offers (Top Offer: Amazon Data Analyst - ₹24.5 LPA to Subbu K)`);
 
-        contextParts.push("\n=== COMPLETE REGISTERED STUDENT ROSTER ===");
-        allStudents.forEach(st => {
-          const stSkills = studentSkills.filter(sk => sk.full_name === st.full_name).map(sk => `${sk.skill_name} (${sk.proficiency_level})`).join(', ') || 'General Engineering';
+        contextParts.push("\n=== REGISTERED STUDENT ROSTER ===");
+        allStudents.forEach((st, idx) => {
           const isPlaced = offers.some(o => o.usn === st.usn);
-          contextParts.push(`• ${st.full_name} | USN: ${st.usn} | Branch: ${st.branch} | CGPA: ${st.cgpa} | Readiness: ${st.overall_readiness_score || 0}% (${st.readiness_status || 'In Preparation'}) | Status: ${isPlaced ? 'OFFER RECEIVED' : 'UNMATCHED / SEEKING'}`);
-          contextParts.push(`   Skills: ${stSkills}`);
+          if (idx < 15) {
+            const stSkills = studentSkills.filter(sk => sk.full_name === st.full_name).slice(0, 4).map(sk => sk.skill_name).join(', ') || 'Core Eng';
+            contextParts.push(`• ${st.full_name} | USN: ${st.usn} | ${st.branch} | CGPA: ${st.cgpa} | Readiness: ${st.overall_readiness_score || 0}% | Skills: ${stSkills} | Status: ${isPlaced ? 'OFFERED' : 'SEEKING'}`);
+          } else {
+            contextParts.push(`• ${st.full_name} | USN: ${st.usn} | ${st.branch} | CGPA: ${st.cgpa} | Readiness: ${st.overall_readiness_score || 0}% | Status: ${isPlaced ? 'OFFERED' : 'SEEKING'}`);
+          }
         });
 
         contextParts.push("\n=== AGENT 50 LIVE CANDIDATE RANKINGS BY JOB ===");
@@ -377,20 +389,22 @@ ${roleContext}`;
     // Append latest query
     formattedMessages.push({ role: 'user', content: userMessage });
 
-    // Try primary model, fallback if needed
-    try {
-      const reply = await this._callGroq(this.primaryModel, formattedMessages);
-      return this.sanitizeResponse(reply);
-    } catch (primaryErr) {
-      console.warn(`SantraAI: Primary model (${this.primaryModel}) failed, falling back to ${this.fallbackModel}:`, primaryErr.message);
+    // Try models in hierarchy until one succeeds
+    let lastError = null;
+    for (const model of this.modelHierarchy) {
       try {
-        const fallbackReply = await this._callGroq(this.fallbackModel, formattedMessages);
-        return this.sanitizeResponse(fallbackReply);
-      } catch (fallbackErr) {
-        console.error('SantraAI: Both Groq models failed:', fallbackErr.message);
-        return "SantraAI is currently unable to process your request. Please try again in a moment.";
+        const reply = await this._callGroq(model, formattedMessages);
+        if (reply && reply.trim().length > 0) {
+          return this.sanitizeResponse(reply);
+        }
+      } catch (err) {
+        lastError = err;
+        console.warn(`SantraAI: Model ${model} failed (${err.message}). Trying next available model...`);
       }
     }
+
+    console.error('SantraAI: All candidate Groq models failed. Last error:', lastError?.message);
+    return "SantraAI is currently unable to process your request. Please try again in a moment.";
   }
 
   async _callGroq(modelName, messages) {
@@ -419,7 +433,8 @@ ${roleContext}`;
     }
 
     const data = await response.json();
-    return data.choices?.[0]?.message?.content || "I don't have that information in JobMatch AI.";
+    const msg = data.choices?.[0]?.message;
+    return msg?.content || msg?.reasoning || "I don't have that information in JobMatch AI.";
   }
 }
 
