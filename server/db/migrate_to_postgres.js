@@ -393,3 +393,4 @@ CREATE INDEX idx_placement_jobs_company_id ON placement_job_openings(company_id)
 }
 
 exportToPostgres().catch(console.error);
+
