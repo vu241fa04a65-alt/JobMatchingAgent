@@ -1,22 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { 
-  GraduationCap, 
-  Building2, 
-  Shield, 
-  ArrowRight, 
-  Eye, 
-  EyeOff, 
-  Lock, 
-  User, 
-  CheckCircle2, 
   Loader2, 
   AlertCircle, 
   X, 
   KeyRound, 
   Mail,
-  ArrowLeft,
-  Info,
-  Users
+  CheckCircle2
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import './LoginPage.css';
@@ -92,355 +81,208 @@ export default function LoginPage({ initialRole = 'STUDENT', onLoginSuccess, onB
     }, 600);
   };
 
-  // Role metadata configurations matching the mockup design
-  const roleConfig = {
-    STUDENT: {
-      label: 'USN / Student Email',
-      placeholder: '1RV23CS184',
-      sampleId: '1RV23CS184 (Subbu K) or 1RV22IS015 (Siri C)',
-      portalTitle: 'Student Career Portal',
-      bannerTag: 'STUDENT PORTAL',
-      bannerTitle: 'Student Login',
-      desc: 'Access your personalized matches, skill roadmap and Agent 50 insights.',
-      icon: GraduationCap,
-      badgeIcon: Users
-    },
-    T_AND_P: {
-      label: 'Employee ID / Official Email',
-      placeholder: 'TP-OFFICER-01',
-      sampleId: 'TP-OFFICER-01 (Aarav Sharma)',
-      portalTitle: 'Training & Placement Portal',
-      bannerTag: 'TRAINING & PLACEMENT',
-      bannerTitle: 'T&P Officer Login',
-      desc: 'Manage drives, candidate ranking, unmatched cohorts, and placement operations.',
-      icon: Building2,
-      badgeIcon: Building2
-    },
-    HOD: {
-      label: 'Faculty ID / Official Email',
-      placeholder: 'HOD-CSE-01',
-      sampleId: 'HOD-CSE-01 (Dr. Rajesh Kumar)',
-      portalTitle: 'Department Intelligence Portal',
-      bannerTag: 'DEPARTMENT INTELLIGENCE',
-      bannerTitle: 'HOD Login',
-      desc: 'Read-only departmental placement statistics, readiness, and skill gaps.',
-      icon: Shield,
-      badgeIcon: Shield
-    }
-  };
-
-  const currentRole = roleConfig[selectedRole] || roleConfig.STUDENT;
-  const RoleIcon = currentRole.icon;
-  const BadgeIcon = currentRole.badgeIcon;
-
   return (
-    <div className="student-auth-viewport">
-      {/* ====================================================================
-          LEFT COLUMN: BRANDING, HEADLINE & 3D GRADUATION ARTWORK
-          ==================================================================== */}
-      <section className="student-auth-left">
-        {/* Content Block */}
-        <div className="student-left-content">
-          {/* Top Brand Logo matching exact mockup blue/violet palette */}
-          <div 
-            onClick={onBackToLanding} 
-            className="student-brand-logo"
-            title="Return to CareerSync Home"
-          >
-            <svg width="34" height="34" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <rect width="36" height="36" rx="9" fill="url(#logo-bg-grad)" />
-              <path d="M18 7L27 12V22L18 27L9 22V12L18 7Z" fill="url(#logo-cube-top)" />
-              <path d="M18 17L27 12V22L18 27V17Z" fill="url(#logo-cube-right)" opacity="0.9" />
-              <path d="M9 12L18 17V27L9 22V12Z" fill="url(#logo-cube-left)" opacity="0.82" />
-              <defs>
-                <linearGradient id="logo-bg-grad" x1="0" y1="0" x2="36" y2="36" gradientUnits="userSpaceOnUse">
-                  <stop stopColor="#6366F1" />
-                  <stop offset="1" stopColor="#4F46E5" />
-                </linearGradient>
-                <linearGradient id="logo-cube-top" x1="9" y1="7" x2="27" y2="17" gradientUnits="userSpaceOnUse">
-                  <stop stopColor="#A5B4FC" />
-                  <stop offset="1" stopColor="#818CF8" />
-                </linearGradient>
-                <linearGradient id="logo-cube-right" x1="18" y1="12" x2="27" y2="27" gradientUnits="userSpaceOnUse">
-                  <stop stopColor="#C084FC" />
-                  <stop offset="1" stopColor="#7C3AED" />
-                </linearGradient>
-                <linearGradient id="logo-cube-left" x1="9" y1="12" x2="18" y2="27" gradientUnits="userSpaceOnUse">
-                  <stop stopColor="#38BDF8" />
-                  <stop offset="1" stopColor="#2563EB" />
-                </linearGradient>
-              </defs>
-            </svg>
-            <span className="student-brand-name">CareerSync</span>
+    <div className="login-page-root">
+      <div className="container">
+        {/* ====================================================================
+            LEFT BRANDING PANEL
+            ==================================================================== */}
+        <section className="left">
+          <div className="left-content">
+            <div 
+              className="logo" 
+              onClick={onBackToLanding} 
+              title="Return to CareerSync Home"
+            >
+              <div className="logo-icon">C</div>
+              <div className="logo-name">
+                Career<span>Sync</span>
+              </div>
+            </div>
+
+            <div className="tagline">
+              Empowered Departments. Stronger Futures.
+            </div>
+
+            <h1 className="hero-title">
+              Your Next Opportunity
+              <span>Starts Here.</span>
+            </h1>
+
+            <p className="hero-description">
+              AI-powered placement intelligence for students,
+              training & placement cells, and academic departments.
+            </p>
+
+            <div className="illustration">
+              <img
+                src="/student-grad-clean.png"
+                alt="Graduation illustration"
+                onError={(e) => { e.currentTarget.style.display = 'none'; }}
+              />
+            </div>
           </div>
+        </section>
 
-          <div className="student-brand-subtag">
-            Empowered Departments. Stronger Futures.
+        {/* ====================================================================
+            RIGHT LOGIN PANEL
+            ==================================================================== */}
+        <section className="right">
+          <div className="login-card">
+            <div className="card-top">
+              <button 
+                type="button" 
+                className="back" 
+                onClick={onBackToLanding}
+                title="Return to Portals"
+              >
+                ← &nbsp; Back to Portals
+              </button>
+
+              <div className="portal-badge">
+                👥 Student Career Portal
+              </div>
+            </div>
+
+            <div className="login-heading">
+              <h1>Account Sign In</h1>
+              <p>
+                Access your personalized matches, skill roadmap
+                and Agent 50 insights.
+              </p>
+            </div>
+
+            <div className="student-box">
+              <div className="student-icon">🎓</div>
+
+              <div className="student-info">
+                <small>STUDENT PORTAL</small>
+                <strong>Student Login</strong>
+              </div>
+
+              <div className="student-arrow">→</div>
+            </div>
+
+            {/* Error Message */}
+            {error && (
+              <div style={{
+                backgroundColor: '#FEF2F2',
+                border: '1px solid #FECACA',
+                color: '#DC2626',
+                padding: '11px 16px',
+                borderRadius: '16px',
+                fontSize: '0.85rem',
+                marginBottom: '20px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px'
+              }} role="alert">
+                <AlertCircle size={17} style={{ flexShrink: 0 }} />
+                <span>{error}</span>
+              </div>
+            )}
+
+            {/* LOGIN FORM */}
+            <form onSubmit={handleSubmit} id="loginForm">
+              <div className="form-group">
+                <div className="form-label">
+                  <label htmlFor="usn">USN / Student Email</label>
+                </div>
+
+                <div className="input-box">
+                  <span className="icon">✉</span>
+                  <input
+                    type="text"
+                    id="usn"
+                    value={identifier}
+                    onChange={(e) => {
+                      setIdentifier(e.target.value);
+                      if (error) setError('');
+                    }}
+                    placeholder="Enter your USN or email"
+                    disabled={loading}
+                    autoComplete="username"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="form-group">
+                <div className="form-label">
+                  <label htmlFor="password">Password</label>
+                  <button 
+                    type="button" 
+                    className="forgot"
+                    onClick={() => {
+                      setRecoverySubmitted(false);
+                      setShowRecoveryModal(true);
+                    }}
+                  >
+                    Forgot password?
+                  </button>
+                </div>
+
+                <div className="input-box">
+                  <span className="icon">🔒</span>
+
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    id="password"
+                    value={password}
+                    onChange={(e) => {
+                      setPassword(e.target.value);
+                      if (error) setError('');
+                    }}
+                    placeholder="Enter your password"
+                    disabled={loading}
+                    autoComplete="current-password"
+                    required
+                  />
+
+                  <button
+                    type="button"
+                    className="toggle-password"
+                    onClick={() => setShowPassword(!showPassword)}
+                    aria-label={showPassword ? "Hide password" : "Show password"}
+                  >
+                    {showPassword ? "◎" : "◉"}
+                  </button>
+                </div>
+              </div>
+
+              <button 
+                type="submit" 
+                className="signin" 
+                disabled={loading}
+              >
+                {loading ? (
+                  <>
+                    <Loader2 size={20} className="animate-spin" />
+                    <span>Authenticating...</span>
+                  </>
+                ) : (
+                  <span>Sign In &nbsp; →</span>
+                )}
+              </button>
+            </form>
+
+            <div className="account-info">
+              <strong>ⓘ &nbsp; Predefined Authorized Account Format:</strong>
+              <br />
+              • Identifier: 1RV23CS184 (Subbu K) or 1RV22S015 (Siri C)
+            </div>
           </div>
+        </section>
 
-          {/* Hero Headline */}
-          <h1 className="student-auth-headline">
-            Your Next Opportunity<br />
-            <span className="student-auth-headline-purple">Starts Here.</span>
-          </h1>
-
-          <p className="student-auth-desc">
-            AI-powered placement intelligence for students, training & placement cells, and academic departments.
-          </p>
+        {/* ====================================================================
+            AURORA DIVIDER
+            ==================================================================== */}
+        <div className="aurora" aria-hidden="true">
+          <span></span>
+          <span></span>
+          <span></span>
         </div>
-
-        {/* Lower Left 3D Graduation Cap & Campus Artwork (Clean without any text) */}
-        <div className="student-left-art-container">
-          <img 
-            src="/student-grad-clean.png" 
-            alt="Student Placement Readiness" 
-            className="student-grad-cap-img"
-          />
-        </div>
-      </section>
-
-      {/* ====================================================================
-          AURORA FLOW TRANSITION DIVIDER (Continuous Animated Liquid Waves)
-          ==================================================================== */}
-      <div className="aurora-flow-divider" aria-hidden="true">
-        {/* Soft Ambient Northern Lights Glow */}
-        <div className="aurora-layer-glow" />
-
-        {/* Layer 1: Deep Indigo / Violet Aurora Ribbon */}
-        <svg 
-          className="aurora-svg-layer aurora-wave-deep" 
-          viewBox="0 0 320 1000" 
-          preserveAspectRatio="none"
-          fill="none" 
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path 
-            d="M0 0 C 140 180, 290 320, 160 520 C 30 710, 240 850, 120 1000 L 320 1000 L 320 0 Z" 
-            fill="url(#aurora-grad-deep)" 
-          />
-          <defs>
-            <linearGradient id="aurora-grad-deep" x1="60" y1="0" x2="280" y2="1000" gradientUnits="userSpaceOnUse">
-              <stop offset="0%" stopColor="#818CF8" stopOpacity="0.55" />
-              <stop offset="35%" stopColor="#A78BFA" stopOpacity="0.45" />
-              <stop offset="70%" stopColor="#6366F1" stopOpacity="0.50" />
-              <stop offset="100%" stopColor="#C084FC" stopOpacity="0.40" />
-            </linearGradient>
-          </defs>
-        </svg>
-
-        {/* Layer 2: Soft Periwinkle & Lavender Refraction Wave */}
-        <svg 
-          className="aurora-svg-layer aurora-wave-mid" 
-          viewBox="0 0 320 1000" 
-          preserveAspectRatio="none"
-          fill="none" 
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path 
-            d="M40 0 C 200 160, 310 360, 190 560 C 70 760, 280 880, 180 1000 L 320 1000 L 320 0 Z" 
-            fill="url(#aurora-grad-mid)" 
-          />
-          <defs>
-            <linearGradient id="aurora-grad-mid" x1="100" y1="0" x2="300" y2="1000" gradientUnits="userSpaceOnUse">
-              <stop offset="0%" stopColor="#BAE6FD" stopOpacity="0.65" />
-              <stop offset="45%" stopColor="#C7D2FE" stopOpacity="0.50" />
-              <stop offset="80%" stopColor="#E0E7FF" stopOpacity="0.60" />
-              <stop offset="100%" stopColor="#DDD6FE" stopOpacity="0.45" />
-            </linearGradient>
-          </defs>
-        </svg>
-
-        {/* Layer 3: Icy Sky-Blue Liquid Sheen Ribbon */}
-        <svg 
-          className="aurora-svg-layer aurora-wave-light" 
-          viewBox="0 0 320 1000" 
-          preserveAspectRatio="none"
-          fill="none" 
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path 
-            d="M80 0 C 230 190, 330 400, 220 600 C 110 800, 300 910, 230 1000 L 320 1000 L 320 0 Z" 
-            fill="url(#aurora-grad-light)" 
-          />
-          <defs>
-            <linearGradient id="aurora-grad-light" x1="140" y1="0" x2="320" y2="1000" gradientUnits="userSpaceOnUse">
-              <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.88" />
-              <stop offset="30%" stopColor="#EEF2FF" stopOpacity="0.75" />
-              <stop offset="70%" stopColor="#F5F3FF" stopOpacity="0.80" />
-              <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0.95" />
-            </linearGradient>
-          </defs>
-        </svg>
       </div>
-
-      {/* ====================================================================
-          RIGHT COLUMN: WHITE FLOATING STUDENT LOGIN CARD
-          ==================================================================== */}
-      <section className="student-auth-right">
-        <div className="student-auth-card">
-          {/* Card Top Navigation Row */}
-          <div className="student-card-top-row">
-            <button
-              type="button"
-              onClick={onBackToLanding}
-              className="student-card-back-btn"
-              title="Return to Portals"
-            >
-              <ArrowLeft size={15} />
-              <span>Back to Portals</span>
-            </button>
-
-            <div className="student-portal-tag-pill">
-              <BadgeIcon size={14} />
-              <span>{currentRole.portalTitle}</span>
-            </div>
-          </div>
-
-          {/* Card Header */}
-          <div className="student-card-header">
-            <h2 className="student-card-title">Account Sign In</h2>
-            <p className="student-card-sub">{currentRole.desc}</p>
-          </div>
-
-          {/* Active Portal Role Banner */}
-          <div className="student-role-banner">
-            <div className="student-role-iconbox">
-              <RoleIcon size={22} />
-            </div>
-            <div style={{ flex: 1 }}>
-              <div className="student-role-tag">{currentRole.bannerTag}</div>
-              <div className="student-role-title">{currentRole.bannerTitle}</div>
-            </div>
-            <ArrowRight size={18} color="#4F46E5" strokeWidth={2.5} />
-          </div>
-
-          {/* Error Alert */}
-          {error && (
-            <div style={{
-              backgroundColor: '#FEF2F2',
-              border: '1px solid #FECACA',
-              color: '#DC2626',
-              padding: '10px 14px',
-              borderRadius: '12px',
-              fontSize: '0.8125rem',
-              marginBottom: '16px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px'
-            }} role="alert">
-              <AlertCircle size={16} style={{ flexShrink: 0 }} />
-              <span>{error}</span>
-            </div>
-          )}
-
-          {/* Form */}
-          <form onSubmit={handleSubmit} style={{ width: '100%' }}>
-            {/* USN / Student Email */}
-            <div className="student-form-group">
-              <div className="student-form-label-row">
-                <label className="student-form-label" htmlFor="student-identifier">
-                  <Mail size={14} color="#64748B" />
-                  <span>{currentRole.label}</span>
-                </label>
-              </div>
-              <div className="student-input-box">
-                <User size={16} className="student-input-icon" />
-                <input
-                  id="student-identifier"
-                  type="text"
-                  value={identifier}
-                  onChange={(e) => {
-                    setIdentifier(e.target.value);
-                    if (error) setError('');
-                  }}
-                  placeholder={currentRole.placeholder}
-                  className="student-input-field"
-                  disabled={loading}
-                  autoComplete="username"
-                  required
-                />
-              </div>
-            </div>
-
-            {/* Password with explicit label row spacing */}
-            <div className="student-form-group">
-              <div className="student-form-label-row">
-                <label className="student-form-label" htmlFor="student-password">
-                  <Lock size={14} color="#64748B" />
-                  <span>Password</span>
-                </label>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setRecoverySubmitted(false);
-                    setShowRecoveryModal(true);
-                  }}
-                  className="student-forgot-btn"
-                >
-                  Forgot password?
-                </button>
-              </div>
-              <div className="student-input-box">
-                <Lock size={16} className="student-input-icon" />
-                <input
-                  id="student-password"
-                  type={showPassword ? 'text' : 'password'}
-                  value={password}
-                  onChange={(e) => {
-                    setPassword(e.target.value);
-                    if (error) setError('');
-                  }}
-                  placeholder="••••••••••"
-                  className="student-input-field"
-                  disabled={loading}
-                  autoComplete="current-password"
-                  required
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="student-password-toggle"
-                  title={showPassword ? 'Hide password' : 'Show password'}
-                  aria-label={showPassword ? 'Hide password' : 'Show password'}
-                  tabIndex={-1}
-                >
-                  {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-                </button>
-              </div>
-            </div>
-
-            {/* Vibrant Purple/Indigo Gradient Sign In Button */}
-            <button
-              type="submit"
-              disabled={loading}
-              className="student-signin-btn"
-            >
-              {loading ? (
-                <>
-                  <Loader2 size={18} className="animate-spin" />
-                  <span>Authenticating...</span>
-                </>
-              ) : (
-                <>
-                  <span>Sign In</span>
-                  <ArrowRight size={18} />
-                </>
-              )}
-            </button>
-          </form>
-
-          {/* Predefined Authorized Account Format Banner */}
-          <div className="student-predefined-banner">
-            <div className="student-predefined-title">
-              <Info size={14} color="#4F46E5" />
-              <span>Predefined Authorized Account Format:</span>
-            </div>
-            <div className="student-predefined-text">
-              • Identifier: <strong>{currentRole.sampleId}</strong>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* ====================================================================
           INSTITUTIONAL PASSWORD RECOVERY MODAL
@@ -449,8 +291,8 @@ export default function LoginPage({ initialRole = 'STUDENT', onLoginSuccess, onB
         <div style={{
           position: 'fixed',
           inset: 0,
-          background: 'rgba(15, 23, 42, 0.65)',
-          backdropFilter: 'blur(5px)',
+          background: 'rgba(16, 23, 71, 0.65)',
+          backdropFilter: 'blur(6px)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -461,23 +303,23 @@ export default function LoginPage({ initialRole = 'STUDENT', onLoginSuccess, onB
             maxWidth: '460px',
             width: '100%',
             background: '#FFFFFF',
-            borderRadius: '24px',
-            padding: '28px',
-            boxShadow: '0 25px 50px -12px rgba(15, 23, 42, 0.25)'
+            borderRadius: '26px',
+            padding: '30px',
+            boxShadow: '0 25px 60px rgba(16, 23, 71, 0.25)'
           }} onClick={(e) => e.stopPropagation()}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <div style={{ width: '36px', height: '36px', borderRadius: '10px', backgroundColor: '#EEF2FF', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#4F46E5' }}>
-                  <KeyRound size={18} />
+                <div style={{ width: '40px', height: '40px', borderRadius: '12px', backgroundColor: '#eeebff', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#5831e9' }}>
+                  <KeyRound size={20} />
                 </div>
-                <h3 style={{ fontSize: '1.1875rem', fontWeight: 800, color: '#0F172A', margin: 0 }}>
+                <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#101747', margin: 0 }}>
                   Password Assistance
                 </h3>
               </div>
               <button
                 type="button"
                 onClick={() => setShowRecoveryModal(false)}
-                style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#94A3B8', padding: '4px' }}
+                style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#8191c0', padding: '4px' }}
                 aria-label="Close modal"
               >
                 <X size={20} />
@@ -486,23 +328,31 @@ export default function LoginPage({ initialRole = 'STUDENT', onLoginSuccess, onB
 
             {!recoverySubmitted ? (
               <form onSubmit={handleRecoverySubmit}>
-                <p style={{ fontSize: '0.8125rem', color: '#64748B', lineHeight: 1.5, marginBottom: '16px' }}>
+                <p style={{ fontSize: '0.85rem', color: '#46588d', lineHeight: 1.6, marginBottom: '18px' }}>
                   Student account credentials are managed through the RVCE Training & Placement active directory. Enter your USN or student email to receive assistance.
                 </p>
 
-                <div style={{ marginBottom: '16px' }}>
-                  <label style={{ display: 'block', fontSize: '0.78125rem', fontWeight: 700, color: '#334155', marginBottom: '6px' }}>
+                <div style={{ marginBottom: '18px' }}>
+                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: '#101747', marginBottom: '6px' }}>
                     USN or Student Email
                   </label>
                   <div style={{ position: 'relative' }}>
-                    <Mail size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#94A3B8' }} />
+                    <Mail size={16} style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: '#8191c0' }} />
                     <input
                       type="text"
                       value={recoveryIdentifier}
                       onChange={(e) => setRecoveryIdentifier(e.target.value)}
                       placeholder="e.g. 1RV23CS184 or student@rvce.edu.in"
-                      className="form-input"
-                      style={{ paddingLeft: '38px', borderRadius: '10px' }}
+                      style={{
+                        width: '100%',
+                        height: '48px',
+                        paddingLeft: '42px',
+                        paddingRight: '14px',
+                        borderRadius: '14px',
+                        border: '1.5px solid #dfe2f7',
+                        outline: 'none',
+                        fontSize: '0.875rem'
+                      }}
                       required
                       autoFocus
                     />
@@ -514,13 +364,13 @@ export default function LoginPage({ initialRole = 'STUDENT', onLoginSuccess, onB
                     type="button"
                     onClick={() => setShowRecoveryModal(false)}
                     style={{
-                      padding: '9px 16px',
-                      borderRadius: '10px',
-                      border: '1px solid #CBD5E1',
+                      padding: '10px 18px',
+                      borderRadius: '12px',
+                      border: '1px solid #dfe2f7',
                       background: '#FFFFFF',
-                      color: '#475569',
-                      fontWeight: 600,
-                      fontSize: '0.8125rem',
+                      color: '#46588d',
+                      fontWeight: 650,
+                      fontSize: '0.85rem',
                       cursor: 'pointer'
                     }}
                   >
@@ -530,13 +380,13 @@ export default function LoginPage({ initialRole = 'STUDENT', onLoginSuccess, onB
                     type="submit"
                     disabled={recoveryLoading}
                     style={{
-                      padding: '9px 18px',
-                      borderRadius: '10px',
+                      padding: '10px 22px',
+                      borderRadius: '12px',
                       border: 'none',
-                      background: 'linear-gradient(135deg, #6366F1 0%, #4F46E5 100%)',
+                      background: 'linear-gradient(100deg, #8138e9, #405ef4)',
                       color: '#FFFFFF',
                       fontWeight: 700,
-                      fontSize: '0.8125rem',
+                      fontSize: '0.85rem',
                       cursor: 'pointer',
                       display: 'flex',
                       alignItems: 'center',
@@ -545,7 +395,7 @@ export default function LoginPage({ initialRole = 'STUDENT', onLoginSuccess, onB
                   >
                     {recoveryLoading ? (
                       <>
-                        <Loader2 size={14} className="animate-spin" />
+                        <Loader2 size={15} className="animate-spin" />
                         <span>Submitting...</span>
                       </>
                     ) : (
@@ -556,26 +406,26 @@ export default function LoginPage({ initialRole = 'STUDENT', onLoginSuccess, onB
               </form>
             ) : (
               <div style={{ textAlign: 'center', padding: '12px 0' }}>
-                <div style={{ width: '48px', height: '48px', borderRadius: '50%', backgroundColor: '#ECFDF5', color: '#10B981', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 14px' }}>
-                  <CheckCircle2 size={26} />
+                <div style={{ width: '50px', height: '50px', borderRadius: '50%', backgroundColor: '#ECFDF5', color: '#10B981', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 14px' }}>
+                  <CheckCircle2 size={28} />
                 </div>
-                <h4 style={{ fontSize: '1.0625rem', fontWeight: 800, color: '#0F172A', marginBottom: '8px' }}>
+                <h4 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#101747', marginBottom: '8px' }}>
                   Instructions Dispatched
                 </h4>
-                <p style={{ fontSize: '0.8125rem', color: '#64748B', lineHeight: 1.5, marginBottom: '20px' }}>
+                <p style={{ fontSize: '0.85rem', color: '#46588d', lineHeight: 1.6, marginBottom: '20px' }}>
                   If <strong>{recoveryIdentifier}</strong> is registered in the institutional directory, verification guidance has been forwarded to your registered contact.
                 </p>
                 <button
                   type="button"
                   onClick={() => setShowRecoveryModal(false)}
                   style={{
-                    padding: '9px 24px',
-                    borderRadius: '10px',
+                    padding: '10px 26px',
+                    borderRadius: '12px',
                     border: 'none',
-                    background: 'linear-gradient(135deg, #6366F1 0%, #4F46E5 100%)',
+                    background: 'linear-gradient(100deg, #8138e9, #405ef4)',
                     color: '#FFFFFF',
                     fontWeight: 700,
-                    fontSize: '0.8125rem',
+                    fontSize: '0.85rem',
                     cursor: 'pointer'
                   }}
                 >
