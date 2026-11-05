@@ -40,9 +40,10 @@ export default function LandingPage({ onGetStarted, onSelectPortal, onOpenLogin 
     <div style={{ minHeight: '100vh', backgroundColor: '#FFFFFF', color: '#0F172A', overflowX: 'hidden' }}>
       {/* Top Navbar matching s img1 */}
       <nav style={{
-        maxWidth: '1400px',
+        maxWidth: '1376px',
+        width: '100%',
         margin: '0 auto',
-        padding: '20px 32px',
+        padding: '20px 24px',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
@@ -127,9 +128,10 @@ export default function LandingPage({ onGetStarted, onSelectPortal, onOpenLogin 
 
       {/* Hero Section matching s img1 */}
       <section id="hero" style={{
-        maxWidth: '1400px',
+        maxWidth: '1376px',
+        width: '100%',
         margin: '0 auto',
-        padding: '44px 32px 64px',
+        padding: '44px 24px 64px',
         display: 'grid',
         gridTemplateColumns: '1.1fr 1fr',
         gap: '36px',
@@ -287,7 +289,7 @@ export default function LandingPage({ onGetStarted, onSelectPortal, onOpenLogin 
       </section>
 
       {/* Trusted By Leading Companies matching s img1 bottom */}
-      <section style={{ maxWidth: '1400px', margin: '0 auto', padding: '44px 32px', textAlign: 'center' }}>
+      <section style={{ maxWidth: '1376px', width: '100%', margin: '0 auto', padding: '44px 24px', textAlign: 'center' }}>
         <p style={{ fontSize: '0.75rem', fontWeight: 700, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '24px' }}>
           Trusted by leading companies for campus placements
         </p>
