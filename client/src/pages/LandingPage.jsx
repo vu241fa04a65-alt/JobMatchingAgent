@@ -237,6 +237,51 @@ export default function LandingPage({ onGetStarted, onSelectPortal, onOpenLogin 
             <div className="emitted-violet-icon emit-dir-5" aria-hidden="true">
               <Target size={19} strokeWidth={1.8} />
             </div>
+
+            {/* Floating Portal Card 1: Students (Top-Left) */}
+            <div 
+              onClick={() => handlePortalClick('STUDENT')}
+              className="ecosystem-portal-card portal-card-student"
+              title="Students — Skills, Interests & Projects"
+            >
+              <div className="portal-card-icon-box" style={{ backgroundColor: '#EEF2FF', color: '#4F46E5' }}>
+                <GraduationCap size={22} />
+              </div>
+              <div>
+                <div className="portal-card-title">Students</div>
+                <div className="portal-card-sub">Skills • Interests • Projects</div>
+              </div>
+            </div>
+
+            {/* Floating Portal Card 2: Companies (Top-Right) */}
+            <div 
+              onClick={() => handlePortalClick('T_AND_P')}
+              className="ecosystem-portal-card portal-card-company"
+              title="Companies — JD, Eligibility & Talent"
+            >
+              <div className="portal-card-icon-box" style={{ backgroundColor: '#ECFDF5', color: '#059669' }}>
+                <Building2 size={22} />
+              </div>
+              <div>
+                <div className="portal-card-title">Companies</div>
+                <div className="portal-card-sub">JD • Eligibility • Talent</div>
+              </div>
+            </div>
+
+            {/* Floating Portal Card 3: Institutions (Bottom-Right) */}
+            <div 
+              onClick={() => handlePortalClick('HOD')}
+              className="ecosystem-portal-card portal-card-inst"
+              title="Institutions — T&P Cell, HODs & Analytics"
+            >
+              <div className="portal-card-icon-box" style={{ backgroundColor: '#F5F3FF', color: '#7C3AED' }}>
+                <ShieldCheck size={22} />
+              </div>
+              <div>
+                <div className="portal-card-title">Institutions</div>
+                <div className="portal-card-sub">T&P Cell • HODs • Analytics</div>
+              </div>
+            </div>
           </div>
         </div>
       </section>

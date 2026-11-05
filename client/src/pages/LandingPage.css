@@ -9,8 +9,8 @@
   align-items: center;
   justify-content: center;
   width: 100%;
-  max-width: 520px;
-  height: 460px;
+  max-width: 560px;
+  height: 480px;
   margin: 0 auto;
 }
 
@@ -363,11 +363,129 @@
   }
 }
 
+/* ==========================================================================
+   FLOATING PREVIEW PORTAL CARDS (Students, Companies, Institutions)
+   ========================================================================== */
+.ecosystem-portal-card {
+  position: absolute;
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 18px;
+  padding: 12px 18px;
+  box-shadow: 
+    0 10px 25px -4px rgba(15, 23, 42, 0.07),
+    0 4px 10px -2px rgba(15, 23, 42, 0.03);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  z-index: 15;
+  user-select: none;
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.ecosystem-portal-card:hover {
+  transform: translateY(-3px) scale(1.02);
+  border-color: #CBD5E1;
+  box-shadow: 
+    0 16px 32px -4px rgba(15, 23, 42, 0.12),
+    0 6px 14px -2px rgba(15, 23, 42, 0.05);
+}
+
+.portal-card-student {
+  top: 15px;
+  left: 10px;
+}
+
+.portal-card-student:hover {
+  border-color: #818CF8;
+}
+
+.portal-card-company {
+  top: 22px;
+  right: 10px;
+}
+
+.portal-card-company:hover {
+  border-color: #34D399;
+}
+
+.portal-card-inst {
+  bottom: 22px;
+  right: 25px;
+}
+
+.portal-card-inst:hover {
+  border-color: #A78BFA;
+}
+
+.portal-card-icon-box {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.ecosystem-portal-card:hover .portal-card-icon-box {
+  transform: scale(1.08);
+}
+
+.portal-card-title {
+  font-weight: 700;
+  font-size: 0.9375rem;
+  color: #0F172A;
+  line-height: 1.2;
+}
+
+.portal-card-sub {
+  font-size: 0.71875rem;
+  color: #64748B;
+  font-weight: 500;
+  margin-top: 2px;
+  white-space: nowrap;
+}
+
 /* Mobile & Tablet Adjustments */
 @media (max-width: 768px) {
   .hero-ecosystem-wrapper {
-    max-width: 360px;
-    height: 380px;
+    max-width: 100%;
+    height: 420px;
+  }
+  .ecosystem-portal-card {
+    padding: 8px 12px;
+    gap: 8px;
+    border-radius: 14px;
+  }
+  .portal-card-icon-box {
+    width: 34px;
+    height: 34px;
+    border-radius: 9px;
+  }
+  .portal-card-icon-box svg {
+    width: 17px;
+    height: 17px;
+  }
+  .portal-card-title {
+    font-size: 0.8125rem;
+  }
+  .portal-card-sub {
+    font-size: 0.625rem;
+  }
+  .portal-card-student {
+    top: 5px;
+    left: 5px;
+  }
+  .portal-card-company {
+    top: 10px;
+    right: 5px;
+  }
+  .portal-card-inst {
+    bottom: 10px;
+    right: 15px;
   }
   .emitted-violet-icon svg {
     width: 16px;
