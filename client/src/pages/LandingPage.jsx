@@ -193,21 +193,11 @@ export default function LandingPage({ onGetStarted, onSelectPortal, onOpenLogin 
           </div>
         </div>
 
-        {/* Hero Visual — Pure, Minimalist CareerSync Sphere with Soft Ambient Glow & Emitted Symbols */}
+        {/* Hero Visual — Pure CareerSync Sphere with Original Soft Aura & Emitted Violet Placement Icons */}
         <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <div className="hero-ecosystem-wrapper">
-            {/* Layer 1: Ambient Corona Mesh (Ultra-wide diffused glow) */}
-            <div className="ambient-corona-mesh" />
-
-            {/* Layer 2: Shifting/Revolving Ambient Rays */}
-            <div className="ambient-revolving-rays" />
-
-            {/* Layer 3: High-Intensity Concentrated Core Aura */}
-            <div className="ambient-core-glow" />
-
-            {/* Subtle Expanding Emission Wave Ripples */}
-            <div className="emission-wave-pulse emission-wave-1" />
-            <div className="emission-wave-pulse emission-wave-2" />
+            {/* Original Soft Ambient Purple Aura (Clean, Zero Green Haze) */}
+            <div className="hero-ambient-aura" />
 
             {/* Center Levitating 3D Sphere with Specular Sheen & Dynamic Ground Shadow */}
             <div className="sphere-anchor-wrapper">

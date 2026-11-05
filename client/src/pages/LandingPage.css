@@ -15,164 +15,25 @@
 }
 
 /* ==========================================================================
-   MULTI-LAYER AMBIENT BACKGROUND LIGHTING
+   ORIGINAL SOFT AMBIENT LIGHTING (Clean, Zero Green Haze)
    ========================================================================== */
-
-/* Layer 1: Ultra-Wide Ambient Corona Mesh */
-.ambient-corona-mesh {
+.hero-ambient-aura {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 600px;
-  height: 600px;
+  width: 440px;
+  height: 440px;
   border-radius: 50%;
   background: radial-gradient(
     circle at 50% 50%,
-    rgba(141, 194, 31, 0.28) 0%,
-    rgba(79, 70, 229, 0.32) 28%,
-    rgba(6, 182, 212, 0.24) 52%,
-    rgba(139, 92, 246, 0.12) 70%,
-    rgba(255, 255, 255, 0) 85%
-  );
-  filter: blur(55px);
-  pointer-events: none;
-  z-index: 1;
-  animation: corona-breathe 7s ease-in-out infinite alternate;
-}
-
-@keyframes corona-breathe {
-  0% {
-    transform: translate(-50%, -50%) scale(0.92);
-    opacity: 0.75;
-  }
-  50% {
-    transform: translate(-50%, -50%) scale(1.08);
-    opacity: 0.95;
-  }
-  100% {
-    transform: translate(-50%, -50%) scale(1.18);
-    opacity: 0.85;
-  }
-}
-
-/* Layer 2: Revolving Light Beams / Shifting Aura */
-.ambient-revolving-rays {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 520px;
-  height: 520px;
-  border-radius: 50%;
-  background: conic-gradient(
-    from 0deg,
-    transparent 0deg,
-    rgba(79, 70, 229, 0.25) 40deg,
-    transparent 80deg,
-    rgba(141, 194, 31, 0.22) 140deg,
-    transparent 180deg,
-    rgba(6, 182, 212, 0.22) 240deg,
-    transparent 280deg,
-    rgba(124, 58, 237, 0.22) 330deg,
-    transparent 360deg
-  );
-  filter: blur(42px);
-  pointer-events: none;
-  z-index: 2;
-  animation: revolve-rays 22s linear infinite;
-}
-
-@keyframes revolve-rays {
-  from {
-    transform: translate(-50%, -50%) rotate(0deg);
-  }
-  to {
-    transform: translate(-50%, -50%) rotate(360deg);
-  }
-}
-
-/* Layer 3: High-Intensity Concentrated Core Aura */
-.ambient-core-glow {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 280px;
-  height: 280px;
-  border-radius: 50%;
-  background: radial-gradient(
-    circle at 50% 50%,
-    rgba(129, 140, 248, 0.8) 0%,
-    rgba(79, 70, 229, 0.6) 35%,
-    rgba(141, 194, 31, 0.45) 65%,
-    rgba(6, 182, 212, 0) 100%
+    rgba(99, 102, 241, 0.14) 0%,
+    rgba(79, 70, 229, 0.05) 45%,
+    rgba(255, 255, 255, 0) 70%
   );
   filter: blur(28px);
   pointer-events: none;
-  z-index: 3;
-  animation: core-pulsar 4.5s ease-in-out infinite alternate;
-}
-
-@keyframes core-pulsar {
-  0% {
-    transform: translate(-50%, -50%) scale(0.9);
-    opacity: 0.8;
-    filter: blur(24px);
-  }
-  100% {
-    transform: translate(-50%, -50%) scale(1.15);
-    opacity: 1;
-    filter: blur(34px);
-  }
-}
-
-/* ==========================================================================
-   SUBTLE EMISSION PULSE RIPPLES (Expanding Softly Outward from Orb)
-   ========================================================================== */
-.emission-wave-pulse {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 4;
-}
-
-.emission-wave-1 {
-  width: 180px;
-  height: 180px;
-  border: 1px solid rgba(129, 140, 248, 0.35);
-  box-shadow: 0 0 16px rgba(129, 140, 248, 0.2);
-  animation: emission-wave 5s cubic-bezier(0.2, 0.8, 0.2, 1) infinite;
-}
-
-.emission-wave-2 {
-  width: 180px;
-  height: 180px;
-  border: 1px solid rgba(141, 194, 31, 0.3);
-  box-shadow: 0 0 16px rgba(141, 194, 31, 0.15);
-  animation: emission-wave 5s cubic-bezier(0.2, 0.8, 0.2, 1) infinite;
-  animation-delay: 2.5s;
-}
-
-@keyframes emission-wave {
-  0% {
-    width: 165px;
-    height: 165px;
-    opacity: 0.65;
-    transform: translate(-50%, -50%) scale(0.95);
-  }
-  60% {
-    opacity: 0.3;
-  }
-  100% {
-    width: 380px;
-    height: 380px;
-    opacity: 0;
-    transform: translate(-50%, -50%) scale(1.15);
-  }
+  z-index: 1;
 }
 
 /* ==========================================================================
@@ -200,9 +61,8 @@
     #1E1B4B 100%
   );
   box-shadow: 
-    0 24px 50px -10px rgba(79, 70, 229, 0.58),
-    0 0 50px 8px rgba(141, 194, 31, 0.3),
-    0 0 80px 16px rgba(99, 102, 241, 0.35),
+    0 20px 45px -8px rgba(79, 70, 229, 0.55),
+    0 0 50px 10px rgba(99, 102, 241, 0.25),
     inset 0 3px 10px rgba(255, 255, 255, 0.65),
     inset 0 -8px 18px rgba(15, 23, 42, 0.75);
   display: flex;
@@ -223,9 +83,8 @@
 .sphere-floating-body:hover {
   transform: scale(1.06) translateY(-4px);
   box-shadow: 
-    0 30px 65px -10px rgba(79, 70, 229, 0.7),
-    0 0 65px 12px rgba(141, 194, 31, 0.45),
-    0 0 100px 24px rgba(99, 102, 241, 0.5),
+    0 28px 60px -8px rgba(79, 70, 229, 0.68),
+    0 0 70px 14px rgba(99, 102, 241, 0.35),
     inset 0 4px 12px rgba(255, 255, 255, 0.8),
     inset 0 -8px 20px rgba(15, 23, 42, 0.8);
 }
@@ -277,8 +136,8 @@
   border-radius: 50%;
   background: radial-gradient(
     ellipse at 50% 50%,
-    rgba(79, 70, 229, 0.45) 0%,
-    rgba(141, 194, 31, 0.2) 40%,
+    rgba(79, 70, 229, 0.38) 0%,
+    rgba(99, 102, 241, 0.15) 40%,
     transparent 80%
   );
   filter: blur(6px);
@@ -304,8 +163,8 @@
 
 /* Sphere Inner Content Elements */
 .sphere-icon-sparkle {
-  color: #A3E635;
-  filter: drop-shadow(0 0 8px rgba(163, 230, 53, 0.8));
+  color: #FFFFFF;
+  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.75));
   margin-bottom: 6px;
   animation: sparkle-rotate 4s ease-in-out infinite alternate;
 }
@@ -342,13 +201,13 @@
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  background: rgba(16, 185, 129, 0.2);
-  border: 1px solid rgba(16, 185, 129, 0.4);
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.25);
   padding: 2px 7px;
   border-radius: 9999px;
   font-size: 0.5625rem;
   font-weight: 800;
-  color: #6EE7B7;
+  color: #FFFFFF;
   margin-top: 6px;
   letter-spacing: 0.03em;
 }
@@ -357,8 +216,8 @@
   width: 5px;
   height: 5px;
   border-radius: 50%;
-  background-color: #10B981;
-  box-shadow: 0 0 6px #10B981;
+  background-color: #A5B4FC;
+  box-shadow: 0 0 6px #A5B4FC;
   animation: dot-pulse 1.8s infinite;
 }
 
@@ -518,11 +377,7 @@
 
 /* Reduced Motion */
 @media (prefers-reduced-motion: reduce) {
-  .ambient-corona-mesh,
-  .ambient-revolving-rays,
-  .ambient-core-glow,
-  .emission-wave-1,
-  .emission-wave-2,
+  .hero-ambient-aura,
   .sphere-floating-body,
   .sphere-sheen-sweep,
   .sphere-ground-shadow,
