@@ -9,8 +9,8 @@
   align-items: center;
   justify-content: center;
   width: 100%;
-  max-width: 580px;
-  height: 520px;
+  max-width: 520px;
+  height: 460px;
   margin: 0 auto;
 }
 
@@ -128,77 +128,50 @@
 }
 
 /* ==========================================================================
-   SVG ORBITAL TRACKS & DATA FLOW CONNECTOR BEAMS
+   SUBTLE EMISSION PULSE RIPPLES (Expanding Softly Outward from Orb)
    ========================================================================== */
-.ecosystem-svg-canvas {
+.emission-wave-pulse {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
   pointer-events: none;
   z-index: 4;
 }
 
-/* Dashed Orbital Rings */
-.orbit-ring-inner {
-  fill: none;
-  stroke: rgba(99, 102, 241, 0.28);
-  stroke-width: 1.5;
-  stroke-dasharray: 6 8;
-  animation: spin-orbit-inner 60s linear infinite;
-  transform-origin: 290px 260px;
+.emission-wave-1 {
+  width: 180px;
+  height: 180px;
+  border: 1px solid rgba(129, 140, 248, 0.35);
+  box-shadow: 0 0 16px rgba(129, 140, 248, 0.2);
+  animation: emission-wave 5s cubic-bezier(0.2, 0.8, 0.2, 1) infinite;
 }
 
-.orbit-ring-outer {
-  fill: none;
-  stroke: rgba(141, 194, 31, 0.25);
-  stroke-width: 1.5;
-  stroke-dasharray: 8 10;
-  animation: spin-orbit-outer 80s linear infinite reverse;
-  transform-origin: 290px 260px;
+.emission-wave-2 {
+  width: 180px;
+  height: 180px;
+  border: 1px solid rgba(141, 194, 31, 0.3);
+  box-shadow: 0 0 16px rgba(141, 194, 31, 0.15);
+  animation: emission-wave 5s cubic-bezier(0.2, 0.8, 0.2, 1) infinite;
+  animation-delay: 2.5s;
 }
 
-@keyframes spin-orbit-inner {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-@keyframes spin-orbit-outer {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-/* Pulsing Connection Lines */
-.connector-beam {
-  stroke-width: 2;
-  stroke-linecap: round;
-}
-
-.connector-beam-student {
-  stroke: url(#gradientStudent);
-  stroke-dasharray: 8 6;
-  animation: beam-flow 2.2s linear infinite;
-}
-
-.connector-beam-company {
-  stroke: url(#gradientCompany);
-  stroke-dasharray: 8 6;
-  animation: beam-flow 2.2s linear infinite;
-}
-
-.connector-beam-inst {
-  stroke: url(#gradientInst);
-  stroke-dasharray: 8 6;
-  animation: beam-flow 2.2s linear infinite;
-}
-
-@keyframes beam-flow {
-  from {
-    stroke-dashoffset: 28;
+@keyframes emission-wave {
+  0% {
+    width: 165px;
+    height: 165px;
+    opacity: 0.65;
+    transform: translate(-50%, -50%) scale(0.95);
   }
-  to {
-    stroke-dashoffset: 0;
+  60% {
+    opacity: 0.3;
+  }
+  100% {
+    width: 380px;
+    height: 380px;
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1.15);
   }
 }
 
@@ -395,94 +368,194 @@
 }
 
 /* ==========================================================================
-   INTERCONNECTED SATELLITE CARDS
+   EMITTED SYMBOLS — NICE, SMALL, CLEAN & ELEVATED
    ========================================================================== */
-.ecosystem-satellite-card {
+.emitted-symbol {
   position: absolute;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
   background: rgba(255, 255, 255, 0.94);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border: 1px solid rgba(226, 232, 240, 0.9);
-  border-radius: 18px;
-  padding: 12px 18px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(226, 232, 240, 0.85);
   box-shadow: 
-    0 12px 30px -4px rgba(15, 23, 42, 0.08),
-    0 4px 12px -2px rgba(15, 23, 42, 0.04);
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  cursor: pointer;
-  z-index: 12;
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  user-select: none;
-}
-
-.satellite-student {
-  top: 24px;
-  left: 12px;
-}
-
-.satellite-student:hover {
-  transform: translateY(-4px) scale(1.03);
-  border-color: #818CF8;
-  box-shadow: 
-    0 18px 36px -4px rgba(79, 70, 229, 0.22),
-    0 0 20px 2px rgba(79, 70, 229, 0.15);
-}
-
-.satellite-company {
-  top: 36px;
-  right: 12px;
-}
-
-.satellite-company:hover {
-  transform: translateY(-4px) scale(1.03);
-  border-color: #34D399;
-  box-shadow: 
-    0 18px 36px -4px rgba(16, 185, 129, 0.22),
-    0 0 20px 2px rgba(16, 185, 129, 0.15);
-}
-
-.satellite-institution {
-  bottom: 24px;
-  right: 32px;
-}
-
-.satellite-institution:hover {
-  transform: translateY(-4px) scale(1.03);
-  border-color: #A3E635;
-  box-shadow: 
-    0 18px 36px -4px rgba(141, 194, 31, 0.22),
-    0 0 20px 2px rgba(141, 194, 31, 0.15);
-}
-
-.satellite-icon-box {
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
+    0 8px 18px -3px rgba(15, 23, 42, 0.09),
+    0 2px 6px -1px rgba(15, 23, 42, 0.04);
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;
-  transition: transform 0.2s ease;
+  cursor: pointer;
+  z-index: 12;
+  user-select: none;
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.25s ease, border-color 0.25s ease;
 }
 
-.ecosystem-satellite-card:hover .satellite-icon-box {
-  transform: scale(1.08);
+.emitted-symbol:hover {
+  transform: scale(1.18) !important;
+  box-shadow: 0 12px 24px -2px rgba(15, 23, 42, 0.16);
 }
 
-.satellite-text-title {
-  font-weight: 800;
-  font-size: 0.9375rem;
-  color: #0F172A;
-  line-height: 1.2;
+/* 1. Job Briefcase Symbol (Top-Right) */
+.symbol-job {
+  top: 15%;
+  right: 18%;
+  color: #10B981;
+  background: radial-gradient(circle at 35% 35%, #FFFFFF 50%, #ECFDF5 100%);
+  border-color: rgba(16, 185, 129, 0.35);
+  box-shadow: 0 8px 18px -3px rgba(16, 185, 129, 0.25), 0 0 12px rgba(16, 185, 129, 0.15);
+  animation: float-symbol-job 5.5s ease-in-out infinite;
+}
+.symbol-job:hover {
+  border-color: #10B981;
+  box-shadow: 0 12px 26px -3px rgba(16, 185, 129, 0.45), 0 0 18px rgba(16, 185, 129, 0.3);
 }
 
-.satellite-text-sub {
-  font-size: 0.71875rem;
-  color: #64748B;
-  font-weight: 500;
-  margin-top: 2px;
+@keyframes float-symbol-job {
+  0%, 100% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(4px, -8px);
+  }
+}
+
+/* 2. Match Target Symbol (Mid-Right) */
+.symbol-target {
+  top: 48%;
+  right: 8%;
+  color: #8DC21F;
+  background: radial-gradient(circle at 35% 35%, #FFFFFF 50%, #F7FEE7 100%);
+  border-color: rgba(141, 194, 31, 0.35);
+  box-shadow: 0 8px 18px -3px rgba(141, 194, 31, 0.25), 0 0 12px rgba(141, 194, 31, 0.15);
+  animation: float-symbol-target 4.8s ease-in-out infinite 0.8s;
+}
+.symbol-target:hover {
+  border-color: #8DC21F;
+  box-shadow: 0 12px 26px -3px rgba(141, 194, 31, 0.45), 0 0 18px rgba(141, 194, 31, 0.3);
+}
+
+@keyframes float-symbol-target {
+  0%, 100% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(6px, 6px);
+  }
+}
+
+/* 3. Student Grad Cap Symbol (Bottom-Right) */
+.symbol-student {
+  bottom: 14%;
+  right: 18%;
+  color: #6366F1;
+  background: radial-gradient(circle at 35% 35%, #FFFFFF 50%, #EEF2FF 100%);
+  border-color: rgba(99, 102, 241, 0.35);
+  box-shadow: 0 8px 18px -3px rgba(99, 102, 241, 0.25), 0 0 12px rgba(99, 102, 241, 0.15);
+  animation: float-symbol-student 5.2s ease-in-out infinite 1.6s;
+}
+.symbol-student:hover {
+  border-color: #6366F1;
+  box-shadow: 0 12px 26px -3px rgba(99, 102, 241, 0.45), 0 0 18px rgba(99, 102, 241, 0.3);
+}
+
+@keyframes float-symbol-student {
+  0%, 100% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(-3px, 8px);
+  }
+}
+
+/* 4. Tech Skills Symbol (Bottom-Left) */
+.symbol-skills {
+  bottom: 14%;
+  left: 18%;
+  color: #8B5CF6;
+  background: radial-gradient(circle at 35% 35%, #FFFFFF 50%, #F5F3FF 100%);
+  border-color: rgba(139, 92, 246, 0.35);
+  box-shadow: 0 8px 18px -3px rgba(139, 92, 246, 0.25), 0 0 12px rgba(139, 92, 246, 0.15);
+  animation: float-symbol-skills 5.6s ease-in-out infinite 0.4s;
+}
+.symbol-skills:hover {
+  border-color: #8B5CF6;
+  box-shadow: 0 12px 26px -3px rgba(139, 92, 246, 0.45), 0 0 18px rgba(139, 92, 246, 0.3);
+}
+
+@keyframes float-symbol-skills {
+  0%, 100% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(-5px, 6px);
+  }
+}
+
+/* 5. Company Building Symbol (Mid-Left) */
+.symbol-company {
+  top: 48%;
+  left: 8%;
+  color: #06B6D4;
+  background: radial-gradient(circle at 35% 35%, #FFFFFF 50%, #ECFEFF 100%);
+  border-color: rgba(6, 182, 212, 0.35);
+  box-shadow: 0 8px 18px -3px rgba(6, 182, 212, 0.25), 0 0 12px rgba(6, 182, 212, 0.15);
+  animation: float-symbol-company 4.9s ease-in-out infinite 1.2s;
+}
+.symbol-company:hover {
+  border-color: #06B6D4;
+  box-shadow: 0 12px 26px -3px rgba(6, 182, 212, 0.45), 0 0 18px rgba(6, 182, 212, 0.3);
+}
+
+@keyframes float-symbol-company {
+  0%, 100% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(-6px, -4px);
+  }
+}
+
+/* 6. AI Sparkles Symbol (Top-Left) */
+.symbol-ai {
+  top: 15%;
+  left: 18%;
+  color: #F59E0B;
+  background: radial-gradient(circle at 35% 35%, #FFFFFF 50%, #FFFBEB 100%);
+  border-color: rgba(245, 158, 11, 0.35);
+  box-shadow: 0 8px 18px -3px rgba(245, 158, 11, 0.25), 0 0 12px rgba(245, 158, 11, 0.15);
+  animation: float-symbol-ai 5.3s ease-in-out infinite 2s;
+}
+.symbol-ai:hover {
+  border-color: #F59E0B;
+  box-shadow: 0 12px 26px -3px rgba(245, 158, 11, 0.45), 0 0 18px rgba(245, 158, 11, 0.3);
+}
+
+@keyframes float-symbol-ai {
+  0%, 100% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(4px, -6px);
+  }
+}
+
+/* Mobile & Tablet Adjustments */
+@media (max-width: 768px) {
+  .hero-ecosystem-wrapper {
+    max-width: 360px;
+    height: 380px;
+  }
+  .emitted-symbol {
+    width: 34px;
+    height: 34px;
+  }
+  .symbol-job { top: 12%; right: 10%; }
+  .symbol-target { top: 48%; right: 4%; }
+  .symbol-student { bottom: 12%; right: 10%; }
+  .symbol-skills { bottom: 12%; left: 10%; }
+  .symbol-company { top: 48%; left: 4%; }
+  .symbol-ai { top: 12%; left: 10%; }
 }
 
 /* Reduced Motion */
@@ -490,15 +563,19 @@
   .ambient-corona-mesh,
   .ambient-revolving-rays,
   .ambient-core-glow,
-  .orbit-ring-inner,
-  .orbit-ring-outer,
-  .connector-beam-student,
-  .connector-beam-company,
-  .connector-beam-inst,
+  .emission-wave-1,
+  .emission-wave-2,
   .sphere-floating-body,
   .sphere-sheen-sweep,
   .sphere-ground-shadow,
-  .sphere-icon-sparkle {
+  .sphere-icon-sparkle,
+  .symbol-job,
+  .symbol-target,
+  .symbol-student,
+  .symbol-skills,
+  .symbol-company,
+  .symbol-ai {
     animation: none !important;
   }
 }
+

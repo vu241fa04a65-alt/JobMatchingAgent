@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Sparkles, ArrowRight, Building2, Users, GraduationCap, ShieldCheck, Play, CheckCircle2, Target, Bot, BarChart3, X } from 'lucide-react';
+import { Sparkles, ArrowRight, Building2, Users, GraduationCap, ShieldCheck, Play, CheckCircle2, Target, Bot, BarChart3, X, Briefcase, Code2 } from 'lucide-react';
 import './LandingPage.css';
 
 export default function LandingPage({ onGetStarted, onSelectPortal, onOpenLogin }) {
@@ -193,7 +193,7 @@ export default function LandingPage({ onGetStarted, onSelectPortal, onOpenLogin 
           </div>
         </div>
 
-        {/* Hero Ecosystem Central Glowing Orb with Multi-Layer Ambient Background Lighting & Animations */}
+        {/* Hero Visual — Pure, Minimalist CareerSync Sphere with Soft Ambient Glow & Emitted Symbols */}
         <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <div className="hero-ecosystem-wrapper">
             {/* Layer 1: Ambient Corona Mesh (Ultra-wide diffused glow) */}
@@ -205,32 +205,9 @@ export default function LandingPage({ onGetStarted, onSelectPortal, onOpenLogin 
             {/* Layer 3: High-Intensity Concentrated Core Aura */}
             <div className="ambient-core-glow" />
 
-            {/* SVG Orbital Track Rings & Live Animated Data Connector Beams */}
-            <svg className="ecosystem-svg-canvas" viewBox="0 0 580 500" fill="none">
-              <defs>
-                <linearGradient id="gradientStudent" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#818CF8" stopOpacity="0.8" />
-                  <stop offset="100%" stopColor="#4F46E5" stopOpacity="0.3" />
-                </linearGradient>
-                <linearGradient id="gradientCompany" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#34D399" stopOpacity="0.8" />
-                  <stop offset="100%" stopColor="#059669" stopOpacity="0.3" />
-                </linearGradient>
-                <linearGradient id="gradientInst" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#A3E635" stopOpacity="0.8" />
-                  <stop offset="100%" stopColor="#8DC21F" stopOpacity="0.3" />
-                </linearGradient>
-              </defs>
-
-              {/* Orbital Track Rings */}
-              <circle cx="290" cy="250" r="142" className="orbit-ring-inner" />
-              <circle cx="290" cy="250" r="215" className="orbit-ring-outer" />
-
-              {/* Animated Connector Beams from Central AI Hub to Satellites */}
-              <path d="M 290 250 C 230 180, 180 110, 140 60" className="connector-beam connector-beam-student" />
-              <path d="M 290 250 C 350 180, 400 120, 440 75" className="connector-beam connector-beam-company" />
-              <path d="M 290 250 C 340 320, 390 380, 430 435" className="connector-beam connector-beam-inst" />
-            </svg>
+            {/* Subtle Expanding Emission Wave Ripples */}
+            <div className="emission-wave-pulse emission-wave-1" />
+            <div className="emission-wave-pulse emission-wave-2" />
 
             {/* Center Levitating 3D Sphere with Specular Sheen & Dynamic Ground Shadow */}
             <div className="sphere-anchor-wrapper">
@@ -240,6 +217,7 @@ export default function LandingPage({ onGetStarted, onSelectPortal, onOpenLogin 
                   if (onGetStarted) onGetStarted();
                   else if (onSelectPortal) onSelectPortal();
                 }}
+                title="CareerSync AI Placement Engine — Click to Get Started"
               >
                 <div className="sphere-sheen-sweep" />
                 <Sparkles size={26} className="sphere-icon-sparkle" />
@@ -253,46 +231,59 @@ export default function LandingPage({ onGetStarted, onSelectPortal, onOpenLogin 
               <div className="sphere-ground-shadow" />
             </div>
 
-            {/* Satellite 1: Students */}
+            {/* Emitted Symbols radiating subtly around the CareerSync orb — Nice, small & clean */}
+            {/* 1. Job Symbol (Briefcase) */}
             <div 
+              className="emitted-symbol symbol-job" 
+              title="Job Matches & Career Openings"
               onClick={() => handlePortalClick('STUDENT')}
-              className="ecosystem-satellite-card satellite-student"
             >
-              <div className="satellite-icon-box" style={{ backgroundColor: '#EEF2FF', color: '#4F46E5' }}>
-                <GraduationCap size={22} />
-              </div>
-              <div>
-                <div className="satellite-text-title">Students</div>
-                <div className="satellite-text-sub">Skills • Interests • Projects</div>
-              </div>
+              <Briefcase size={16} />
             </div>
 
-            {/* Satellite 2: Companies */}
+            {/* 2. Opportunities / Fit Target Symbol */}
             <div 
+              className="emitted-symbol symbol-target" 
+              title="95% Match Fit"
+              onClick={() => setShowOverviewModal(true)}
+            >
+              <Target size={16} />
+            </div>
+
+            {/* 3. Students / Talent Symbol (Graduation Cap) */}
+            <div 
+              className="emitted-symbol symbol-student" 
+              title="Student Profiles & Skill Verification"
+              onClick={() => handlePortalClick('STUDENT')}
+            >
+              <GraduationCap size={16} />
+            </div>
+
+            {/* 4. Tech Skills Symbol (Code2) */}
+            <div 
+              className="emitted-symbol symbol-skills" 
+              title="Technical Skills & Projects"
+              onClick={() => setShowOverviewModal(true)}
+            >
+              <Code2 size={16} />
+            </div>
+
+            {/* 5. Company / Employer Symbol (Building2) */}
+            <div 
+              className="emitted-symbol symbol-company" 
+              title="Company Partners & Job Descriptions"
               onClick={() => handlePortalClick('T_AND_P')}
-              className="ecosystem-satellite-card satellite-company"
             >
-              <div className="satellite-icon-box" style={{ backgroundColor: '#ECFDF5', color: '#10B981' }}>
-                <Building2 size={22} />
-              </div>
-              <div>
-                <div className="satellite-text-title">Companies</div>
-                <div className="satellite-text-sub">JD • Eligibility • Talent</div>
-              </div>
+              <Building2 size={16} />
             </div>
 
-            {/* Satellite 3: Institutions */}
+            {/* 6. AI Intelligence Symbol (Sparkles) */}
             <div 
-              onClick={() => handlePortalClick('HOD')}
-              className="ecosystem-satellite-card satellite-institution"
+              className="emitted-symbol symbol-ai" 
+              title="Agent 50 Intelligent Matching"
+              onClick={() => setShowOverviewModal(true)}
             >
-              <div className="satellite-icon-box" style={{ backgroundColor: '#F5F3FF', color: '#8B5CF6' }}>
-                <ShieldCheck size={22} />
-              </div>
-              <div>
-                <div className="satellite-text-title">Institutions</div>
-                <div className="satellite-text-sub">T&P Cell • HODs • Analytics</div>
-              </div>
+              <Sparkles size={15} />
             </div>
           </div>
         </div>
