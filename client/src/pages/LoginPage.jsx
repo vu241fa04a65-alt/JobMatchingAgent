@@ -180,7 +180,7 @@ export default function LoginPage({ initialRole = 'STUDENT', onLoginSuccess, onB
       </section>
 
       {/* ====================================================================
-          ORGANIC S-CURVE WAVE DIVIDER — Exact angle starting from red mark
+          ORGANIC S-CURVE WAVE DIVIDER — Seamless overshoot through top edge
           ==================================================================== */}
       <div className="student-organic-wave-divider" aria-hidden="true">
         <svg 
@@ -193,17 +193,17 @@ export default function LoginPage({ initialRole = 'STUDENT', onLoginSuccess, onB
           {/* Layer 1: Ethereal Soft Pastel Periwinkle Wave */}
           <path 
             className="student-wave-path-back" 
-            d="M490 0 C 460 80, 405 160, 390 250 C 375 380, 445 510, 440 650 C 435 780, 380 890, 370 1000 L 1000 1000 L 1000 0 Z" 
+            d="M505 -40 C 475 40, 405 160, 390 250 C 375 380, 445 510, 440 650 C 435 780, 380 890, 370 1000 L 360 1040 L 1000 1040 L 1000 -40 Z" 
           />
           {/* Layer 2: Delicate Lavender Veil */}
           <path 
             className="student-wave-path-mid" 
-            d="M515 0 C 485 80, 430 160, 415 250 C 400 380, 470 510, 465 650 C 460 780, 405 890, 395 1000 L 1000 1000 L 1000 0 Z" 
+            d="M530 -40 C 500 40, 430 160, 415 250 C 400 380, 470 510, 465 650 C 460 780, 405 890, 395 1000 L 385 1040 L 1000 1040 L 1000 -40 Z" 
           />
           {/* Layer 3: Solid Right Section Backdrop */}
           <path 
             className="student-wave-path-front" 
-            d="M540 0 C 510 80, 455 160, 440 250 C 425 380, 495 510, 490 650 C 485 780, 430 890, 420 1000 L 1000 1000 L 1000 0 Z" 
+            d="M555 -40 C 525 40, 455 160, 440 250 C 425 380, 495 510, 490 650 C 485 780, 430 890, 420 1000 L 410 1040 L 1000 1040 L 1000 -40 Z" 
           />
         </svg>
       </div>

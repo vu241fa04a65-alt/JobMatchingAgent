@@ -9,7 +9,7 @@
   width: 100%;
   display: grid;
   grid-template-columns: 1fr 1.12fr;
-  background-color: #F8FAFC;
+  background: linear-gradient(145deg, #E2ECFF 0%, #CCDFFF 45%, #DFDCFF 100%);
   overflow-x: hidden;
   position: relative;
   font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -20,7 +20,7 @@
    ========================================================================== */
 .student-auth-left {
   position: relative;
-  background: linear-gradient(145deg, #E2ECFF 0%, #CCDFFF 45%, #DFDCFF 100%);
+  background: transparent;
   padding: 52px 64px 32px;
   display: flex;
   flex-direction: column;
@@ -167,7 +167,7 @@
     transform: translate3d(0, 0, 0);
   }
   100% {
-    transform: translate3d(-10px, 6px, 0);
+    transform: translate3d(-10px, 0, 0);
   }
 }
 
@@ -176,7 +176,7 @@
     transform: translate3d(0, 0, 0);
   }
   100% {
-    transform: translate3d(10px, -6px, 0);
+    transform: translate3d(10px, 0, 0);
   }
 }
 
@@ -508,6 +508,7 @@
     padding: 32px 24px 20px;
     border-right: none;
     border-bottom: 1px solid #E2E8F0;
+    background: linear-gradient(145deg, #E2ECFF 0%, #CCDFFF 45%, #DFDCFF 100%);
   }
   .student-auth-headline {
     font-size: 2rem;
