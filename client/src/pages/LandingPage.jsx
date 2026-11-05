@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Sparkles, ArrowRight, Building2, Users, GraduationCap, ShieldCheck, Play, CheckCircle2, Target, Bot, BarChart3, X } from 'lucide-react';
+import './LandingPage.css';
 
 export default function LandingPage({ onGetStarted, onSelectPortal, onOpenLogin }) {
   const [activeNav, setActiveNav] = useState('home');
@@ -192,125 +193,105 @@ export default function LandingPage({ onGetStarted, onSelectPortal, onOpenLogin 
           </div>
         </div>
 
-        {/* Hero Ecosystem Central Glowing Orb with Connected Nodes */}
+        {/* Hero Ecosystem Central Glowing Orb with Multi-Layer Ambient Background Lighting & Animations */}
         <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <div style={{
-            width: '460px',
-            height: '420px',
-            position: 'relative',
-            background: 'radial-gradient(circle at 50% 50%, rgba(79, 70, 229, 0.12) 0%, rgba(255,255,255,0) 70%)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center'
-          }}>
-            {/* Center Glowing Sphere */}
-            <div style={{
-              width: '150px',
-              height: '150px',
-              borderRadius: '50%',
-              background: 'radial-gradient(circle at 30% 30%, #6366F1, #4338CA, #1E1B4B)',
-              boxShadow: '0 20px 40px rgba(79, 70, 229, 0.4), inset 0 2px 6px rgba(255,255,255,0.4)',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: 'white',
-              textAlign: 'center',
-              zIndex: 10,
-              padding: '12px'
-            }}>
-              <Sparkles size={24} style={{ marginBottom: '4px' }} />
-              <div style={{ fontWeight: 800, fontSize: '0.9375rem' }}>CareerSync</div>
-              <div style={{ fontSize: '0.625rem', color: '#C7D2FE', marginTop: '2px' }}>Skills → Opportunities → Better Outcomes</div>
+          <div className="hero-ecosystem-wrapper">
+            {/* Layer 1: Ambient Corona Mesh (Ultra-wide diffused glow) */}
+            <div className="ambient-corona-mesh" />
+
+            {/* Layer 2: Shifting/Revolving Ambient Rays */}
+            <div className="ambient-revolving-rays" />
+
+            {/* Layer 3: High-Intensity Concentrated Core Aura */}
+            <div className="ambient-core-glow" />
+
+            {/* SVG Orbital Track Rings & Live Animated Data Connector Beams */}
+            <svg className="ecosystem-svg-canvas" viewBox="0 0 580 500" fill="none">
+              <defs>
+                <linearGradient id="gradientStudent" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#818CF8" stopOpacity="0.8" />
+                  <stop offset="100%" stopColor="#4F46E5" stopOpacity="0.3" />
+                </linearGradient>
+                <linearGradient id="gradientCompany" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#34D399" stopOpacity="0.8" />
+                  <stop offset="100%" stopColor="#059669" stopOpacity="0.3" />
+                </linearGradient>
+                <linearGradient id="gradientInst" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#A3E635" stopOpacity="0.8" />
+                  <stop offset="100%" stopColor="#8DC21F" stopOpacity="0.3" />
+                </linearGradient>
+              </defs>
+
+              {/* Orbital Track Rings */}
+              <circle cx="290" cy="250" r="142" className="orbit-ring-inner" />
+              <circle cx="290" cy="250" r="215" className="orbit-ring-outer" />
+
+              {/* Animated Connector Beams from Central AI Hub to Satellites */}
+              <path d="M 290 250 C 230 180, 180 110, 140 60" className="connector-beam connector-beam-student" />
+              <path d="M 290 250 C 350 180, 400 120, 440 75" className="connector-beam connector-beam-company" />
+              <path d="M 290 250 C 340 320, 390 380, 430 435" className="connector-beam connector-beam-inst" />
+            </svg>
+
+            {/* Center Levitating 3D Sphere with Specular Sheen & Dynamic Ground Shadow */}
+            <div className="sphere-anchor-wrapper">
+              <div 
+                className="sphere-floating-body"
+                onClick={() => {
+                  if (onGetStarted) onGetStarted();
+                  else if (onSelectPortal) onSelectPortal();
+                }}
+              >
+                <div className="sphere-sheen-sweep" />
+                <Sparkles size={26} className="sphere-icon-sparkle" />
+                <div className="sphere-brand-title">CareerSync</div>
+                <div className="sphere-tagline">Skills → Opportunities → Better Outcomes</div>
+                <div className="sphere-live-chip">
+                  <span className="chip-pulsar-dot" />
+                  <span>Agent 50 AI</span>
+                </div>
+              </div>
+              <div className="sphere-ground-shadow" />
             </div>
 
             {/* Satellite 1: Students */}
             <div 
               onClick={() => handlePortalClick('STUDENT')}
-              style={{
-                position: 'absolute',
-                top: '20px',
-                left: '20px',
-                backgroundColor: '#FFFFFF',
-                border: '1px solid #E2E8F0',
-                borderRadius: '16px',
-                padding: '12px 16px',
-                boxShadow: '0 10px 25px rgba(0,0,0,0.06)',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '12px',
-                cursor: 'pointer',
-                transition: 'transform 0.2s ease'
-              }}
-              onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
-              onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+              className="ecosystem-satellite-card satellite-student"
             >
-              <div style={{ width: '40px', height: '40px', borderRadius: '10px', backgroundColor: '#EEF2FF', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#4F46E5' }}>
+              <div className="satellite-icon-box" style={{ backgroundColor: '#EEF2FF', color: '#4F46E5' }}>
                 <GraduationCap size={22} />
               </div>
               <div>
-                <div style={{ fontWeight: 800, fontSize: '0.875rem' }}>Students</div>
-                <div style={{ fontSize: '0.6875rem', color: '#64748B' }}>Skills • Interests • Projects</div>
+                <div className="satellite-text-title">Students</div>
+                <div className="satellite-text-sub">Skills • Interests • Projects</div>
               </div>
             </div>
 
             {/* Satellite 2: Companies */}
             <div 
               onClick={() => handlePortalClick('T_AND_P')}
-              style={{
-                position: 'absolute',
-                top: '30px',
-                right: '10px',
-                backgroundColor: '#FFFFFF',
-                border: '1px solid #E2E8F0',
-                borderRadius: '16px',
-                padding: '12px 16px',
-                boxShadow: '0 10px 25px rgba(0,0,0,0.06)',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '12px',
-                cursor: 'pointer',
-                transition: 'transform 0.2s ease'
-              }}
-              onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
-              onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+              className="ecosystem-satellite-card satellite-company"
             >
-              <div style={{ width: '40px', height: '40px', borderRadius: '10px', backgroundColor: '#ECFDF5', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#10B981' }}>
+              <div className="satellite-icon-box" style={{ backgroundColor: '#ECFDF5', color: '#10B981' }}>
                 <Building2 size={22} />
               </div>
               <div>
-                <div style={{ fontWeight: 800, fontSize: '0.875rem' }}>Companies</div>
-                <div style={{ fontSize: '0.6875rem', color: '#64748B' }}>JD • Eligibility • Talent</div>
+                <div className="satellite-text-title">Companies</div>
+                <div className="satellite-text-sub">JD • Eligibility • Talent</div>
               </div>
             </div>
 
             {/* Satellite 3: Institutions */}
             <div 
               onClick={() => handlePortalClick('HOD')}
-              style={{
-                position: 'absolute',
-                bottom: '20px',
-                right: '40px',
-                backgroundColor: '#FFFFFF',
-                border: '1px solid #E2E8F0',
-                borderRadius: '16px',
-                padding: '12px 16px',
-                boxShadow: '0 10px 25px rgba(0,0,0,0.06)',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '12px',
-                cursor: 'pointer',
-                transition: 'transform 0.2s ease'
-              }}
-              onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
-              onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+              className="ecosystem-satellite-card satellite-institution"
             >
-              <div style={{ width: '40px', height: '40px', borderRadius: '10px', backgroundColor: '#F5F3FF', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#8B5CF6' }}>
+              <div className="satellite-icon-box" style={{ backgroundColor: '#F5F3FF', color: '#8B5CF6' }}>
                 <ShieldCheck size={22} />
               </div>
               <div>
-                <div style={{ fontWeight: 800, fontSize: '0.875rem' }}>Institutions</div>
-                <div style={{ fontSize: '0.6875rem', color: '#64748B' }}>T&P Cell • HODs • Analytics</div>
+                <div className="satellite-text-title">Institutions</div>
+                <div className="satellite-text-sub">T&P Cell • HODs • Analytics</div>
               </div>
             </div>
           </div>

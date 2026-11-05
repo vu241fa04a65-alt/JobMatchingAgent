@@ -1,0 +1,504 @@
+/* ==========================================================================
+   CareerSync — Hero Ecosystem Ambient Lighting & High-End Animations
+   ========================================================================== */
+
+/* The Canvas Wrapper */
+.hero-ecosystem-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 580px;
+  height: 520px;
+  margin: 0 auto;
+}
+
+/* ==========================================================================
+   MULTI-LAYER AMBIENT BACKGROUND LIGHTING
+   ========================================================================== */
+
+/* Layer 1: Ultra-Wide Ambient Corona Mesh */
+.ambient-corona-mesh {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 600px;
+  height: 600px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(141, 194, 31, 0.28) 0%,
+    rgba(79, 70, 229, 0.32) 28%,
+    rgba(6, 182, 212, 0.24) 52%,
+    rgba(139, 92, 246, 0.12) 70%,
+    rgba(255, 255, 255, 0) 85%
+  );
+  filter: blur(55px);
+  pointer-events: none;
+  z-index: 1;
+  animation: corona-breathe 7s ease-in-out infinite alternate;
+}
+
+@keyframes corona-breathe {
+  0% {
+    transform: translate(-50%, -50%) scale(0.92);
+    opacity: 0.75;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.08);
+    opacity: 0.95;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1.18);
+    opacity: 0.85;
+  }
+}
+
+/* Layer 2: Revolving Light Beams / Shifting Aura */
+.ambient-revolving-rays {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 520px;
+  height: 520px;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    rgba(79, 70, 229, 0.25) 40deg,
+    transparent 80deg,
+    rgba(141, 194, 31, 0.22) 140deg,
+    transparent 180deg,
+    rgba(6, 182, 212, 0.22) 240deg,
+    transparent 280deg,
+    rgba(124, 58, 237, 0.22) 330deg,
+    transparent 360deg
+  );
+  filter: blur(42px);
+  pointer-events: none;
+  z-index: 2;
+  animation: revolve-rays 22s linear infinite;
+}
+
+@keyframes revolve-rays {
+  from {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+/* Layer 3: High-Intensity Concentrated Core Aura */
+.ambient-core-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 280px;
+  height: 280px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(129, 140, 248, 0.8) 0%,
+    rgba(79, 70, 229, 0.6) 35%,
+    rgba(141, 194, 31, 0.45) 65%,
+    rgba(6, 182, 212, 0) 100%
+  );
+  filter: blur(28px);
+  pointer-events: none;
+  z-index: 3;
+  animation: core-pulsar 4.5s ease-in-out infinite alternate;
+}
+
+@keyframes core-pulsar {
+  0% {
+    transform: translate(-50%, -50%) scale(0.9);
+    opacity: 0.8;
+    filter: blur(24px);
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1.15);
+    opacity: 1;
+    filter: blur(34px);
+  }
+}
+
+/* ==========================================================================
+   SVG ORBITAL TRACKS & DATA FLOW CONNECTOR BEAMS
+   ========================================================================== */
+.ecosystem-svg-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 4;
+}
+
+/* Dashed Orbital Rings */
+.orbit-ring-inner {
+  fill: none;
+  stroke: rgba(99, 102, 241, 0.28);
+  stroke-width: 1.5;
+  stroke-dasharray: 6 8;
+  animation: spin-orbit-inner 60s linear infinite;
+  transform-origin: 290px 260px;
+}
+
+.orbit-ring-outer {
+  fill: none;
+  stroke: rgba(141, 194, 31, 0.25);
+  stroke-width: 1.5;
+  stroke-dasharray: 8 10;
+  animation: spin-orbit-outer 80s linear infinite reverse;
+  transform-origin: 290px 260px;
+}
+
+@keyframes spin-orbit-inner {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes spin-orbit-outer {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Pulsing Connection Lines */
+.connector-beam {
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.connector-beam-student {
+  stroke: url(#gradientStudent);
+  stroke-dasharray: 8 6;
+  animation: beam-flow 2.2s linear infinite;
+}
+
+.connector-beam-company {
+  stroke: url(#gradientCompany);
+  stroke-dasharray: 8 6;
+  animation: beam-flow 2.2s linear infinite;
+}
+
+.connector-beam-inst {
+  stroke: url(#gradientInst);
+  stroke-dasharray: 8 6;
+  animation: beam-flow 2.2s linear infinite;
+}
+
+@keyframes beam-flow {
+  from {
+    stroke-dashoffset: 28;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* ==========================================================================
+   CENTRAL 3D SPHERE LEVITATION & SPECULAR DEPTH
+   ========================================================================== */
+.sphere-anchor-wrapper {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Continuous Soft 3D Floating */
+.sphere-floating-body {
+  width: 168px;
+  height: 168px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 35% 28%,
+    #818CF8 0%,
+    #4F46E5 26%,
+    #3730A3 60%,
+    #1E1B4B 100%
+  );
+  box-shadow: 
+    0 24px 50px -10px rgba(79, 70, 229, 0.58),
+    0 0 50px 8px rgba(141, 194, 31, 0.3),
+    0 0 80px 16px rgba(99, 102, 241, 0.35),
+    inset 0 3px 10px rgba(255, 255, 255, 0.65),
+    inset 0 -8px 18px rgba(15, 23, 42, 0.75);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #FFFFFF;
+  text-align: center;
+  padding: 16px;
+  position: relative;
+  overflow: hidden;
+  user-select: none;
+  cursor: pointer;
+  animation: float-sphere 5s ease-in-out infinite;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sphere-floating-body:hover {
+  transform: scale(1.06) translateY(-4px);
+  box-shadow: 
+    0 30px 65px -10px rgba(79, 70, 229, 0.7),
+    0 0 65px 12px rgba(141, 194, 31, 0.45),
+    0 0 100px 24px rgba(99, 102, 241, 0.5),
+    inset 0 4px 12px rgba(255, 255, 255, 0.8),
+    inset 0 -8px 20px rgba(15, 23, 42, 0.8);
+}
+
+@keyframes float-sphere {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+/* Dynamic Sheen Sweep across Sphere */
+.sphere-sheen-sweep {
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    45deg,
+    transparent 42%,
+    rgba(255, 255, 255, 0.28) 49%,
+    rgba(255, 255, 255, 0.5) 51%,
+    rgba(255, 255, 255, 0.28) 53%,
+    transparent 60%
+  );
+  pointer-events: none;
+  animation: sheen-glimmer 6.5s ease-in-out infinite;
+}
+
+@keyframes sheen-glimmer {
+  0%, 65% {
+    transform: translate(-100%, -100%) rotate(25deg);
+  }
+  85%, 100% {
+    transform: translate(100%, 100%) rotate(25deg);
+  }
+}
+
+/* Floor Contact Shadow (Expands/Sharpens in Sync with Float) */
+.sphere-ground-shadow {
+  width: 130px;
+  height: 22px;
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse at 50% 50%,
+    rgba(79, 70, 229, 0.45) 0%,
+    rgba(141, 194, 31, 0.2) 40%,
+    transparent 80%
+  );
+  filter: blur(6px);
+  margin-top: 14px;
+  animation: ground-shadow-sync 5s ease-in-out infinite;
+}
+
+@keyframes ground-shadow-sync {
+  0% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(0.72);
+    opacity: 0.45;
+    filter: blur(9px);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+}
+
+/* Sphere Inner Content Elements */
+.sphere-icon-sparkle {
+  color: #A3E635;
+  filter: drop-shadow(0 0 8px rgba(163, 230, 53, 0.8));
+  margin-bottom: 6px;
+  animation: sparkle-rotate 4s ease-in-out infinite alternate;
+}
+
+@keyframes sparkle-rotate {
+  0% {
+    transform: scale(0.92) rotate(-5deg);
+  }
+  100% {
+    transform: scale(1.1) rotate(10deg);
+  }
+}
+
+.sphere-brand-title {
+  font-weight: 900;
+  font-size: 1.0625rem;
+  letter-spacing: -0.02em;
+  color: #FFFFFF;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+  line-height: 1.1;
+}
+
+.sphere-tagline {
+  font-size: 0.625rem;
+  color: #C7D2FE;
+  margin-top: 4px;
+  font-weight: 600;
+  line-height: 1.3;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+  max-width: 130px;
+}
+
+.sphere-live-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(16, 185, 129, 0.2);
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  padding: 2px 7px;
+  border-radius: 9999px;
+  font-size: 0.5625rem;
+  font-weight: 800;
+  color: #6EE7B7;
+  margin-top: 6px;
+  letter-spacing: 0.03em;
+}
+
+.chip-pulsar-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background-color: #10B981;
+  box-shadow: 0 0 6px #10B981;
+  animation: dot-pulse 1.8s infinite;
+}
+
+@keyframes dot-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.7); }
+}
+
+/* ==========================================================================
+   INTERCONNECTED SATELLITE CARDS
+   ========================================================================== */
+.ecosystem-satellite-card {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  border-radius: 18px;
+  padding: 12px 18px;
+  box-shadow: 
+    0 12px 30px -4px rgba(15, 23, 42, 0.08),
+    0 4px 12px -2px rgba(15, 23, 42, 0.04);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  cursor: pointer;
+  z-index: 12;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  user-select: none;
+}
+
+.satellite-student {
+  top: 24px;
+  left: 12px;
+}
+
+.satellite-student:hover {
+  transform: translateY(-4px) scale(1.03);
+  border-color: #818CF8;
+  box-shadow: 
+    0 18px 36px -4px rgba(79, 70, 229, 0.22),
+    0 0 20px 2px rgba(79, 70, 229, 0.15);
+}
+
+.satellite-company {
+  top: 36px;
+  right: 12px;
+}
+
+.satellite-company:hover {
+  transform: translateY(-4px) scale(1.03);
+  border-color: #34D399;
+  box-shadow: 
+    0 18px 36px -4px rgba(16, 185, 129, 0.22),
+    0 0 20px 2px rgba(16, 185, 129, 0.15);
+}
+
+.satellite-institution {
+  bottom: 24px;
+  right: 32px;
+}
+
+.satellite-institution:hover {
+  transform: translateY(-4px) scale(1.03);
+  border-color: #A3E635;
+  box-shadow: 
+    0 18px 36px -4px rgba(141, 194, 31, 0.22),
+    0 0 20px 2px rgba(141, 194, 31, 0.15);
+}
+
+.satellite-icon-box {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.ecosystem-satellite-card:hover .satellite-icon-box {
+  transform: scale(1.08);
+}
+
+.satellite-text-title {
+  font-weight: 800;
+  font-size: 0.9375rem;
+  color: #0F172A;
+  line-height: 1.2;
+}
+
+.satellite-text-sub {
+  font-size: 0.71875rem;
+  color: #64748B;
+  font-weight: 500;
+  margin-top: 2px;
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .ambient-corona-mesh,
+  .ambient-revolving-rays,
+  .ambient-core-glow,
+  .orbit-ring-inner,
+  .orbit-ring-outer,
+  .connector-beam-student,
+  .connector-beam-company,
+  .connector-beam-inst,
+  .sphere-floating-body,
+  .sphere-sheen-sweep,
+  .sphere-ground-shadow,
+  .sphere-icon-sparkle {
+    animation: none !important;
+  }
+}
