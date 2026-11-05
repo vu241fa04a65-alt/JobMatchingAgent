@@ -21,11 +21,11 @@
 .student-auth-left {
   position: relative;
   background: linear-gradient(145deg, #EEF4FF 0%, #E0E7FF 50%, #EDE9FE 100%);
-  padding: 52px 64px 36px;
+  padding: 48px 60px 48px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  gap: 16px;
+  justifyContent: center;
+  gap: 14px;
   overflow: hidden;
   z-index: 1;
 }
@@ -35,14 +35,16 @@
   position: relative;
   z-index: 3;
   max-width: 490px;
+  margin-top: auto;
+  margin-bottom: auto;
+  padding-bottom: 90px;
 }
 
 .student-brand-logo {
   display: inline-flex;
   align-items: center;
-  gap: 12px;
   cursor: pointer;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
   transition: opacity 0.2s ease;
 }
 
@@ -50,29 +52,17 @@
   opacity: 0.9;
 }
 
-.student-brand-icon {
-  width: 44px;
+.student-brand-img {
   height: 44px;
-  border-radius: 13px;
-  background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 4px 16px rgba(79, 70, 229, 0.32);
-}
-
-.student-brand-name {
-  font-size: 1.55rem;
-  font-weight: 800;
-  color: #0F172A;
-  letter-spacing: -0.03em;
+  width: auto;
+  object-fit: contain;
 }
 
 .student-brand-subtag {
   color: #475569;
   font-size: 0.875rem;
   font-weight: 500;
-  margin-bottom: 26px;
+  margin-bottom: 24px;
   letter-spacing: -0.01em;
 }
 
@@ -96,20 +86,23 @@
   color: #475569;
   font-size: 0.96875rem;
   line-height: 1.6;
-  max-width: 430px;
-  margin-bottom: 8px;
+  max-width: 440px;
+  margin-bottom: 6px;
 }
 
-/* 3D Graduation Cap on Books Artwork — Raised UP prominently */
+/* 3D Graduation Cap & Books Background Scene — Seamless without any extra box */
 .student-left-art-container {
-  position: relative;
-  z-index: 3;
-  margin-top: 10px;
+  position: absolute;
+  bottom: 0;
+  left: 0;
   width: 100%;
-  max-width: 470px;
+  max-width: 540px;
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   pointer-events: none;
+  z-index: 2;
+  overflow: hidden;
+  line-height: 0;
 }
 
 .student-grad-cap-img {
@@ -118,19 +111,21 @@
   display: block;
   object-fit: contain;
   border-radius: 0;
-  box-shadow: none;
-  filter: drop-shadow(0 16px 32px rgba(99, 102, 241, 0.15));
+  box-shadow: none !important;
+  border: none !important;
+  outline: none !important;
+  background: transparent !important;
 }
 
 /* ==========================================================================
-   ORGANIC S-CURVE WAVE DIVIDER (Front-side gentle curves)
+   ORGANIC S-CURVE WAVE DIVIDER (Slightly big, subtle less-saturated pastel)
    ========================================================================== */
 .student-organic-wave-divider {
   position: absolute;
   top: 0;
   bottom: 0;
   right: -2px;
-  width: 180px;
+  width: 280px;
   height: 100%;
   pointer-events: none;
   z-index: 2;
@@ -145,16 +140,16 @@
   height: 100%;
 }
 
-/* Layer 1: Ambient Lavender Wave */
+/* Layer 1: Ethereal Soft Pastel Periwinkle Wave (Less Color / Subtle) */
 .student-wave-path-back {
-  fill: rgba(167, 139, 250, 0.38);
-  animation: wavePulseSlow 14s ease-in-out infinite alternate;
+  fill: rgba(180, 195, 254, 0.42);
+  animation: wavePulseSlow 16s ease-in-out infinite alternate;
 }
 
-/* Layer 2: Translucent Indigo Wave */
+/* Layer 2: Delicate Lavender Veil (Less Color / Soft) */
 .student-wave-path-mid {
-  fill: rgba(129, 140, 248, 0.45);
-  animation: wavePulseFast 18s ease-in-out infinite alternate;
+  fill: rgba(215, 205, 254, 0.48);
+  animation: wavePulseFast 20s ease-in-out infinite alternate;
 }
 
 /* Layer 3: Solid Right Section Backdrop */
@@ -167,7 +162,7 @@
     transform: translate3d(0, 0, 0) scaleX(1);
   }
   100% {
-    transform: translate3d(-8px, 6px, 0) scaleX(1.04);
+    transform: translate3d(-10px, 8px, 0) scaleX(1.05);
   }
 }
 
@@ -176,7 +171,7 @@
     transform: translate3d(0, 0, 0) scaleX(1);
   }
   100% {
-    transform: translate3d(8px, -8px, 0) scaleX(0.96);
+    transform: translate3d(10px, -8px, 0) scaleX(0.96);
   }
 }
 

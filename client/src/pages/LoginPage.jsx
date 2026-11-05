@@ -136,39 +136,22 @@ export default function LoginPage({ initialRole = 'STUDENT', onLoginSuccess, onB
   return (
     <div className="student-auth-viewport">
       {/* ====================================================================
-          LEFT COLUMN: BRANDING, HEADLINE & 3D GRADUATION ARTWORK
+          LEFT COLUMN: BRANDING, HEADLINE & SEAMLESS 3D BACKGROUND ARTWORK
           ==================================================================== */}
       <section className="student-auth-left">
         {/* Content Block */}
         <div className="student-left-content">
-          {/* Top Brand Logo matching exact mockup blue/violet palette */}
+          {/* Original CareerSync Brand Logo */}
           <div 
             onClick={onBackToLanding} 
             className="student-brand-logo"
             title="Return to CareerSync Home"
           >
-            <div className="student-brand-icon">
-              <svg width="26" height="26" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M18 6L28 12V24L18 30L8 24V12L18 6Z" fill="url(#brand-cube-top)" />
-                <path d="M18 18L28 12V24L18 30V18Z" fill="url(#brand-cube-right)" opacity="0.9" />
-                <path d="M8 12L18 18V30L8 24V12Z" fill="url(#brand-cube-left)" opacity="0.82" />
-                <defs>
-                  <linearGradient id="brand-cube-top" x1="8" y1="6" x2="28" y2="18" gradientUnits="userSpaceOnUse">
-                    <stop stopColor="#A5B4FC" />
-                    <stop offset="1" stopColor="#818CF8" />
-                  </linearGradient>
-                  <linearGradient id="brand-cube-right" x1="18" y1="12" x2="28" y2="30" gradientUnits="userSpaceOnUse">
-                    <stop stopColor="#C084FC" />
-                    <stop offset="1" stopColor="#7C3AED" />
-                  </linearGradient>
-                  <linearGradient id="brand-cube-left" x1="8" y1="12" x2="18" y2="30" gradientUnits="userSpaceOnUse">
-                    <stop stopColor="#38BDF8" />
-                    <stop offset="1" stopColor="#2563EB" />
-                  </linearGradient>
-                </defs>
-              </svg>
-            </div>
-            <span className="student-brand-name">CareerSync</span>
+            <img 
+              src="/career-sync-logo.png" 
+              alt="CareerSync" 
+              className="student-brand-img"
+            />
           </div>
 
           <div className="student-brand-subtag">
@@ -186,38 +169,38 @@ export default function LoginPage({ initialRole = 'STUDENT', onLoginSuccess, onB
           </p>
         </div>
 
-        {/* 3D Graduation Cap & Campus Artwork (Clean, raised UP nicely) */}
+        {/* 3D Graduation Cap on Books & Campus Background Scene — Seamless without any extra box */}
         <div className="student-left-art-container">
           <img 
-            src="/student-grad-clean.png" 
-            alt="Student Placement Readiness" 
+            src="/student-book-clean.png" 
+            alt="CareerSync Student Placement Readiness" 
             className="student-grad-cap-img"
           />
         </div>
 
-        {/* Organic S-Curve Wave Divider into Right Section — Front-side gentle wave */}
+        {/* Organic S-Curve Wave Divider — Slightly big, subtle less-saturated pastel */}
         <div className="student-organic-wave-divider" aria-hidden="true">
           <svg 
             className="student-wave-svg" 
-            viewBox="0 0 180 1000" 
+            viewBox="0 0 280 1000" 
             preserveAspectRatio="none"
             fill="none" 
             xmlns="http://www.w3.org/2000/svg"
           >
-            {/* Layer 1: Ambient Lavender Wave */}
+            {/* Layer 1: Ethereal Soft Pastel Periwinkle Wave */}
             <path 
               className="student-wave-path-back" 
-              d="M110 0 C 85 180, 130 350, 105 520 C 80 700, 125 850, 100 1000 L 180 1000 L 180 0 Z" 
+              d="M280 0 C 160 80, 75 170, 65 260 C 55 360, 130 470, 125 580 C 120 700, 45 870, 40 1000 L 280 1000 Z" 
             />
-            {/* Layer 2: Translucent Indigo Wave */}
+            {/* Layer 2: Delicate Lavender Veil */}
             <path 
               className="student-wave-path-mid" 
-              d="M125 0 C 98 180, 142 350, 115 520 C 92 700, 138 850, 112 1000 L 180 1000 L 180 0 Z" 
+              d="M280 0 C 190 80, 105 170, 95 260 C 85 360, 160 470, 155 580 C 150 700, 75 870, 70 1000 L 280 1000 Z" 
             />
-            {/* Layer 3: Smooth White Transition Front */}
+            {/* Layer 3: Solid Right Section Backdrop */}
             <path 
               className="student-wave-path-front" 
-              d="M140 0 C 115 180, 155 350, 130 520 C 105 700, 150 850, 125 1000 L 180 1000 L 180 0 Z" 
+              d="M280 0 C 220 80, 135 170, 125 260 C 115 360, 190 470, 185 580 C 180 700, 105 870, 100 1000 L 280 1000 Z" 
             />
           </svg>
         </div>
