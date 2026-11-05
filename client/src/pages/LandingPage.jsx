@@ -231,59 +231,21 @@ export default function LandingPage({ onGetStarted, onSelectPortal, onOpenLogin 
               <div className="sphere-ground-shadow" />
             </div>
 
-            {/* Emitted Symbols radiating subtly around the CareerSync orb — Nice, small & clean */}
-            {/* 1. Job Symbol (Briefcase) */}
-            <div 
-              className="emitted-symbol symbol-job" 
-              title="Job Matches & Career Openings"
-              onClick={() => handlePortalClick('STUDENT')}
-            >
-              <Briefcase size={16} />
+            {/* Slowly Emitted Outline Violet Placement Icons — like gentle sunlight rays radiating outward */}
+            <div className="emitted-violet-icon emit-dir-1" aria-hidden="true">
+              <Briefcase size={20} strokeWidth={1.8} />
             </div>
-
-            {/* 2. Opportunities / Fit Target Symbol */}
-            <div 
-              className="emitted-symbol symbol-target" 
-              title="95% Match Fit"
-              onClick={() => setShowOverviewModal(true)}
-            >
-              <Target size={16} />
+            <div className="emitted-violet-icon emit-dir-2" aria-hidden="true">
+              <GraduationCap size={20} strokeWidth={1.8} />
             </div>
-
-            {/* 3. Students / Talent Symbol (Graduation Cap) */}
-            <div 
-              className="emitted-symbol symbol-student" 
-              title="Student Profiles & Skill Verification"
-              onClick={() => handlePortalClick('STUDENT')}
-            >
-              <GraduationCap size={16} />
+            <div className="emitted-violet-icon emit-dir-3" aria-hidden="true">
+              <Briefcase size={18} strokeWidth={1.8} />
             </div>
-
-            {/* 4. Tech Skills Symbol (Code2) */}
-            <div 
-              className="emitted-symbol symbol-skills" 
-              title="Technical Skills & Projects"
-              onClick={() => setShowOverviewModal(true)}
-            >
-              <Code2 size={16} />
+            <div className="emitted-violet-icon emit-dir-4" aria-hidden="true">
+              <Building2 size={20} strokeWidth={1.8} />
             </div>
-
-            {/* 5. Company / Employer Symbol (Building2) */}
-            <div 
-              className="emitted-symbol symbol-company" 
-              title="Company Partners & Job Descriptions"
-              onClick={() => handlePortalClick('T_AND_P')}
-            >
-              <Building2 size={16} />
-            </div>
-
-            {/* 6. AI Intelligence Symbol (Sparkles) */}
-            <div 
-              className="emitted-symbol symbol-ai" 
-              title="Agent 50 Intelligent Matching"
-              onClick={() => setShowOverviewModal(true)}
-            >
-              <Sparkles size={15} />
+            <div className="emitted-violet-icon emit-dir-5" aria-hidden="true">
+              <Target size={19} strokeWidth={1.8} />
             </div>
           </div>
         </div>
