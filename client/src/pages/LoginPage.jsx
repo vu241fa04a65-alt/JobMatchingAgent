@@ -186,7 +186,7 @@ export default function LoginPage({ initialRole = 'STUDENT', onLoginSuccess, onB
           </p>
         </div>
 
-        {/* Lower Left 3D Graduation Cap & Campus Artwork */}
+        {/* 3D Graduation Cap & Campus Artwork (Clean, raised UP nicely) */}
         <div className="student-left-art-container">
           <img 
             src="/student-grad-clean.png" 
@@ -195,7 +195,7 @@ export default function LoginPage({ initialRole = 'STUDENT', onLoginSuccess, onB
           />
         </div>
 
-        {/* Organic S-Curve Wave Divider into Right Section */}
+        {/* Organic S-Curve Wave Divider into Right Section — Front-side gentle wave */}
         <div className="student-organic-wave-divider" aria-hidden="true">
           <svg 
             className="student-wave-svg" 
@@ -207,17 +207,17 @@ export default function LoginPage({ initialRole = 'STUDENT', onLoginSuccess, onB
             {/* Layer 1: Ambient Lavender Wave */}
             <path 
               className="student-wave-path-back" 
-              d="M50 0 C 10 180, 130 360, 50 560 C -15 760, 95 880, 45 1000 L 180 1000 L 180 0 Z" 
+              d="M110 0 C 85 180, 130 350, 105 520 C 80 700, 125 850, 100 1000 L 180 1000 L 180 0 Z" 
             />
             {/* Layer 2: Translucent Indigo Wave */}
             <path 
               className="student-wave-path-mid" 
-              d="M75 0 C 30 190, 150 380, 70 580 C 5 780, 115 900, 65 1000 L 180 1000 L 180 0 Z" 
+              d="M125 0 C 98 180, 142 350, 115 520 C 92 700, 138 850, 112 1000 L 180 1000 L 180 0 Z" 
             />
             {/* Layer 3: Smooth White Transition Front */}
             <path 
               className="student-wave-path-front" 
-              d="M95 0 C 50 200, 170 400, 90 600 C 20 800, 135 920, 85 1000 L 180 1000 L 180 0 Z" 
+              d="M140 0 C 115 180, 155 350, 130 520 C 105 700, 150 850, 125 1000 L 180 1000 L 180 0 Z" 
             />
           </svg>
         </div>

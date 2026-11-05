@@ -16,15 +16,16 @@
 }
 
 /* ==========================================================================
-   LEFT COLUMN: BRANDING, HEADLINE & GRADUATION ARTWORK
+   LEFT COLUMN: BRANDING, HEADLINE & 3D GRADUATION ARTWORK
    ========================================================================== */
 .student-auth-left {
   position: relative;
   background: linear-gradient(145deg, #EEF4FF 0%, #E0E7FF 50%, #EDE9FE 100%);
-  padding: 48px 56px 0;
+  padding: 52px 64px 36px;
   display: flex;
   flex-direction: column;
-  justifyContent: space-between;
+  justify-content: center;
+  gap: 16px;
   overflow: hidden;
   z-index: 1;
 }
@@ -33,7 +34,7 @@
 .student-left-content {
   position: relative;
   z-index: 3;
-  max-width: 480px;
+  max-width: 490px;
 }
 
 .student-brand-logo {
@@ -41,7 +42,7 @@
   align-items: center;
   gap: 12px;
   cursor: pointer;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
   transition: opacity 0.2s ease;
 }
 
@@ -50,18 +51,18 @@
 }
 
 .student-brand-icon {
-  width: 42px;
-  height: 42px;
-  border-radius: 12px;
+  width: 44px;
+  height: 44px;
+  border-radius: 13px;
   background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 14px rgba(79, 70, 229, 0.3);
+  box-shadow: 0 4px 16px rgba(79, 70, 229, 0.32);
 }
 
 .student-brand-name {
-  font-size: 1.5rem;
+  font-size: 1.55rem;
   font-weight: 800;
   color: #0F172A;
   letter-spacing: -0.03em;
@@ -71,7 +72,7 @@
   color: #475569;
   font-size: 0.875rem;
   font-weight: 500;
-  margin-bottom: 34px;
+  margin-bottom: 26px;
   letter-spacing: -0.01em;
 }
 
@@ -81,7 +82,7 @@
   line-height: 1.15;
   color: #0F172A;
   letter-spacing: -0.03em;
-  margin-bottom: 16px;
+  margin-bottom: 14px;
   max-width: 490px;
 }
 
@@ -96,18 +97,18 @@
   font-size: 0.96875rem;
   line-height: 1.6;
   max-width: 430px;
-  margin-bottom: 24px;
+  margin-bottom: 8px;
 }
 
-/* Lower 3D Graduation Cap on Books Artwork */
+/* 3D Graduation Cap on Books Artwork — Raised UP prominently */
 .student-left-art-container {
   position: relative;
   z-index: 3;
-  margin-top: auto;
+  margin-top: 10px;
   width: 100%;
-  max-width: 460px;
+  max-width: 470px;
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   pointer-events: none;
 }
 
@@ -118,11 +119,11 @@
   object-fit: contain;
   border-radius: 0;
   box-shadow: none;
-  filter: drop-shadow(0 14px 28px rgba(99, 102, 241, 0.12));
+  filter: drop-shadow(0 16px 32px rgba(99, 102, 241, 0.15));
 }
 
 /* ==========================================================================
-   ORGANIC S-CURVE WAVE DIVIDER (Exact match to reference mockup)
+   ORGANIC S-CURVE WAVE DIVIDER (Front-side gentle curves)
    ========================================================================== */
 .student-organic-wave-divider {
   position: absolute;
@@ -144,13 +145,13 @@
   height: 100%;
 }
 
-/* Layer 1: Subtle Periwinkle/Lavender Translucent Veil */
+/* Layer 1: Ambient Lavender Wave */
 .student-wave-path-back {
-  fill: rgba(167, 139, 250, 0.35);
+  fill: rgba(167, 139, 250, 0.38);
   animation: wavePulseSlow 14s ease-in-out infinite alternate;
 }
 
-/* Layer 2: Soft Violet/Indigo Translucent Ribbon */
+/* Layer 2: Translucent Indigo Wave */
 .student-wave-path-mid {
   fill: rgba(129, 140, 248, 0.45);
   animation: wavePulseFast 18s ease-in-out infinite alternate;
@@ -166,7 +167,7 @@
     transform: translate3d(0, 0, 0) scaleX(1);
   }
   100% {
-    transform: translate3d(-10px, 8px, 0) scaleX(1.06);
+    transform: translate3d(-8px, 6px, 0) scaleX(1.04);
   }
 }
 
@@ -175,7 +176,7 @@
     transform: translate3d(0, 0, 0) scaleX(1);
   }
   100% {
-    transform: translate3d(12px, -10px, 0) scaleX(0.95);
+    transform: translate3d(8px, -8px, 0) scaleX(0.96);
   }
 }
 
@@ -193,13 +194,13 @@
 }
 
 .student-auth-card {
-  max-width: 440px;
+  max-width: 448px;
   width: 100%;
   background-color: #FFFFFF;
   border-radius: 28px;
   border: 1px solid #E2E8F0;
   box-shadow: 
-    0 25px 55px -12px rgba(15, 23, 42, 0.08), 
+    0 25px 60px -12px rgba(15, 23, 42, 0.08), 
     0 0 1px 1px rgba(15, 23, 42, 0.03);
   padding: 38px 36px;
   box-sizing: border-box;
@@ -309,7 +310,7 @@
   margin-top: 2px;
 }
 
-/* Form Controls */
+/* Form Controls & Beautiful Input Bars */
 .student-form-group {
   margin-bottom: 18px;
   width: 100%;
@@ -320,14 +321,14 @@
   align-items: center !important;
   justify-content: space-between !important;
   width: 100% !important;
-  margin-bottom: 6px !important;
+  margin-bottom: 7px !important;
 }
 
 .student-form-label {
   display: inline-flex !important;
   align-items: center !important;
   gap: 6px !important;
-  font-size: 0.8125rem !important;
+  font-size: 0.825rem !important;
   font-weight: 700 !important;
   color: #334155 !important;
 }
@@ -341,7 +342,7 @@
 
 .student-input-icon {
   position: absolute;
-  left: 14px;
+  left: 15px;
   color: #94A3B8;
   pointer-events: none;
   transition: color 0.15s ease;
@@ -350,13 +351,14 @@
 
 .student-input-field {
   width: 100% !important;
-  height: 48px !important;
-  padding: 0 44px 0 42px !important;
-  border-radius: 12px !important;
+  height: 50px !important;
+  padding: 0 46px 0 44px !important;
+  border-radius: 13px !important;
   border: 1.5px solid #E2E8F0 !important;
-  background-color: #FFFFFF !important;
+  background-color: #FAFAFC !important;
   color: #0F172A !important;
-  font-size: 0.875rem !important;
+  font-size: 0.9375rem !important;
+  font-weight: 500 !important;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
   outline: none !important;
   box-sizing: border-box !important;
@@ -364,13 +366,13 @@
 
 .student-input-field:hover {
   border-color: #CBD5E1 !important;
-  background-color: #FAFAFC !important;
+  background-color: #FFFFFF !important;
 }
 
 .student-input-field:focus {
-  border-color: #4F46E5 !important;
+  border-color: #6366F1 !important;
   background-color: #FFFFFF !important;
-  box-shadow: 0 0 0 3.5px rgba(79, 70, 229, 0.14) !important;
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.12) !important;
 }
 
 .student-input-box:focus-within .student-input-icon {
@@ -378,7 +380,7 @@
 }
 
 .student-forgot-btn {
-  font-size: 0.75rem !important;
+  font-size: 0.78125rem !important;
   font-weight: 600 !important;
   color: #4F46E5 !important;
   background: none !important;
@@ -396,7 +398,7 @@
 
 .student-password-toggle {
   position: absolute !important;
-  right: 12px !important;
+  right: 14px !important;
   top: 50% !important;
   transform: translateY(-50%) !important;
   background: none !important;
@@ -419,11 +421,11 @@
 /* Purple/Indigo Gradient Sign In Button matching mockup */
 .student-signin-btn {
   width: 100% !important;
-  height: 50px !important;
+  height: 52px !important;
   border-radius: 14px !important;
   background: linear-gradient(135deg, #6366F1 0%, #4F46E5 100%) !important;
   color: #FFFFFF !important;
-  font-size: 0.96875rem !important;
+  font-size: 0.98rem !important;
   font-weight: 700 !important;
   border: none !important;
   display: flex !important;
@@ -433,14 +435,14 @@
   cursor: pointer !important;
   margin-top: 8px !important;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
-  box-shadow: 0 4px 16px rgba(79, 70, 229, 0.35) !important;
+  box-shadow: 0 4px 18px rgba(79, 70, 229, 0.35) !important;
   text-align: center !important;
   box-sizing: border-box !important;
 }
 
 .student-signin-btn:hover:not(:disabled) {
   transform: translateY(-1px) !important;
-  box-shadow: 0 6px 22px rgba(79, 70, 229, 0.45) !important;
+  box-shadow: 0 6px 24px rgba(79, 70, 229, 0.45) !important;
 }
 
 .student-signin-btn:active:not(:disabled) {
@@ -455,8 +457,8 @@
 /* Predefined Authorized Format Box */
 .student-predefined-banner {
   margin-top: 20px;
-  padding: 12px 14px;
-  border-radius: 12px;
+  padding: 13px 15px;
+  border-radius: 14px;
   background-color: #F8FAFC;
   border: 1px solid #E2E8F0;
   font-size: 0.71875rem;
@@ -487,7 +489,7 @@
     grid-template-columns: 1fr 1fr;
   }
   .student-auth-left {
-    padding: 36px 36px 0;
+    padding: 36px 36px 24px;
   }
   .student-auth-headline {
     font-size: 2.25rem;
