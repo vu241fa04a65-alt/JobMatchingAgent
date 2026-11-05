@@ -177,34 +177,36 @@ export default function LoginPage({ initialRole = 'STUDENT', onLoginSuccess, onB
             className="student-grad-cap-img"
           />
         </div>
-
-        {/* Organic S-Curve Wave Divider — Slightly big, subtle less-saturated pastel */}
-        <div className="student-organic-wave-divider" aria-hidden="true">
-          <svg 
-            className="student-wave-svg" 
-            viewBox="0 0 280 1000" 
-            preserveAspectRatio="none"
-            fill="none" 
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            {/* Layer 1: Ethereal Soft Pastel Periwinkle Wave */}
-            <path 
-              className="student-wave-path-back" 
-              d="M280 0 C 160 80, 75 170, 65 260 C 55 360, 130 470, 125 580 C 120 700, 45 870, 40 1000 L 280 1000 Z" 
-            />
-            {/* Layer 2: Delicate Lavender Veil */}
-            <path 
-              className="student-wave-path-mid" 
-              d="M280 0 C 190 80, 105 170, 95 260 C 85 360, 160 470, 155 580 C 150 700, 75 870, 70 1000 L 280 1000 Z" 
-            />
-            {/* Layer 3: Solid Right Section Backdrop */}
-            <path 
-              className="student-wave-path-front" 
-              d="M280 0 C 220 80, 135 170, 125 260 C 115 360, 190 470, 185 580 C 180 700, 105 870, 100 1000 L 280 1000 Z" 
-            />
-          </svg>
-        </div>
       </section>
+
+      {/* ====================================================================
+          ORGANIC S-CURVE WAVE DIVIDER — Exact angle starting from red mark
+          ==================================================================== */}
+      <div className="student-organic-wave-divider" aria-hidden="true">
+        <svg 
+          className="student-wave-svg" 
+          viewBox="0 0 1000 1000" 
+          preserveAspectRatio="none"
+          fill="none" 
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          {/* Layer 1: Ethereal Soft Pastel Periwinkle Wave */}
+          <path 
+            className="student-wave-path-back" 
+            d="M490 0 C 460 80, 405 160, 390 250 C 375 380, 445 510, 440 650 C 435 780, 380 890, 370 1000 L 1000 1000 L 1000 0 Z" 
+          />
+          {/* Layer 2: Delicate Lavender Veil */}
+          <path 
+            className="student-wave-path-mid" 
+            d="M515 0 C 485 80, 430 160, 415 250 C 400 380, 470 510, 465 650 C 460 780, 405 890, 395 1000 L 1000 1000 L 1000 0 Z" 
+          />
+          {/* Layer 3: Solid Right Section Backdrop */}
+          <path 
+            className="student-wave-path-front" 
+            d="M540 0 C 510 80, 455 160, 440 250 C 425 380, 495 510, 490 650 C 485 780, 430 890, 420 1000 L 1000 1000 L 1000 0 Z" 
+          />
+        </svg>
+      </div>
 
       {/* ====================================================================
           RIGHT COLUMN: WHITE FLOATING STUDENT LOGIN CARD

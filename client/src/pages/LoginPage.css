@@ -8,7 +8,7 @@
   min-height: 100vh;
   width: 100%;
   display: grid;
-  grid-template-columns: 1fr 1.08fr;
+  grid-template-columns: 1fr 1.05fr;
   background-color: #F8FAFC;
   overflow-x: hidden;
   position: relative;
@@ -21,23 +21,22 @@
 .student-auth-left {
   position: relative;
   background: linear-gradient(145deg, #EEF4FF 0%, #E0E7FF 50%, #EDE9FE 100%);
-  padding: 48px 60px 48px;
+  padding: 52px 64px 32px;
   display: flex;
   flex-direction: column;
-  justifyContent: center;
-  gap: 14px;
+  justify-content: flex-start;
+  align-items: flex-start;
   overflow: hidden;
   z-index: 1;
 }
 
-/* Content block in Left Column */
+/* Content block in Left Column — Positioned cleanly upwards with high-end SaaS font */
 .student-left-content {
   position: relative;
   z-index: 3;
-  max-width: 490px;
-  margin-top: auto;
-  margin-bottom: auto;
-  padding-bottom: 90px;
+  max-width: 500px;
+  margin-top: 0;
+  padding-top: 8px;
 }
 
 .student-brand-logo {
@@ -45,49 +44,58 @@
   align-items: center;
   cursor: pointer;
   margin-bottom: 8px;
-  transition: opacity 0.2s ease;
+  transition: transform 0.2s ease, opacity 0.2s ease;
 }
 
 .student-brand-logo:hover {
-  opacity: 0.9;
+  opacity: 0.92;
+  transform: translateY(-1px);
 }
 
 .student-brand-img {
-  height: 44px;
+  height: 46px;
   width: auto;
   object-fit: contain;
+  display: block;
 }
 
 .student-brand-subtag {
   color: #475569;
-  font-size: 0.875rem;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 0.9375rem;
   font-weight: 500;
-  margin-bottom: 24px;
-  letter-spacing: -0.01em;
+  margin-top: 6px;
+  margin-bottom: 34px;
+  letter-spacing: -0.015em;
 }
 
 .student-auth-headline {
-  font-size: 2.75rem;
-  font-weight: 800;
-  line-height: 1.15;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: clamp(2.5rem, 3.6vw, 3.25rem);
+  font-weight: 850;
+  line-height: 1.14;
   color: #0F172A;
-  letter-spacing: -0.03em;
-  margin-bottom: 14px;
-  max-width: 490px;
+  letter-spacing: -0.035em;
+  margin-bottom: 18px;
+  max-width: 500px;
 }
 
 .student-auth-headline-purple {
-  background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
+  background: linear-gradient(135deg, #4338CA 0%, #6366F1 45%, #7C3AED 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  display: inline-block;
 }
 
 .student-auth-desc {
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   color: #475569;
-  font-size: 0.96875rem;
-  line-height: 1.6;
-  max-width: 440px;
-  margin-bottom: 6px;
+  font-size: 1.03125rem;
+  font-weight: 450;
+  line-height: 1.68;
+  max-width: 460px;
+  margin-bottom: 0;
+  letter-spacing: -0.01em;
 }
 
 /* 3D Graduation Cap & Books Background Scene — Seamless without any extra box */
@@ -96,11 +104,11 @@
   bottom: 0;
   left: 0;
   width: 100%;
-  max-width: 540px;
+  max-width: 520px;
   display: flex;
   align-items: flex-end;
   pointer-events: none;
-  z-index: 2;
+  z-index: 1;
   overflow: hidden;
   line-height: 0;
 }
@@ -118,35 +126,32 @@
 }
 
 /* ==========================================================================
-   ORGANIC S-CURVE WAVE DIVIDER (Slightly big, subtle less-saturated pastel)
+   ORGANIC S-CURVE WAVE DIVIDER (Exact angle starting from red mark)
    ========================================================================== */
 .student-organic-wave-divider {
   position: absolute;
   top: 0;
-  bottom: 0;
-  right: -2px;
-  width: 280px;
+  left: 0;
+  width: 100%;
   height: 100%;
   pointer-events: none;
   z-index: 2;
-  overflow: visible;
+  overflow: hidden;
 }
 
 .student-wave-svg {
-  position: absolute;
-  top: 0;
-  right: 0;
   width: 100%;
   height: 100%;
+  display: block;
 }
 
-/* Layer 1: Ethereal Soft Pastel Periwinkle Wave (Less Color / Subtle) */
+/* Layer 1: Ethereal Soft Pastel Periwinkle Wave */
 .student-wave-path-back {
   fill: rgba(180, 195, 254, 0.42);
   animation: wavePulseSlow 16s ease-in-out infinite alternate;
 }
 
-/* Layer 2: Delicate Lavender Veil (Less Color / Soft) */
+/* Layer 2: Delicate Lavender Veil */
 .student-wave-path-mid {
   fill: rgba(215, 205, 254, 0.48);
   animation: wavePulseFast 20s ease-in-out infinite alternate;
@@ -159,19 +164,19 @@
 
 @keyframes wavePulseSlow {
   0% {
-    transform: translate3d(0, 0, 0) scaleX(1);
+    transform: translate3d(0, 0, 0);
   }
   100% {
-    transform: translate3d(-10px, 8px, 0) scaleX(1.05);
+    transform: translate3d(-10px, 6px, 0);
   }
 }
 
 @keyframes wavePulseFast {
   0% {
-    transform: translate3d(0, 0, 0) scaleX(1);
+    transform: translate3d(0, 0, 0);
   }
   100% {
-    transform: translate3d(10px, -8px, 0) scaleX(0.96);
+    transform: translate3d(10px, -6px, 0);
   }
 }
 
@@ -183,7 +188,7 @@
   align-items: center;
   justify-content: center;
   padding: 44px 40px;
-  background-color: #F8FAFC;
+  background-color: transparent;
   position: relative;
   z-index: 3;
 }
@@ -200,6 +205,8 @@
   padding: 38px 36px;
   box-sizing: border-box;
   transition: box-shadow 0.25s ease;
+  position: relative;
+  z-index: 4;
 }
 
 /* Card Top Navigation Row */
@@ -513,6 +520,7 @@
   }
   .student-auth-right {
     padding: 24px 16px 40px;
+    background-color: #F8FAFC;
   }
   .student-auth-card {
     padding: 28px 22px;
