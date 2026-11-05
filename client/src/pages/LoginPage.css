@@ -237,16 +237,37 @@
   color: #0F172A;
 }
 
-.student-portal-tag-pill {
-  background-color: #EEF2FF;
-  color: #4F46E5;
-  font-size: 0.75rem;
-  font-weight: 700;
-  padding: 6px 14px;
-  border-radius: 999px;
+/* Premium Cursive Portal Badge */
+.student-portal-cursive-badge {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  justify-content: center;
+  padding: 5px 20px 7px;
+  border-radius: 999px;
+  border: 1.5px solid;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  user-select: none;
+  cursor: pointer;
+  position: relative;
+}
+
+.student-portal-cursive-badge:hover {
+  transform: translateY(-2px) scale(1.02);
+  filter: brightness(1.03);
+}
+
+.student-portal-cursive-badge:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.student-portal-cursive-text {
+  font-family: 'Dancing Script', 'Caveat', cursive, sans-serif;
+  font-size: 1.6rem;
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: 0.02em;
+  display: inline-block;
+  transform: translateY(-1px);
 }
 
 /* Card Header */

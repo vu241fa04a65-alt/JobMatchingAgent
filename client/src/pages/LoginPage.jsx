@@ -45,7 +45,36 @@ export default function LoginPage({ initialRole = 'STUDENT', onLoginSuccess, onB
   const [recoverySubmitted, setRecoverySubmitted] = useState(false);
   const [recoveryLoading, setRecoveryLoading] = useState(false);
 
+  const handleRoleSelect = (newRole) => {
+    setSelectedRole(newRole);
+    const creds = defaultCredentials[newRole] || defaultCredentials.STUDENT;
+    setIdentifier(creds.id);
+    setPassword(creds.pass);
+    setError('');
+  };
+
+  const cycleRole = () => {
+    const order = ['STUDENT', 'T_AND_P', 'HOD'];
+    const next = order[(order.indexOf(selectedRole) + 1) % order.length];
+    handleRoleSelect(next);
+  };
+
   useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const roleParam = params.get('role');
+    if (roleParam) {
+      const normalized = roleParam.toUpperCase().replace('-', '_');
+      if (normalized === 'TP' || normalized === 'T_AND_P' || normalized === 'T&P') {
+        handleRoleSelect('T_AND_P');
+        return;
+      } else if (normalized === 'HOD') {
+        handleRoleSelect('HOD');
+        return;
+      } else if (normalized === 'STUDENT') {
+        handleRoleSelect('STUDENT');
+        return;
+      }
+    }
     if (initialRole) {
       setSelectedRole(initialRole);
       const creds = defaultCredentials[initialRole] || defaultCredentials.STUDENT;
@@ -98,40 +127,47 @@ export default function LoginPage({ initialRole = 'STUDENT', onLoginSuccess, onB
       label: 'USN / Student Email',
       placeholder: '1RV23CS184',
       sampleId: '1RV23CS184 (Subbu K) or 1RV22IS015 (Siri C)',
-      portalTitle: 'Student Career Portal',
-      bannerTag: 'STUDENT PORTAL',
-      bannerTitle: 'Student Login',
+      cursiveTitle: 'Student',
+      themeColor: '#2563EB',
+      themeBg: 'linear-gradient(135deg, rgba(37, 99, 235, 0.08) 0%, rgba(59, 130, 246, 0.12) 100%)',
+      themeBorder: 'rgba(37, 99, 235, 0.28)',
+      badgeShadow: '0 4px 14px rgba(37, 99, 235, 0.14)',
+      btnGradient: 'linear-gradient(135deg, #2563EB 0%, #4F46E5 50%, #3B82F6 100%)',
+      btnShadow: '0 8px 24px rgba(37, 99, 235, 0.35)',
       desc: 'Access your personalized matches, skill roadmap and Agent 50 insights.',
-      icon: GraduationCap,
-      badgeIcon: Users
+      icon: GraduationCap
     },
     T_AND_P: {
       label: 'Employee ID / Official Email',
       placeholder: 'TP-OFFICER-01',
       sampleId: 'TP-OFFICER-01 (Aarav Sharma)',
-      portalTitle: 'Training & Placement Portal',
-      bannerTag: 'TRAINING & PLACEMENT',
-      bannerTitle: 'T&P Officer Login',
+      cursiveTitle: 'T&P Officer',
+      themeColor: '#7C3AED',
+      themeBg: 'linear-gradient(135deg, rgba(124, 58, 237, 0.08) 0%, rgba(168, 85, 247, 0.12) 100%)',
+      themeBorder: 'rgba(124, 58, 237, 0.28)',
+      badgeShadow: '0 4px 14px rgba(124, 58, 237, 0.14)',
+      btnGradient: 'linear-gradient(135deg, #7C3AED 0%, #8B5CF6 50%, #6D28D9 100%)',
+      btnShadow: '0 8px 24px rgba(124, 58, 237, 0.35)',
       desc: 'Manage drives, candidate ranking, unmatched cohorts, and placement operations.',
-      icon: Building2,
-      badgeIcon: Building2
+      icon: Building2
     },
     HOD: {
       label: 'Faculty ID / Official Email',
       placeholder: 'HOD-CSE-01',
       sampleId: 'HOD-CSE-01 (Dr. Rajesh Kumar)',
-      portalTitle: 'Department Intelligence Portal',
-      bannerTag: 'DEPARTMENT INTELLIGENCE',
-      bannerTitle: 'HOD Login',
+      cursiveTitle: 'HOD',
+      themeColor: '#059669',
+      themeBg: 'linear-gradient(135deg, rgba(5, 150, 105, 0.08) 0%, rgba(16, 185, 129, 0.12) 100%)',
+      themeBorder: 'rgba(5, 150, 105, 0.28)',
+      badgeShadow: '0 4px 14px rgba(5, 150, 105, 0.14)',
+      btnGradient: 'linear-gradient(135deg, #059669 0%, #10B981 50%, #047857 100%)',
+      btnShadow: '0 8px 24px rgba(5, 150, 105, 0.35)',
       desc: 'Read-only departmental placement statistics, readiness, and skill gaps.',
-      icon: Shield,
-      badgeIcon: Shield
+      icon: Shield
     }
   };
 
   const currentRole = roleConfig[selectedRole] || roleConfig.STUDENT;
-  const RoleIcon = currentRole.icon;
-  const BadgeIcon = currentRole.badgeIcon;
 
   return (
     <div className="student-auth-viewport">
@@ -225,9 +261,21 @@ export default function LoginPage({ initialRole = 'STUDENT', onLoginSuccess, onB
               <span>Back to Portals</span>
             </button>
 
-            <div className="student-portal-tag-pill">
-              <BadgeIcon size={14} />
-              <span>{currentRole.portalTitle}</span>
+            <div 
+              className="student-portal-cursive-badge"
+              onClick={cycleRole}
+              title="Click to switch portal (Student • T&P Officer • HOD)"
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') cycleRole(); }}
+              style={{
+                color: currentRole.themeColor,
+                background: currentRole.themeBg,
+                borderColor: currentRole.themeBorder,
+                boxShadow: currentRole.badgeShadow
+              }}
+            >
+              <span className="student-portal-cursive-text">{currentRole.cursiveTitle}</span>
             </div>
           </div>
 
@@ -262,7 +310,7 @@ export default function LoginPage({ initialRole = 'STUDENT', onLoginSuccess, onB
             <div className="student-form-group">
               <div className="student-form-label-row">
                 <label className="student-form-label" htmlFor="student-identifier">
-                  <Mail size={15} color="#4F46E5" />
+                  <Mail size={15} color={currentRole.themeColor} />
                   <span>{currentRole.label}</span>
                 </label>
               </div>
@@ -289,7 +337,7 @@ export default function LoginPage({ initialRole = 'STUDENT', onLoginSuccess, onB
             <div className="student-form-group">
               <div className="student-form-label-row">
                 <label className="student-form-label" htmlFor="student-password">
-                  <Lock size={15} color="#4F46E5" />
+                  <Lock size={15} color={currentRole.themeColor} />
                   <span>Password</span>
                 </label>
                 <button
@@ -299,6 +347,7 @@ export default function LoginPage({ initialRole = 'STUDENT', onLoginSuccess, onB
                     setShowRecoveryModal(true);
                   }}
                   className="student-forgot-btn"
+                  style={{ color: currentRole.themeColor }}
                 >
                   Forgot password?
                 </button>
@@ -337,6 +386,10 @@ export default function LoginPage({ initialRole = 'STUDENT', onLoginSuccess, onB
               type="submit"
               disabled={loading}
               className="student-signin-btn"
+              style={{
+                background: currentRole.btnGradient,
+                boxShadow: currentRole.btnShadow
+              }}
             >
               {loading ? (
                 <>
