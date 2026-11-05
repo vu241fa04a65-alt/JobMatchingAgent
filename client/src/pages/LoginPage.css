@@ -1,63 +1,51 @@
 /* ==========================================================================
-   CareerSync — Photorealistic Campus Glassmorphism Login Experience
+   CareerSync — Student Login Page Styles (Exact match to design mockup)
    ========================================================================== */
 
-/* Full Viewport Container with Photographic Campus Background */
-.campus-login-viewport {
+/* Main Split-Screen Container */
+.student-auth-viewport {
   min-height: 100vh;
   width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1.08fr;
+  background-color: #F8FAFC;
+  overflow-x: hidden;
   position: relative;
-  background-image: url('/campus-desk-bg.jpg');
-  background-size: cover;
-  background-position: center center;
-  background-repeat: no-repeat;
+}
+
+/* ==========================================================================
+   LEFT COLUMN: BRANDING, HEADLINE & GRADUATION CAP 3D ART
+   ========================================================================== */
+.student-auth-left {
+  position: relative;
+  background: linear-gradient(145deg, #EEF4FF 0%, #E0E7FF 55%, #EDE9FE 100%);
+  padding: 48px 56px 36px;
   display: flex;
   flex-direction: column;
   justifyContent: space-between;
-  overflow-x: hidden;
+  overflow: hidden;
+  border-right: 1px solid rgba(226, 232, 240, 0.8);
 }
 
-/* Subtle Vignette & Contrast Overlay */
-.campus-login-overlay {
+/* Organic Soft Flowing Waves in the Background */
+.student-left-wave-bg {
   position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    90deg, 
-    rgba(15, 23, 42, 0.55) 0%, 
-    rgba(15, 23, 42, 0.20) 45%, 
-    rgba(15, 23, 42, 0.35) 100%
-  );
+  top: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
   pointer-events: none;
   z-index: 1;
 }
 
-/* Split Main Content Grid */
-.campus-login-content {
+/* Content block in Left Column */
+.student-left-content {
   position: relative;
   z-index: 2;
-  flex: 1;
-  display: grid;
-  grid-template-columns: 1.15fr 1fr;
-  align-items: center;
-  max-width: 1440px;
-  width: 100%;
-  margin: 0 auto;
-  padding: 40px 64px 20px;
-  gap: 48px;
+  max-width: 480px;
 }
 
-/* ==========================================================================
-   LEFT COLUMN: BRANDING & HEADLINE
-   ========================================================================== */
-.campus-brand-col {
-  display: flex;
-  flex-direction: column;
-  justifyContent: center;
-  color: #FFFFFF;
-  padding-right: 20px;
-}
-
-.campus-brand-logo-wrap {
+.student-brand-logo {
   display: inline-flex;
   align-items: center;
   cursor: pointer;
@@ -65,110 +53,101 @@
   transition: opacity 0.2s ease;
 }
 
-.campus-brand-logo-wrap:hover {
-  opacity: 0.92;
+.student-brand-logo:hover {
+  opacity: 0.9;
 }
 
-.campus-brand-subtag {
-  color: #E2E8F0;
-  font-size: 0.90625rem;
+.student-brand-subtag {
+  color: #475569;
+  font-size: 0.875rem;
   font-weight: 500;
-  letter-spacing: 0.01em;
-  margin-bottom: 36px;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+  margin-bottom: 40px;
+  letter-spacing: -0.01em;
 }
 
-.campus-hero-title {
-  font-size: 3.5rem;
+.student-auth-headline {
+  font-size: 2.875rem;
   font-weight: 800;
-  line-height: 1.08;
-  color: #FFFFFF;
+  line-height: 1.15;
+  color: #0F172A;
   letter-spacing: -0.03em;
-  margin-bottom: 18px;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+  margin-bottom: 16px;
 }
 
-.opportunity-highlight-green {
-  color: #86EFAC;
-  text-shadow: 0 0 25px rgba(134, 239, 172, 0.35);
+.student-auth-headline-purple {
+  background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
-.campus-hero-desc {
-  color: rgba(255, 255, 255, 0.92);
-  font-size: 1.0625rem;
+.student-auth-desc {
+  color: #475569;
+  font-size: 0.96875rem;
   line-height: 1.6;
-  max-width: 480px;
-  margin-bottom: 32px;
-  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+  max-width: 420px;
+  margin-bottom: 24px;
 }
 
-/* 3 Frosted Glass Badges */
-.campus-badges-row {
+/* Lower 3D Graduation Cap & Books Artwork */
+.student-left-art-container {
+  position: relative;
+  z-index: 2;
+  margin-top: auto;
+  padding-top: 20px;
   display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-  margin-bottom: 36px;
+  align-items: flex-end;
 }
 
-.campus-frosted-pill {
-  background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  padding: 8px 18px;
-  border-radius: 999px;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  color: #FFFFFF;
-  font-size: 0.8125rem;
-  font-weight: 600;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12);
-  transition: all 0.2s ease;
+.student-grad-cap-img {
+  width: 100%;
+  max-width: 380px;
+  height: auto;
+  object-fit: contain;
+  border-radius: 16px;
+  box-shadow: 0 16px 36px -12px rgba(99, 102, 241, 0.2);
+  transition: transform 0.3s ease;
 }
 
-.campus-frosted-pill:hover {
-  background: rgba(255, 255, 255, 0.22);
-  border-color: rgba(255, 255, 255, 0.35);
-  transform: translateY(-1px);
+.student-grad-cap-img:hover {
+  transform: translateY(-2px);
 }
 
 /* ==========================================================================
-   RIGHT COLUMN: FROSTED GLASS LOGIN CARD
+   RIGHT COLUMN: WHITE FLOATING LOGIN CARD
    ========================================================================== */
-.campus-card-col {
+.student-auth-right {
   display: flex;
   align-items: center;
   justifyContent: center;
+  padding: 44px 40px;
+  background-color: #F8FAFC;
 }
 
-.campus-glass-card {
-  max-width: 440px;
+.student-auth-card {
+  max-width: 450px;
   width: 100%;
-  background: rgba(255, 255, 255, 0.82);
-  backdrop-filter: blur(28px);
-  -webkit-backdrop-filter: blur(28px);
+  background-color: #FFFFFF;
   border-radius: 28px;
-  border: 1.5px solid rgba(255, 255, 255, 0.7);
+  border: 1px solid #E2E8F0;
   box-shadow: 
-    0 30px 60px -12px rgba(0, 0, 0, 0.22),
-    0 0 0 1px rgba(255, 255, 255, 0.35);
-  padding: 34px 32px;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+    0 25px 55px -12px rgba(15, 23, 42, 0.08), 
+    0 0 1px 1px rgba(15, 23, 42, 0.03);
+  padding: 36px 34px;
+  transition: box-shadow 0.25s ease;
 }
 
-/* Card Top Navigation */
-.glass-top-row {
+/* Card Top Row */
+.student-card-top-row {
   display: flex;
   align-items: center;
   justifyContent: space-between;
-  margin-bottom: 20px;
+  margin-bottom: 22px;
 }
 
-.glass-back-link {
+.student-card-back-btn {
   background: none;
   border: none;
-  color: #374151;
+  color: #475569;
   font-size: 0.8125rem;
   font-weight: 600;
   cursor: pointer;
@@ -180,17 +159,16 @@
   transition: color 0.15s ease;
 }
 
-.glass-back-link:hover {
-  color: #111827;
+.student-card-back-btn:hover {
+  color: #0F172A;
 }
 
-.glass-center-portal-pill {
-  background: #DCFCE7;
-  border: 1px solid #86EFAC;
-  color: #166534;
-  font-size: 0.71875rem;
+.student-portal-tag-pill {
+  background-color: #EEF2FF;
+  color: #4F46E5;
+  font-size: 0.75rem;
   font-weight: 700;
-  padding: 4px 12px;
+  padding: 5px 14px;
   border-radius: 999px;
   display: inline-flex;
   align-items: center;
@@ -198,125 +176,132 @@
 }
 
 /* Card Header */
-.glass-card-header {
+.student-card-header {
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: 22px;
 }
 
-.glass-card-title {
-  font-size: 1.625rem;
+.student-card-title {
+  font-size: 1.75rem;
   font-weight: 800;
-  color: #111827;
-  letter-spacing: -0.02em;
-  margin-bottom: 4px;
+  color: #0F172A;
+  letter-spacing: -0.025em;
+  margin-bottom: 6px;
 }
 
-.glass-card-subtitle {
+.student-card-sub {
   font-size: 0.8125rem;
-  color: #6B7280;
+  color: #64748B;
   line-height: 1.5;
 }
 
-/* Active Role Banner */
-.glass-role-container {
+/* Active Student Portal Banner */
+.student-role-banner {
   display: flex;
   align-items: center;
   gap: 14px;
-  padding: 12px 16px;
+  padding: 14px 18px;
   border-radius: 16px;
-  background: rgba(243, 244, 246, 0.85);
-  border: 1px solid rgba(229, 231, 235, 0.9);
+  background-color: #EEF2FF;
+  border: 1.5px solid rgba(79, 70, 229, 0.18);
   margin-bottom: 22px;
-  transition: all 0.15s ease;
 }
 
-.glass-role-icon {
-  width: 40px;
-  height: 40px;
+.student-role-iconbox {
+  width: 44px;
+  height: 44px;
   border-radius: 12px;
-  background: #312E81;
+  background: linear-gradient(135deg, #6366F1 0%, #4F46E5 100%);
   display: flex;
   align-items: center;
   justifyContent: center;
   color: #FFFFFF;
   flex-shrink: 0;
-  box-shadow: 0 4px 10px rgba(49, 46, 129, 0.25);
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.35);
 }
 
-.glass-role-sub {
+.student-role-tag {
   font-size: 0.6875rem;
   font-weight: 800;
   color: #4F46E5;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.07em;
 }
 
-.glass-role-main {
-  font-size: 0.9375rem;
+.student-role-title {
+  font-size: 0.96875rem;
   font-weight: 800;
-  color: #111827;
-  margin-top: 1px;
+  color: #0F172A;
+  margin-top: 2px;
 }
 
-/* Form Groups & Inputs */
-.glass-form-group {
+/* Form Controls */
+.student-form-group {
   margin-bottom: 18px;
 }
 
-.glass-field-label {
-  display: block;
-  font-size: 0.8125rem;
-  font-weight: 700;
-  color: #374151;
+.student-form-label-row {
+  display: flex;
+  align-items: center;
+  justifyContent: space-between;
   margin-bottom: 6px;
 }
 
-.glass-input-box {
+.student-form-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: #334155;
+}
+
+.student-input-box {
   position: relative;
   display: flex;
   align-items: center;
 }
 
-.glass-field-icon {
+.student-input-icon {
   position: absolute;
   left: 14px;
-  color: #9CA3AF;
+  color: #94A3B8;
   pointer-events: none;
   transition: color 0.15s ease;
 }
 
-.glass-text-input {
+.student-input-field {
   width: 100%;
   height: 46px;
   padding: 0 14px 0 42px;
   border-radius: 12px;
-  border: 1.5px solid #E5E7EB;
-  background-color: #F3F4F6;
-  color: #111827;
+  border: 1.5px solid #E2E8F0;
+  background-color: #FFFFFF;
+  color: #0F172A;
   font-size: 0.875rem;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   outline: none;
 }
 
-.glass-text-input:hover {
+.student-input-field:hover {
   border-color: #CBD5E1;
-  background-color: #F8FAFC;
+  background-color: #FAFAFC;
 }
 
-.glass-text-input:focus {
-  border-color: #1E3A2F;
+.student-input-field:focus {
+  border-color: #4F46E5;
   background-color: #FFFFFF;
-  box-shadow: 0 0 0 3px rgba(30, 58, 47, 0.15);
+  box-shadow: 0 0 0 3.5px rgba(79, 70, 229, 0.14);
 }
 
-.glass-input-box:focus-within .glass-field-icon {
-  color: #1E3A2F;
+.student-input-box:focus-within .student-input-icon {
+  color: #4F46E5;
 }
 
-.glass-forgot-btn {
+.student-forgot-btn {
   font-size: 0.75rem;
   font-weight: 600;
-  color: #4B5563;
+  color: #4F46E5;
   background: none;
   border: none;
   padding: 0;
@@ -324,19 +309,19 @@
   transition: color 0.15s ease;
 }
 
-.glass-forgot-btn:hover {
-  color: #111827;
+.student-forgot-btn:hover {
+  color: #3730A3;
   text-decoration: underline;
 }
 
-.glass-pw-toggle {
+.student-password-toggle {
   position: absolute;
   right: 12px;
   background: none;
   border: none;
   padding: 6px;
   cursor: pointer;
-  color: #9CA3AF;
+  color: #94A3B8;
   border-radius: 6px;
   display: flex;
   align-items: center;
@@ -344,18 +329,18 @@
   transition: color 0.15s ease;
 }
 
-.glass-pw-toggle:hover {
-  color: #374151;
+.student-password-toggle:hover {
+  color: #475569;
 }
 
-/* Deep Forest Moss Green Sign In Button matching reference image */
-.glass-green-signin-btn {
+/* Purple/Indigo Gradient Sign In Button matching mockup */
+.student-signin-btn {
   width: 100%;
   height: 48px;
-  border-radius: 14px;
-  background: #1E3A2F;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #6366F1 0%, #4F46E5 100%);
   color: #FFFFFF;
-  font-size: 0.9375rem;
+  font-size: 0.96875rem;
   font-weight: 700;
   border: none;
   display: flex;
@@ -365,117 +350,84 @@
   cursor: pointer;
   margin-top: 6px;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 4px 14px rgba(30, 58, 47, 0.35);
+  box-shadow: 0 4px 16px rgba(79, 70, 229, 0.35);
 }
 
-.glass-green-signin-btn:hover:not(:disabled) {
-  background: #142E24;
+.student-signin-btn:hover:not(:disabled) {
   transform: translateY(-1px);
-  box-shadow: 0 6px 18px rgba(30, 58, 47, 0.45);
+  box-shadow: 0 6px 22px rgba(79, 70, 229, 0.45);
 }
 
-.glass-green-signin-btn:active:not(:disabled) {
+.student-signin-btn:active:not(:disabled) {
   transform: translateY(0);
 }
 
-.glass-green-signin-btn:disabled {
+.student-signin-btn:disabled {
   opacity: 0.75;
   cursor: not-allowed;
 }
 
 /* Predefined Authorized Format Box */
-.glass-predefined-banner {
-  margin-top: 18px;
-  padding: 11px 14px;
+.student-predefined-banner {
+  margin-top: 20px;
+  padding: 12px 14px;
   border-radius: 12px;
-  background: rgba(243, 244, 246, 0.75);
-  border: 1px solid rgba(229, 231, 235, 0.9);
+  background-color: #F8FAFC;
+  border: 1px solid #E2E8F0;
   font-size: 0.71875rem;
+  color: #64748B;
   line-height: 1.45;
 }
 
-.glass-predefined-title {
+.student-predefined-title {
   font-weight: 700;
-  color: #374151;
+  color: #334155;
   display: flex;
   align-items: center;
   gap: 6px;
   margin-bottom: 4px;
 }
 
-.glass-predefined-text {
-  color: #4B5563;
+.student-predefined-text {
+  color: #475569;
 }
 
 /* ==========================================================================
-   BOTTOM FOOTER BAR
-   ========================================================================== */
-.campus-bottom-bar {
-  position: relative;
-  z-index: 2;
-  max-width: 1440px;
-  width: 100%;
-  margin: 0 auto;
-  padding: 14px 64px 20px;
-  display: flex;
-  align-items: center;
-  justifyContent: space-between;
-  border-top: 1px solid rgba(255, 255, 255, 0.15);
-  color: rgba(255, 255, 255, 0.75);
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.bottom-brand-tag {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.bottom-motto-tag {
-  letter-spacing: 0.14em;
-  opacity: 0.85;
-}
-
-/* ==========================================================================
-   RESPONSIVENESS
+   RESPONSIVENESS (Desktop, Laptop, Tablet, Mobile)
    ========================================================================== */
 @media (max-width: 1024px) {
-  .campus-login-content {
-    padding: 32px 36px 20px;
-    gap: 32px;
+  .student-auth-viewport {
+    grid-template-columns: 1fr 1fr;
   }
-  .campus-hero-title {
-    font-size: 2.75rem;
+  .student-auth-left {
+    padding: 36px 36px 28px;
   }
-  .campus-bottom-bar {
-    padding: 14px 36px 20px;
+  .student-auth-headline {
+    font-size: 2.375rem;
   }
 }
 
 @media (max-width: 860px) {
-  .campus-login-content {
+  .student-auth-viewport {
     display: flex;
     flex-direction: column;
-    padding: 24px 20px 32px;
-    gap: 28px;
+    min-height: 100vh;
   }
-  .campus-hero-title {
-    font-size: 2.125rem;
+  .student-auth-left {
+    padding: 32px 24px 20px;
+    border-right: none;
+    border-bottom: 1px solid #E2E8F0;
   }
-  .campus-hero-desc {
-    font-size: 0.9375rem;
-    margin-bottom: 20px;
+  .student-auth-headline {
+    font-size: 2rem;
   }
-  .campus-badges-row {
-    margin-bottom: 16px;
+  .student-left-art-container {
+    display: none; /* Keep mobile view compact & clean */
   }
-  .campus-bottom-bar {
-    padding: 12px 20px 18px;
-    flex-direction: column;
-    gap: 6px;
-    text-align: center;
+  .student-auth-right {
+    padding: 24px 16px 40px;
+  }
+  .student-auth-card {
+    padding: 28px 22px;
   }
 }

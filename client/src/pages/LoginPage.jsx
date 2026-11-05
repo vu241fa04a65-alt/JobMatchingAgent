@@ -16,9 +16,7 @@ import {
   Mail,
   ArrowLeft,
   Info,
-  TrendingUp,
-  Star,
-  ChevronRight
+  Users
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import './LoginPage.css';
@@ -60,7 +58,7 @@ export default function LoginPage({ initialRole = 'STUDENT', onLoginSuccess, onB
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!identifier.trim()) {
-      setError('Please enter your URN or student email.');
+      setError('Please enter your USN or registered campus email.');
       return;
     }
     if (!password) {
@@ -78,7 +76,7 @@ export default function LoginPage({ initialRole = 'STUDENT', onLoginSuccess, onB
         onLoginSuccess('tp-dashboard');
       }
     } catch (err) {
-      setError(err.message || 'Authentication failed. Please check your credentials.');
+      setError(err.message || 'Authentication failed. Please verify your credentials or contact T&P administration.');
     } finally {
       setLoading(false);
     }
@@ -97,289 +95,297 @@ export default function LoginPage({ initialRole = 'STUDENT', onLoginSuccess, onB
   // Role metadata configurations matching the mockup design
   const roleConfig = {
     STUDENT: {
-      label: 'URN / Student Email',
+      label: 'USN / Student Email',
       placeholder: '1RV23CS184',
-      sampleId: '1RV23CS184 (Subbu K) or 1RV23CS1815 (Siri C)',
-      portalTitle: 'Student / Center Portal',
+      sampleId: '1RV23CS184 (Subbu K) or 1RV22IS015 (Siri C)',
+      portalTitle: 'Student Career Portal',
       bannerTag: 'STUDENT PORTAL',
       bannerTitle: 'Student Login',
-      desc: 'Access your personalized dashboard, find matching and acquire insights.',
+      desc: 'Access your personalized matches, skill roadmap and Agent 50 insights.',
       icon: GraduationCap,
-      iconBg: '#312E81'
+      badgeIcon: Users
     },
     T_AND_P: {
       label: 'Employee ID / Official Email',
       placeholder: 'TP-OFFICER-01',
       sampleId: 'TP-OFFICER-01 (Aarav Sharma)',
-      portalTitle: 'T&P / Placement Portal',
+      portalTitle: 'Training & Placement Portal',
       bannerTag: 'TRAINING & PLACEMENT',
       bannerTitle: 'T&P Officer Login',
-      desc: 'Access your placement drives, candidate rankings, and corporate relationships.',
+      desc: 'Manage drives, candidate ranking, unmatched cohorts, and placement operations.',
       icon: Building2,
-      iconBg: '#4C1D95'
+      badgeIcon: Building2
     },
     HOD: {
       label: 'Faculty ID / Official Email',
       placeholder: 'HOD-CSE-01',
       sampleId: 'HOD-CSE-01 (Dr. Rajesh Kumar)',
-      portalTitle: 'Department / HOD Portal',
+      portalTitle: 'Department Intelligence Portal',
       bannerTag: 'DEPARTMENT INTELLIGENCE',
       bannerTitle: 'HOD Login',
-      desc: 'Access departmental placement insights, student readiness, and curriculum analytics.',
+      desc: 'Read-only departmental placement statistics, readiness, and skill gaps.',
       icon: Shield,
-      iconBg: '#064E3B'
+      badgeIcon: Shield
     }
   };
 
   const currentRole = roleConfig[selectedRole] || roleConfig.STUDENT;
   const RoleIcon = currentRole.icon;
+  const BadgeIcon = currentRole.badgeIcon;
 
   return (
-    <div className="campus-login-viewport">
-      {/* Background Dark Overlay for crisp contrast */}
-      <div className="campus-login-overlay" />
+    <div className="student-auth-viewport">
+      {/* ====================================================================
+          LEFT COLUMN: BRANDING, HEADLINE, 3D GRADUATION CAP & BOOKS ARTWORK
+          ==================================================================== */}
+      <section className="student-auth-left">
+        {/* Soft Flowing Waves SVG Overlay in the Background */}
+        <svg 
+          className="student-left-wave-bg" 
+          viewBox="0 0 500 700" 
+          fill="none" 
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path 
+            d="M500 0C400 120 320 180 340 320C360 480 200 520 100 580C30 620 0 680 0 700H500V0Z" 
+            fill="url(#wave-gradient-1)" 
+            opacity="0.3"
+          />
+          <path 
+            d="M500 0C440 80 380 140 400 250C420 380 300 440 220 500C140 560 50 640 0 700H500V0Z" 
+            fill="url(#wave-gradient-2)" 
+            opacity="0.2"
+          />
+          <defs>
+            <linearGradient id="wave-gradient-1" x1="500" y1="0" x2="100" y2="700" gradientUnits="userSpaceOnUse">
+              <stop stopColor="#818CF8" />
+              <stop offset="1" stopColor="#C7D2FE" />
+            </linearGradient>
+            <linearGradient id="wave-gradient-2" x1="500" y1="0" x2="200" y2="700" gradientUnits="userSpaceOnUse">
+              <stop stopColor="#A78BFA" />
+              <stop offset="1" stopColor="#E0E7FF" />
+            </linearGradient>
+          </defs>
+        </svg>
 
-      {/* Main Split Grid Area */}
-      <main className="campus-login-content">
-        {/* ==================================================================
-            LEFT COLUMN: BRANDING, HEADLINE, FROSTED BADGES
-            ================================================================== */}
-        <section className="campus-brand-col">
-          {/* Brand Logo */}
+        {/* Content Block */}
+        <div className="student-left-content">
+          {/* Top Brand Logo */}
           <div 
             onClick={onBackToLanding} 
-            className="campus-brand-logo-wrap"
+            className="student-brand-logo"
             title="Return to CareerSync Home"
           >
             <img 
               src="/career-sync-logo.png" 
               alt="CareerSync" 
-              style={{ height: '48px', width: 'auto', objectFit: 'contain' }} 
+              style={{ height: '46px', width: 'auto', objectFit: 'contain' }} 
             />
           </div>
 
-          <div className="campus-brand-subtag">
+          <div className="student-brand-subtag">
             Empowered Departments. Stronger Futures.
           </div>
 
-          {/* Hero Headline with Mint-Green "Opportunity" */}
-          <h1 className="campus-hero-title">
-            Your Next<br />
-            <span className="opportunity-highlight-green">Opportunity</span><br />
-            Starts Here.
+          {/* Hero Headline */}
+          <h1 className="student-auth-headline">
+            Your Next Opportunity<br />
+            <span className="student-auth-headline-purple">Starts Here.</span>
           </h1>
 
-          <p className="campus-hero-desc">
+          <p className="student-auth-desc">
             AI-powered placement intelligence for students, training & placement cells, and academic departments.
           </p>
+        </div>
 
-          {/* 3 Frosted Glass Badges */}
-          <div className="campus-badges-row">
-            <div className="campus-frosted-pill">
-              <GraduationCap size={16} color="#FFFFFF" />
-              <span>Smarter Matching</span>
-            </div>
-            <div className="campus-frosted-pill">
-              <TrendingUp size={16} color="#86EFAC" />
-              <span>Better Opportunities</span>
-            </div>
-            <div className="campus-frosted-pill">
-              <Star size={16} color="#FBBF24" fill="#FBBF24" />
-              <span>Brighter Future</span>
+        {/* Lower Left 3D Graduation Cap on Books Visual */}
+        <div className="student-left-art-container">
+          <img 
+            src="/student-grad-art.png" 
+            alt="Student Placement Readiness" 
+            className="student-grad-cap-img"
+          />
+        </div>
+      </section>
+
+      {/* ====================================================================
+          RIGHT COLUMN: WHITE FLOATING STUDENT LOGIN CARD
+          ==================================================================== */}
+      <section className="student-auth-right">
+        <div className="student-auth-card">
+          {/* Card Top Navigation */}
+          <div className="student-card-top-row">
+            <button
+              type="button"
+              onClick={onBackToLanding}
+              className="student-card-back-btn"
+              title="Return to Portals"
+            >
+              <ArrowLeft size={15} />
+              <span>Back to Portals</span>
+            </button>
+
+            <div className="student-portal-tag-pill">
+              <BadgeIcon size={14} />
+              <span>{currentRole.portalTitle}</span>
             </div>
           </div>
-        </section>
 
-        {/* ==================================================================
-            RIGHT COLUMN: FROSTED GLASS LOGIN CARD
-            ================================================================== */}
-        <section className="campus-card-col">
-          <div className="campus-glass-card">
-            {/* Top Navigation */}
-            <div className="glass-top-row">
-              <button
-                type="button"
-                onClick={onBackToLanding}
-                className="glass-back-link"
-                title="Return to Portals"
-              >
-                <ArrowLeft size={15} />
-                <span>Back to Portals</span>
-              </button>
+          {/* Card Header */}
+          <div className="student-card-header">
+            <h2 className="student-card-title">Account Sign In</h2>
+            <p className="student-card-sub">{currentRole.desc}</p>
+          </div>
 
-              <div className="glass-center-portal-pill">
-                <GraduationCap size={14} color="#166534" />
-                <span>{currentRole.portalTitle}</span>
-              </div>
+          {/* Active Portal Role Banner */}
+          <div className="student-role-banner">
+            <div className="student-role-iconbox">
+              <RoleIcon size={22} />
             </div>
-
-            {/* Header */}
-            <div className="glass-card-header">
-              <h2 className="glass-card-title">Account Sign In</h2>
-              <p className="glass-card-subtitle">{currentRole.desc}</p>
+            <div style={{ flex: 1 }}>
+              <div className="student-role-tag">{currentRole.bannerTag}</div>
+              <div className="student-role-title">{currentRole.bannerTitle}</div>
             </div>
+            <ArrowRight size={18} color="#4F46E5" strokeWidth={2.5} />
+          </div>
 
-            {/* Active Role Banner */}
-            <div className="glass-role-container">
-              <div className="glass-role-icon" style={{ backgroundColor: currentRole.iconBg }}>
-                <RoleIcon size={20} />
-              </div>
-              <div style={{ flex: 1 }}>
-                <div className="glass-role-sub">{currentRole.bannerTag}</div>
-                <div className="glass-role-main">{currentRole.bannerTitle}</div>
-              </div>
-              <ChevronRight size={18} color="#9CA3AF" />
+          {/* Error Alert */}
+          {error && (
+            <div style={{
+              backgroundColor: '#FEF2F2',
+              border: '1px solid #FECACA',
+              color: '#DC2626',
+              padding: '10px 14px',
+              borderRadius: '12px',
+              fontSize: '0.8125rem',
+              marginBottom: '16px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px'
+            }} role="alert">
+              <AlertCircle size={16} style={{ flexShrink: 0 }} />
+              <span>{error}</span>
             </div>
+          )}
 
-            {/* Error Alert */}
-            {error && (
-              <div style={{
-                backgroundColor: '#FEF2F2',
-                border: '1px solid #FECACA',
-                color: '#B91C1C',
-                padding: '10px 14px',
-                borderRadius: '12px',
-                fontSize: '0.8125rem',
-                marginBottom: '16px',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px'
-              }} role="alert">
-                <AlertCircle size={16} style={{ flexShrink: 0 }} />
-                <span>{error}</span>
-              </div>
-            )}
-
-            {/* Form */}
-            <form onSubmit={handleSubmit}>
-              {/* URN / Student Email */}
-              <div className="glass-form-group">
-                <label className="glass-field-label" htmlFor="login-identifier">
-                  {currentRole.label}
+          {/* Form */}
+          <form onSubmit={handleSubmit}>
+            {/* USN / Student Email */}
+            <div className="student-form-group">
+              <div className="student-form-label-row">
+                <label className="student-form-label" htmlFor="student-identifier">
+                  <Mail size={14} color="#64748B" />
+                  <span>{currentRole.label}</span>
                 </label>
-                <div className="glass-input-box">
-                  <User size={16} className="glass-field-icon" />
-                  <input
-                    id="login-identifier"
-                    type="text"
-                    value={identifier}
-                    onChange={(e) => {
-                      setIdentifier(e.target.value);
-                      if (error) setError('');
-                    }}
-                    placeholder={currentRole.placeholder}
-                    className="glass-text-input"
-                    disabled={loading}
-                    autoComplete="username"
-                    required
-                  />
-                </div>
               </div>
-
-              {/* Password */}
-              <div className="glass-form-group">
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
-                  <label className="glass-field-label" htmlFor="login-password" style={{ margin: 0 }}>
-                    Password
-                  </label>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setRecoverySubmitted(false);
-                      setShowRecoveryModal(true);
-                    }}
-                    className="glass-forgot-btn"
-                  >
-                    Forgot password?
-                  </button>
-                </div>
-                <div className="glass-input-box">
-                  <Lock size={16} className="glass-field-icon" />
-                  <input
-                    id="login-password"
-                    type={showPassword ? 'text' : 'password'}
-                    value={password}
-                    onChange={(e) => {
-                      setPassword(e.target.value);
-                      if (error) setError('');
-                    }}
-                    placeholder="••••••••••"
-                    className="glass-text-input"
-                    disabled={loading}
-                    autoComplete="current-password"
-                    required
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="glass-pw-toggle"
-                    title={showPassword ? 'Hide password' : 'Show password'}
-                    aria-label={showPassword ? 'Hide password' : 'Show password'}
-                    tabIndex={-1}
-                  >
-                    {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-                  </button>
-                </div>
-              </div>
-
-              {/* Deep Forest Moss Green Button */}
-              <button
-                type="submit"
-                disabled={loading}
-                className="glass-green-signin-btn"
-              >
-                {loading ? (
-                  <>
-                    <Loader2 size={17} className="animate-spin" />
-                    <span>Authenticating...</span>
-                  </>
-                ) : (
-                  <>
-                    <span>Sign In</span>
-                    <ArrowRight size={17} />
-                  </>
-                )}
-              </button>
-            </form>
-
-            {/* Predefined Authorized Account Format Banner */}
-            <div className="glass-predefined-banner">
-              <div className="glass-predefined-title">
-                <Info size={14} color="#166534" />
-                <span>Predefined Authorized Account Format:</span>
-              </div>
-              <div className="glass-predefined-text">
-                • Identifier: <strong>{currentRole.sampleId}</strong>
+              <div className="student-input-box">
+                <User size={16} className="student-input-icon" />
+                <input
+                  id="student-identifier"
+                  type="text"
+                  value={identifier}
+                  onChange={(e) => {
+                    setIdentifier(e.target.value);
+                    if (error) setError('');
+                  }}
+                  placeholder={currentRole.placeholder}
+                  className="student-input-field"
+                  disabled={loading}
+                  autoComplete="username"
+                  required
+                />
               </div>
             </div>
+
+            {/* Password */}
+            <div className="student-form-group">
+              <div className="student-form-label-row">
+                <label className="student-form-label" htmlFor="student-password">
+                  <Lock size={14} color="#64748B" />
+                  <span>Password</span>
+                </label>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setRecoverySubmitted(false);
+                    setShowRecoveryModal(true);
+                  }}
+                  className="student-forgot-btn"
+                >
+                  Forgot password?
+                </button>
+              </div>
+              <div className="student-input-box">
+                <Lock size={16} className="student-input-icon" />
+                <input
+                  id="student-password"
+                  type={showPassword ? 'text' : 'password'}
+                  value={password}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    if (error) setError('');
+                  }}
+                  placeholder="••••••••••"
+                  className="student-input-field"
+                  disabled={loading}
+                  autoComplete="current-password"
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="student-password-toggle"
+                  title={showPassword ? 'Hide password' : 'Show password'}
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                  tabIndex={-1}
+                >
+                  {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
+              </div>
+            </div>
+
+            {/* Vibrant Purple/Indigo Gradient Sign In Button */}
+            <button
+              type="submit"
+              disabled={loading}
+              className="student-signin-btn"
+            >
+              {loading ? (
+                <>
+                  <Loader2 size={17} className="animate-spin" />
+                  <span>Authenticating...</span>
+                </>
+              ) : (
+                <>
+                  <span>Sign In</span>
+                  <ArrowRight size={17} />
+                </>
+              )}
+            </button>
+          </form>
+
+          {/* Predefined Authorized Account Format Banner */}
+          <div className="student-predefined-banner">
+            <div className="student-predefined-title">
+              <Info size={14} color="#4F46E5" />
+              <span>Predefined Authorized Account Format:</span>
+            </div>
+            <div className="student-predefined-text">
+              • Identifier: <strong>{currentRole.sampleId}</strong>
+            </div>
           </div>
-        </section>
-      </main>
-
-      {/* ==================================================================
-          BOTTOM FOOTER BAR
-          ================================================================== */}
-      <footer className="campus-bottom-bar">
-        <div className="bottom-brand-tag">
-          <img src="/career-sync-icon.png" alt="" style={{ height: '16px', opacity: 0.9 }} />
-          <span>CareerSync</span>
-          <span style={{ opacity: 0.5 }}>•</span>
-          <span>Bridging Students and Opportunities</span>
         </div>
-        <div className="bottom-motto-tag">
-          LEARN &nbsp;•&nbsp; GROW &nbsp;•&nbsp; SUCCEED
-        </div>
-      </footer>
+      </section>
 
-      {/* ==================================================================
+      {/* ====================================================================
           INSTITUTIONAL PASSWORD RECOVERY MODAL
-          ================================================================== */}
+          ==================================================================== */}
       {showRecoveryModal && (
         <div style={{
           position: 'fixed',
           inset: 0,
-          background: 'rgba(15, 23, 42, 0.7)',
-          backdropFilter: 'blur(6px)',
+          background: 'rgba(15, 23, 42, 0.65)',
+          backdropFilter: 'blur(5px)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -392,11 +398,11 @@ export default function LoginPage({ initialRole = 'STUDENT', onLoginSuccess, onB
             background: '#FFFFFF',
             borderRadius: '24px',
             padding: '28px',
-            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)'
+            boxShadow: '0 25px 50px -12px rgba(15, 23, 42, 0.25)'
           }} onClick={(e) => e.stopPropagation()}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <div style={{ width: '36px', height: '36px', borderRadius: '10px', backgroundColor: '#DCFCE7', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#166534' }}>
+                <div style={{ width: '36px', height: '36px', borderRadius: '10px', backgroundColor: '#EEF2FF', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#4F46E5' }}>
                   <KeyRound size={18} />
                 </div>
                 <h3 style={{ fontSize: '1.1875rem', fontWeight: 800, color: '#0F172A', margin: 0 }}>
@@ -416,12 +422,12 @@ export default function LoginPage({ initialRole = 'STUDENT', onLoginSuccess, onB
             {!recoverySubmitted ? (
               <form onSubmit={handleRecoverySubmit}>
                 <p style={{ fontSize: '0.8125rem', color: '#64748B', lineHeight: 1.5, marginBottom: '16px' }}>
-                  Institutional student credentials are managed by the campus Training & Placement directory. Enter your URN or student email to request assistance.
+                  Student account credentials are managed through the RVCE Training & Placement active directory. Enter your USN or student email to receive assistance.
                 </p>
 
                 <div style={{ marginBottom: '16px' }}>
                   <label style={{ display: 'block', fontSize: '0.78125rem', fontWeight: 700, color: '#334155', marginBottom: '6px' }}>
-                    URN or Campus Email
+                    USN or Student Email
                   </label>
                   <div style={{ position: 'relative' }}>
                     <Mail size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#94A3B8' }} />
@@ -451,7 +457,7 @@ export default function LoginPage({ initialRole = 'STUDENT', onLoginSuccess, onB
                     type="submit"
                     disabled={recoveryLoading || !recoveryIdentifier.trim()}
                     className="btn btn-primary"
-                    style={{ padding: '8px 18px', borderRadius: '8px', backgroundColor: '#1E3A2F', borderColor: '#1E3A2F' }}
+                    style={{ padding: '8px 18px', borderRadius: '8px' }}
                   >
                     {recoveryLoading ? 'Routing Request...' : 'Send Guidance'}
                   </button>
@@ -459,7 +465,7 @@ export default function LoginPage({ initialRole = 'STUDENT', onLoginSuccess, onB
               </form>
             ) : (
               <div style={{ textAlign: 'center', padding: '12px 0' }}>
-                <div style={{ width: '48px', height: '48px', borderRadius: '50%', backgroundColor: '#DCFCE7', color: '#166534', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px' }}>
+                <div style={{ width: '48px', height: '48px', borderRadius: '50%', backgroundColor: '#ECFDF5', color: '#059669', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px' }}>
                   <CheckCircle2 size={24} />
                 </div>
                 <h4 style={{ fontSize: '1rem', fontWeight: 700, color: '#0F172A', marginBottom: '6px' }}>
@@ -475,7 +481,7 @@ export default function LoginPage({ initialRole = 'STUDENT', onLoginSuccess, onB
                   type="button"
                   onClick={() => setShowRecoveryModal(false)}
                   className="btn btn-primary"
-                  style={{ width: '100%', borderRadius: '8px', padding: '10px', backgroundColor: '#1E3A2F', borderColor: '#1E3A2F' }}
+                  style={{ width: '100%', borderRadius: '8px', padding: '10px' }}
                 >
                   Back to Sign In
                 </button>
