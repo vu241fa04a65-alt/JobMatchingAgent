@@ -237,23 +237,23 @@
   color: #0F172A;
 }
 
-/* Premium Cursive Portal Badge */
+/* Clean Cursive Portal Header Tag — Box Frame Removed */
 .student-portal-cursive-badge {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  padding: 5px 20px 7px;
-  border-radius: 999px;
-  border: 1.5px solid;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  justify-content: flex-end;
+  padding: 0;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
   user-select: none;
   cursor: pointer;
-  position: relative;
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease;
 }
 
 .student-portal-cursive-badge:hover {
-  transform: translateY(-2px) scale(1.02);
-  filter: brightness(1.03);
+  transform: translateY(-1px) scale(1.05);
+  opacity: 0.88;
 }
 
 .student-portal-cursive-badge:active {
@@ -261,11 +261,11 @@
 }
 
 .student-portal-cursive-text {
-  font-family: 'Dancing Script', 'Caveat', cursive, sans-serif;
-  font-size: 1.6rem;
+  font-family: 'Caveat', cursive, sans-serif;
+  font-size: 2.15rem;
   font-weight: 700;
-  line-height: 1.1;
-  letter-spacing: 0.02em;
+  line-height: 1;
+  letter-spacing: -0.01em;
   display: inline-block;
   transform: translateY(-1px);
 }

@@ -128,12 +128,9 @@ export default function LoginPage({ initialRole = 'STUDENT', onLoginSuccess, onB
       placeholder: '1RV23CS184',
       sampleId: '1RV23CS184 (Subbu K) or 1RV22IS015 (Siri C)',
       cursiveTitle: 'Student',
-      themeColor: '#2563EB',
-      themeBg: 'linear-gradient(135deg, rgba(37, 99, 235, 0.08) 0%, rgba(59, 130, 246, 0.12) 100%)',
-      themeBorder: 'rgba(37, 99, 235, 0.28)',
-      badgeShadow: '0 4px 14px rgba(37, 99, 235, 0.14)',
-      btnGradient: 'linear-gradient(135deg, #2563EB 0%, #4F46E5 50%, #3B82F6 100%)',
-      btnShadow: '0 8px 24px rgba(37, 99, 235, 0.35)',
+      themeColor: '#0EA5E9',
+      btnGradient: 'linear-gradient(135deg, #0EA5E9 0%, #38BDF8 50%, #0284C7 100%)',
+      btnShadow: '0 8px 24px rgba(14, 165, 233, 0.35)',
       desc: 'Access your personalized matches, skill roadmap and Agent 50 insights.',
       icon: GraduationCap
     },
@@ -143,9 +140,6 @@ export default function LoginPage({ initialRole = 'STUDENT', onLoginSuccess, onB
       sampleId: 'TP-OFFICER-01 (Aarav Sharma)',
       cursiveTitle: 'T&P Officer',
       themeColor: '#7C3AED',
-      themeBg: 'linear-gradient(135deg, rgba(124, 58, 237, 0.08) 0%, rgba(168, 85, 247, 0.12) 100%)',
-      themeBorder: 'rgba(124, 58, 237, 0.28)',
-      badgeShadow: '0 4px 14px rgba(124, 58, 237, 0.14)',
       btnGradient: 'linear-gradient(135deg, #7C3AED 0%, #8B5CF6 50%, #6D28D9 100%)',
       btnShadow: '0 8px 24px rgba(124, 58, 237, 0.35)',
       desc: 'Manage drives, candidate ranking, unmatched cohorts, and placement operations.',
@@ -157,9 +151,6 @@ export default function LoginPage({ initialRole = 'STUDENT', onLoginSuccess, onB
       sampleId: 'HOD-CSE-01 (Dr. Rajesh Kumar)',
       cursiveTitle: 'HOD',
       themeColor: '#059669',
-      themeBg: 'linear-gradient(135deg, rgba(5, 150, 105, 0.08) 0%, rgba(16, 185, 129, 0.12) 100%)',
-      themeBorder: 'rgba(5, 150, 105, 0.28)',
-      badgeShadow: '0 4px 14px rgba(5, 150, 105, 0.14)',
       btnGradient: 'linear-gradient(135deg, #059669 0%, #10B981 50%, #047857 100%)',
       btnShadow: '0 8px 24px rgba(5, 150, 105, 0.35)',
       desc: 'Read-only departmental placement statistics, readiness, and skill gaps.',
@@ -269,10 +260,7 @@ export default function LoginPage({ initialRole = 'STUDENT', onLoginSuccess, onB
               tabIndex={0}
               onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') cycleRole(); }}
               style={{
-                color: currentRole.themeColor,
-                background: currentRole.themeBg,
-                borderColor: currentRole.themeBorder,
-                boxShadow: currentRole.badgeShadow
+                color: currentRole.themeColor
               }}
             >
               <span className="student-portal-cursive-text">{currentRole.cursiveTitle}</span>
