@@ -16,18 +16,26 @@ import {
   KeyRound, 
   Target, 
   Mail,
-  ArrowLeft
+  ArrowLeft,
+  Info
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import './LoginPage.css';
+
+const defaultCredentials = {
+  STUDENT: { id: '1RV23CS184', pass: 'Student@123' },
+  T_AND_P: { id: 'TP-OFFICER-01', pass: 'TPCell@123' },
+  HOD: { id: 'HOD-CSE-01', pass: 'HOD@123' }
+};
 
 export default function LoginPage({ initialRole = 'STUDENT', onLoginSuccess, onBackToLanding }) {
   const { login } = useAuth();
   const [selectedRole, setSelectedRole] = useState(initialRole || 'STUDENT');
   
-  // Security Hardening: Never prefill credentials on public login
-  const [identifier, setIdentifier] = useState('');
-  const [password, setPassword] = useState('');
+  // Predefined authorized credentials populated for instant authorized access
+  const initialCreds = defaultCredentials[initialRole] || defaultCredentials.STUDENT;
+  const [identifier, setIdentifier] = useState(initialCreds.id);
+  const [password, setPassword] = useState(initialCreds.pass);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -41,6 +49,9 @@ export default function LoginPage({ initialRole = 'STUDENT', onLoginSuccess, onB
   useEffect(() => {
     if (initialRole) {
       setSelectedRole(initialRole);
+      const creds = defaultCredentials[initialRole] || defaultCredentials.STUDENT;
+      setIdentifier(creds.id);
+      setPassword(creds.pass);
     }
     setError('');
   }, [initialRole]);
@@ -87,6 +98,7 @@ export default function LoginPage({ initialRole = 'STUDENT', onLoginSuccess, onB
     STUDENT: {
       label: 'USN / Student Email',
       placeholder: 'Enter USN (e.g. 1RV23CS184) or email',
+      sampleId: '1RV23CS184 (Subbu K) or 1RV22IS015 (Siri C)',
       color: '#4F46E5',
       accentBg: '#EEF2FF',
       portalTitle: 'Student Career Portal',
@@ -98,6 +110,7 @@ export default function LoginPage({ initialRole = 'STUDENT', onLoginSuccess, onB
     T_AND_P: {
       label: 'Employee ID / Official Email',
       placeholder: 'Enter Employee ID (e.g. TP-OFFICER-01) or email',
+      sampleId: 'TP-OFFICER-01 (Aarav Sharma)',
       color: '#7C3AED',
       accentBg: '#F5F3FF',
       portalTitle: 'Training & Placement Portal',
@@ -109,6 +122,7 @@ export default function LoginPage({ initialRole = 'STUDENT', onLoginSuccess, onB
     HOD: {
       label: 'Faculty ID / Official Email',
       placeholder: 'Enter Faculty ID (e.g. HOD-CSE-01) or email',
+      sampleId: 'HOD-CSE-01 (Dr. Rajesh Kumar)',
       color: '#059669',
       accentBg: '#ECFDF5',
       portalTitle: 'Department Intelligence Portal',
@@ -405,6 +419,25 @@ export default function LoginPage({ initialRole = 'STUDENT', onLoginSuccess, onB
               )}
             </button>
           </form>
+
+          {/* Predefined Authorized Account Format (Institutional Directory) */}
+          <div style={{
+            marginTop: '20px',
+            padding: '12px 14px',
+            borderRadius: '10px',
+            backgroundColor: '#F8FAFC',
+            border: '1px solid #E2E8F0',
+            fontSize: '0.71875rem',
+            color: '#64748B'
+          }}>
+            <div style={{ fontWeight: 700, color: '#334155', display: 'flex', alignItems: 'center', gap: '5px', marginBottom: '4px' }}>
+              <Info size={13} color="#4F46E5" />
+              Predefined Authorized Account Format:
+            </div>
+            <div>
+              • <strong>Identifier:</strong> {currentRole.sampleId}
+            </div>
+          </div>
         </div>
       </div>
 
