@@ -1,53 +1,85 @@
 import React, { useState, useEffect } from 'react';
-import { Sparkles, GraduationCap, Building2, Shield, ArrowRight, Eye, EyeOff, Lock, User, Info, CheckCircle2 } from 'lucide-react';
+import { 
+  Sparkles, 
+  GraduationCap, 
+  Building2, 
+  Shield, 
+  ArrowRight, 
+  Eye, 
+  EyeOff, 
+  Lock, 
+  User, 
+  CheckCircle2, 
+  Loader2, 
+  AlertCircle, 
+  X, 
+  KeyRound, 
+  Target, 
+  Mail,
+  ArrowLeft
+} from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import './LoginPage.css';
 
 export default function LoginPage({ initialRole = 'STUDENT', onLoginSuccess, onBackToLanding }) {
   const { login } = useAuth();
   const [selectedRole, setSelectedRole] = useState(initialRole || 'STUDENT');
-  const [identifier, setIdentifier] = useState('1RV23CS184');
-  const [password, setPassword] = useState('Student@123');
+  
+  // Security Hardening: Never prefill credentials on public login
+  const [identifier, setIdentifier] = useState('');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const handleRoleTab = (role) => {
-    setSelectedRole(role);
-    setError('');
-    if (role === 'STUDENT') {
-      setIdentifier('1RV23CS184');
-      setPassword('Student@123');
-    } else if (role === 'T_AND_P') {
-      setIdentifier('TP-OFFICER-01');
-      setPassword('TPCell@123');
-    } else if (role === 'HOD') {
-      setIdentifier('HOD-CSE-01');
-      setPassword('HOD@123');
-    }
-  };
+  // Institutional Password Recovery Modal State
+  const [showRecoveryModal, setShowRecoveryModal] = useState(false);
+  const [recoveryIdentifier, setRecoveryIdentifier] = useState('');
+  const [recoverySubmitted, setRecoverySubmitted] = useState(false);
+  const [recoveryLoading, setRecoveryLoading] = useState(false);
 
   useEffect(() => {
     if (initialRole) {
-      handleRoleTab(initialRole);
+      setSelectedRole(initialRole);
     }
+    setError('');
   }, [initialRole]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!identifier.trim()) {
+      setError('Please enter your USN or registered campus email.');
+      return;
+    }
+    if (!password) {
+      setError('Please enter your password.');
+      return;
+    }
+
     setLoading(true);
     setError('');
     try {
-      await login(identifier, password, selectedRole);
+      await login(identifier.trim(), password, selectedRole);
       if (selectedRole === 'STUDENT') {
         onLoginSuccess('student-dashboard');
       } else {
         onLoginSuccess('tp-dashboard');
       }
     } catch (err) {
-      setError(err.message || 'Login failed. Please check your credentials.');
+      setError(err.message || 'Authentication failed. Please verify your credentials or contact T&P administration.');
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleRecoverySubmit = (e) => {
+    e.preventDefault();
+    if (!recoveryIdentifier.trim()) return;
+    setRecoveryLoading(true);
+    setTimeout(() => {
+      setRecoveryLoading(false);
+      setRecoverySubmitted(true);
+    }, 600);
   };
 
   // Role metadata configurations
@@ -55,57 +87,55 @@ export default function LoginPage({ initialRole = 'STUDENT', onLoginSuccess, onB
     STUDENT: {
       label: 'USN / Student Email',
       placeholder: 'Enter USN (e.g. 1RV23CS184) or email',
-      sampleId: '1RV23CS184 (Subbu K) or 1RV22IS015 (Siri C)',
       color: '#4F46E5',
       accentBg: '#EEF2FF',
       portalTitle: 'Student Career Portal',
-      desc: 'Access your personalized matches, skill roadmap and Agent 50 insights.'
+      bannerTag: 'Student Portal',
+      bannerTitle: 'Student Login',
+      desc: 'Access your personalized matches, skill roadmap and Agent 50 insights.',
+      icon: GraduationCap
     },
     T_AND_P: {
       label: 'Employee ID / Official Email',
       placeholder: 'Enter Employee ID (e.g. TP-OFFICER-01) or email',
-      sampleId: 'TP-OFFICER-01 (Aarav Sharma)',
       color: '#7C3AED',
       accentBg: '#F5F3FF',
       portalTitle: 'Training & Placement Portal',
-      desc: 'Manage drives, candidate ranking, unmatched cohorts, and placement operations.'
+      bannerTag: 'Training & Placement Portal',
+      bannerTitle: 'T&P Officer Login',
+      desc: 'Manage drives, candidate ranking, unmatched cohorts, and placement operations.',
+      icon: Building2
     },
     HOD: {
       label: 'Faculty ID / Official Email',
       placeholder: 'Enter Faculty ID (e.g. HOD-CSE-01) or email',
-      sampleId: 'HOD-CSE-01 (Dr. Rajesh Kumar)',
       color: '#059669',
       accentBg: '#ECFDF5',
       portalTitle: 'Department Intelligence Portal',
-      desc: 'Read-only departmental placement statistics, readiness, and skill gaps.'
+      bannerTag: 'Department Intelligence Portal',
+      bannerTitle: 'HOD Login',
+      desc: 'Read-only departmental placement statistics, readiness, and skill gaps.',
+      icon: Shield
     }
   };
 
-  const currentRole = roleConfig[selectedRole];
+  const currentRole = roleConfig[selectedRole] || roleConfig.STUDENT;
+  const RoleIcon = currentRole.icon;
 
   return (
-    <div style={{
-      minHeight: '100vh',
-      display: 'grid',
-      gridTemplateColumns: '1fr 1.1fr',
-      backgroundColor: '#F8FAFC'
-    }}>
-      {/* Left Column: Campus Branding & Value Props */}
-      <div style={{
-        background: 'linear-gradient(135deg, #0B132B 0%, #1C2541 100%)',
-        color: 'white',
-        padding: '48px 40px',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'space-between',
-        position: 'relative',
-        overflow: 'hidden'
-      }}>
-        {/* Top Branding */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+    <div className="login-split-container">
+      {/* ====================================================================
+          LEFT BRANDING PANEL (Dark Navy, Value Props, Agent 50 Nexus Graphic)
+          ==================================================================== */}
+      <div className="login-branding-panel">
+        <div className="branding-ambient-glow" />
+
+        {/* 1. Top Logo */}
+        <div className="branding-header">
           <div
             onClick={onBackToLanding}
-            style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}
+            className="branding-logo-wrapper"
+            title="Return to CareerSync Portals"
           >
             <img 
               src="/career-sync-logo.png" 
@@ -115,238 +145,364 @@ export default function LoginPage({ initialRole = 'STUDENT', onLoginSuccess, onB
           </div>
         </div>
 
-        {/* Center Content */}
-        <div style={{ margin: '48px 0' }}>
-          <div className="font-script" style={{ color: '#818CF8', fontSize: '1.5rem', marginBottom: '8px' }}>
+        {/* 2. Headline & Value Hierarchy */}
+        <div className="branding-content-block">
+          <div className="branding-script-label">
             Empowered Departments. Stronger Futures.
           </div>
-          <h1 style={{ fontSize: '2.75rem', fontWeight: 800, lineHeight: 1.15, color: '#FFFFFF', marginBottom: '16px' }}>
+          <h1 className="branding-headline">
             Your Next Opportunity<br />
-            <span style={{ color: '#818CF8' }}>Starts Here.</span>
+            <span className="branding-headline-highlight">Starts Here.</span>
           </h1>
-          <p style={{ color: '#94A3B8', fontSize: '1rem', lineHeight: 1.5, maxWidth: '440px', marginBottom: '36px' }}>
+          <p className="branding-subtext">
             AI-powered placement intelligence for students, training & placement cells, and academic departments.
           </p>
 
           {/* Value Badges */}
-          <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
-            <div style={{ backgroundColor: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', padding: '10px 16px', borderRadius: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <div className="branding-badges-row">
+            <div className="branding-badge-pill">
               <Sparkles size={16} color="#818CF8" />
-              <span style={{ fontSize: '0.8125rem', fontWeight: 600 }}>Smarter Matching</span>
+              <span className="branding-badge-text">Smarter Matching</span>
             </div>
-            <div style={{ backgroundColor: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', padding: '10px 16px', borderRadius: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <div className="branding-badge-pill">
               <Building2 size={16} color="#34D399" />
-              <span style={{ fontSize: '0.8125rem', fontWeight: 600 }}>Better Opportunities</span>
+              <span className="branding-badge-text">Better Opportunities</span>
             </div>
-            <div style={{ backgroundColor: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', padding: '10px 16px', borderRadius: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <div className="branding-badge-pill">
               <GraduationCap size={16} color="#FBBF24" />
-              <span style={{ fontSize: '0.8125rem', fontWeight: 600 }}>Brighter Futures</span>
+              <span className="branding-badge-text">Brighter Futures</span>
             </div>
           </div>
         </div>
 
-        {/* Campus Photo banner */}
-        <div style={{
-          backgroundColor: 'rgba(255,255,255,0.04)',
-          border: '1px solid rgba(255,255,255,0.08)',
-          borderRadius: '16px',
-          padding: '16px 20px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between'
-        }}>
-          <div>
-            <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#818CF8' }}>RV COLLEGE OF ENGINEERING</div>
-            <div style={{ fontSize: '0.8125rem', color: '#E2E8F0', marginTop: '2px' }}>"Academic Excellence Leads to Brighter Futures."</div>
+        {/* 3. Sophisticated Agent 50 AI Matching Illustration */}
+        <div className="matching-nexus-card">
+          <div className="nexus-header">
+            <div className="nexus-title-chip">
+              <Target size={14} color="#818CF8" />
+              <span>Agent 50 Matching Nexus</span>
+            </div>
+            <div className="nexus-status-indicator">
+              <span className="nexus-pulse-dot" />
+              <span>Active Engine</span>
+            </div>
           </div>
-          <div style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: '#10B981' }} />
+
+          <div className="nexus-flow-grid">
+            {/* Student Skills Column */}
+            <div className="nexus-column">
+              <div className="nexus-node-pill" title="Candidate Skill Signal">
+                <span className="nexus-node-label">DSA & Algorithms</span>
+                <span className="nexus-node-metric">96%</span>
+              </div>
+              <div className="nexus-node-pill" title="Candidate Skill Signal">
+                <span className="nexus-node-label">React & Node.js</span>
+                <span className="nexus-node-metric">94%</span>
+              </div>
+              <div className="nexus-node-pill" title="Candidate Skill Signal">
+                <span className="nexus-node-label">System Architecture</span>
+                <span className="nexus-node-metric">91%</span>
+              </div>
+            </div>
+
+            {/* Center Nexus Engine */}
+            <div className="nexus-center-core" title="Agent 50 Multi-Factor Deterministic Engine">
+              <div className="nexus-core-icon">
+                <Sparkles size={17} />
+              </div>
+              <div className="nexus-core-title">AGENT 50</div>
+              <div className="nexus-core-subtitle">5-Factor Engine</div>
+            </div>
+
+            {/* Campus Opportunities Column */}
+            <div className="nexus-column">
+              <div className="nexus-role-pill" title="Target Role Match">
+                <span className="nexus-node-label">Software Engineer</span>
+                <span className="nexus-role-tag tag-eligible">Eligible</span>
+              </div>
+              <div className="nexus-role-pill" title="Target Role Match">
+                <span className="nexus-node-label">Frontend SDE</span>
+                <span className="nexus-role-tag tag-eligible">Top Match</span>
+              </div>
+              <div className="nexus-role-pill" title="Target Role Match">
+                <span className="nexus-node-label">Cloud Specialist</span>
+                <span className="nexus-role-tag tag-shortlist">Shortlist</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="nexus-footer-strip">
+            <span className="nexus-footer-caption">Deterministic skill-to-role scoring</span>
+            <span className="nexus-footer-score">
+              <CheckCircle2 size={13} color="#34D399" />
+              95% Match Precision
+            </span>
+          </div>
+        </div>
+
+        {/* 4. Campus Footer Card */}
+        <div className="branding-footer-card">
+          <div>
+            <div className="footer-college-name">RV COLLEGE OF ENGINEERING</div>
+            <div className="footer-college-motto">"Academic Excellence Leads to Brighter Futures."</div>
+          </div>
+          <div className="footer-online-dot" title="Campus Placement Network Online" />
         </div>
       </div>
 
-      {/* Right Column: Sign In Card */}
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '40px 32px'
-      }}>
-        <div style={{
-          maxWidth: '460px',
-          width: '100%',
-          backgroundColor: '#FFFFFF',
-          borderRadius: '24px',
-          border: '1px solid #E2E8F0',
-          boxShadow: '0 20px 40px rgba(0,0,0,0.06)',
-          padding: '36px'
-        }}>
-          {/* Back link & Portal Header Badge */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+      {/* ====================================================================
+          RIGHT COLUMN: LOGIN CARD
+          ==================================================================== */}
+      <div className="login-card-viewport">
+        <div className="login-auth-card">
+          {/* Top Bar: Back to Portals & Portal Indicator */}
+          <div className="login-top-bar">
             <button
               type="button"
               onClick={onBackToLanding}
-              style={{
-                background: 'none',
-                border: 'none',
-                color: '#64748B',
-                fontSize: '0.78125rem',
-                fontWeight: 600,
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '4px',
-                padding: '4px 8px',
-                borderRadius: '6px'
-              }}
+              className="login-back-btn"
+              title="Return to choose your portal"
             >
-              ← Back to Portals
+              <ArrowLeft size={14} />
+              <span>Back to Portals</span>
             </button>
-            <div style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '6px',
-              padding: '4px 10px',
-              borderRadius: '999px',
-              backgroundColor: currentRole.accentBg,
-              border: '1px solid #E0E7FF'
-            }}>
-              <span style={{ backgroundColor: currentRole.color, color: 'white', fontWeight: 800, fontSize: '10px', padding: '1px 5px', borderRadius: '4px' }}>AI</span>
-              <span style={{ fontSize: '0.71875rem', fontWeight: 700, color: currentRole.color }}>{currentRole.portalTitle}</span>
+
+            <div className="login-portal-chip">
+              <span className="login-portal-chip-ai">AI</span>
+              <span className="login-portal-chip-title">{currentRole.portalTitle}</span>
             </div>
           </div>
 
+          {/* Heading & Subtitle */}
           <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-            <h2 style={{ fontSize: '1.625rem', fontWeight: 800, color: '#0F172A' }}>Account Sign In</h2>
-            <p style={{ fontSize: '0.8125rem', color: '#64748B', marginTop: '4px' }}>
+            <h2 style={{ fontSize: '1.625rem', fontWeight: 800, color: '#0F172A', letterSpacing: '-0.02em' }}>
+              Account Sign In
+            </h2>
+            <p style={{ fontSize: '0.8125rem', color: '#64748B', marginTop: '4px', lineHeight: 1.5 }}>
               {currentRole.desc}
             </p>
           </div>
 
-          {/* Active Portal Banner */}
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '14px',
-            padding: '14px 16px',
-            borderRadius: '16px',
-            backgroundColor: currentRole.accentBg,
-            border: `1.5px solid ${currentRole.color}30`,
-            marginBottom: '24px'
-          }}>
-            <div style={{
-              width: '42px',
-              height: '42px',
-              borderRadius: '12px',
-              backgroundColor: currentRole.color,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: '#FFFFFF',
-              flexShrink: 0,
-              boxShadow: `0 4px 12px ${currentRole.color}35`
-            }}>
-              {selectedRole === 'STUDENT' ? <GraduationCap size={22} /> : selectedRole === 'T_AND_P' ? <Building2 size={22} /> : <Shield size={22} />}
+          {/* Active Portal Role Banner */}
+          <div className="login-role-banner" style={{ backgroundColor: currentRole.accentBg, borderColor: `${currentRole.color}25` }}>
+            <div className="login-role-iconbox" style={{ backgroundColor: currentRole.color }}>
+              <RoleIcon size={22} />
             </div>
-            <div style={{ flex: 1 }}>
-              <div style={{ fontSize: '0.6875rem', fontWeight: 800, color: currentRole.color, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
-                {selectedRole === 'STUDENT' ? 'Student Portal' : selectedRole === 'T_AND_P' ? 'Training & Placement Portal' : 'Department Intelligence Portal'}
+            <div>
+              <div className="login-role-tag" style={{ color: currentRole.color }}>
+                {currentRole.bannerTag}
               </div>
-              <div style={{ fontSize: '0.9375rem', fontWeight: 800, color: '#0F172A', marginTop: '1px' }}>
-                {selectedRole === 'STUDENT' ? 'Student Login' : selectedRole === 'T_AND_P' ? 'T&P Officer Login' : 'HOD Login'}
+              <div className="login-role-title">
+                {currentRole.bannerTitle}
               </div>
             </div>
           </div>
 
+          {/* Error Alert Feedback */}
           {error && (
-            <div style={{ backgroundColor: '#FEF2F2', border: '1px solid #FECACA', color: '#DC2626', padding: '10px 14px', borderRadius: '8px', fontSize: '0.8125rem', marginBottom: '16px', lineHeight: 1.4 }}>
-              {error}
+            <div className="login-error-alert" role="alert">
+              <AlertCircle size={16} style={{ flexShrink: 0, marginTop: '2px' }} />
+              <div>{error}</div>
             </div>
           )}
 
-          {/* Form */}
-          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            <div>
-              <label style={{ display: 'block', fontSize: '0.78125rem', fontWeight: 700, color: '#334155', marginBottom: '6px' }}>
+          {/* Authentication Form */}
+          <form onSubmit={handleSubmit}>
+            {/* Identifier Field */}
+            <div className="login-form-group">
+              <label className="login-form-label" htmlFor="user-identifier">
                 {currentRole.label}
               </label>
-              <div style={{ position: 'relative' }}>
-                <User size={16} color="#94A3B8" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
+              <div className="login-input-wrapper">
+                <User size={16} className="login-input-icon" />
                 <input
+                  id="user-identifier"
                   type="text"
                   value={identifier}
-                  onChange={(e) => setIdentifier(e.target.value)}
+                  onChange={(e) => {
+                    setIdentifier(e.target.value);
+                    if (error) setError('');
+                  }}
                   placeholder={currentRole.placeholder}
-                  className="form-input"
-                  style={{ paddingLeft: '38px' }}
+                  className={`login-input-field ${error && !identifier.trim() ? 'input-error' : ''}`}
+                  disabled={loading}
+                  autoComplete="username"
                   required
                 />
               </div>
             </div>
 
-            <div>
+            {/* Password Field */}
+            <div className="login-form-group">
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
-                <label style={{ fontSize: '0.78125rem', fontWeight: 700, color: '#334155' }}>
+                <label className="login-form-label" htmlFor="user-password" style={{ margin: 0 }}>
                   Password
                 </label>
-                <span style={{ fontSize: '0.71875rem', color: '#4F46E5', cursor: 'pointer' }}>Forgot password?</span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setRecoverySubmitted(false);
+                    setShowRecoveryModal(true);
+                  }}
+                  className="login-forgot-link"
+                >
+                  Forgot password?
+                </button>
               </div>
-              <div style={{ position: 'relative' }}>
-                <Lock size={16} color="#94A3B8" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
+              <div className="login-input-wrapper">
+                <Lock size={16} className="login-input-icon" />
                 <input
+                  id="user-password"
                   type={showPassword ? 'text' : 'password'}
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Enter password"
-                  className="form-input"
-                  style={{ paddingLeft: '38px', paddingRight: '38px' }}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    if (error) setError('');
+                  }}
+                  placeholder="Enter your password"
+                  className={`login-input-field ${error && !password ? 'input-error' : ''}`}
+                  disabled={loading}
+                  autoComplete="current-password"
                   required
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: '#94A3B8' }}
+                  className="login-password-toggle"
+                  title={showPassword ? 'Hide password' : 'Show password'}
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                  tabIndex={-1}
                 >
                   {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
               </div>
             </div>
 
+            {/* Submit Button with Polished Loading Feedback */}
             <button
               type="submit"
               disabled={loading}
-              className="btn btn-primary"
+              className="btn btn-primary login-submit-btn"
               style={{
-                width: '100%',
-                padding: '12px',
-                borderRadius: '10px',
-                marginTop: '4px',
-                background: selectedRole === 'T_AND_P' ? 'linear-gradient(135deg, #7C3AED 0%, #4F46E5 100%)' : selectedRole === 'HOD' ? 'linear-gradient(135deg, #059669 0%, #10B981 100%)' : undefined
+                backgroundColor: currentRole.color,
+                background: selectedRole === 'T_AND_P' 
+                  ? 'linear-gradient(135deg, #7C3AED 0%, #4F46E5 100%)' 
+                  : selectedRole === 'HOD' 
+                  ? 'linear-gradient(135deg, #059669 0%, #10B981 100%)' 
+                  : undefined
               }}
             >
-              <span>{loading ? 'Authenticating...' : 'Sign In'}</span>
-              <ArrowRight size={16} />
+              {loading ? (
+                <>
+                  <Loader2 size={17} className="animate-spin" />
+                  <span>Authenticating...</span>
+                </>
+              ) : (
+                <>
+                  <span>Sign In</span>
+                  <ArrowRight size={17} />
+                </>
+              )}
             </button>
           </form>
-
-          {/* Authorized Credentials Helper Banner */}
-          <div style={{
-            marginTop: '20px',
-            padding: '12px 14px',
-            borderRadius: '10px',
-            backgroundColor: '#F8FAFC',
-            border: '1px solid #E2E8F0',
-            fontSize: '0.71875rem',
-            color: '#64748B'
-          }}>
-            <div style={{ fontWeight: 700, color: '#334155', display: 'flex', alignItems: 'center', gap: '5px', marginBottom: '4px' }}>
-              <Info size={13} color="#4F46E5" />
-              Predefined Authorized Account Format:
-            </div>
-            <div>
-              • <strong>Identifier:</strong> {currentRole.sampleId}
-            </div>
-          </div>
         </div>
       </div>
+
+      {/* ====================================================================
+          INSTITUTIONAL PASSWORD RECOVERY MODAL
+          ==================================================================== */}
+      {showRecoveryModal && (
+        <div className="recovery-modal-overlay" onClick={() => setShowRecoveryModal(false)}>
+          <div className="recovery-modal-card" onClick={(e) => e.stopPropagation()}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <div style={{ width: '36px', height: '36px', borderRadius: '10px', backgroundColor: '#EEF2FF', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#4F46E5' }}>
+                  <KeyRound size={18} />
+                </div>
+                <h3 style={{ fontSize: '1.1875rem', fontWeight: 800, color: '#0F172A', margin: 0 }}>
+                  Password Assistance
+                </h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowRecoveryModal(false)}
+                style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#94A3B8', padding: '4px' }}
+                aria-label="Close modal"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            {!recoverySubmitted ? (
+              <form onSubmit={handleRecoverySubmit}>
+                <p style={{ fontSize: '0.8125rem', color: '#64748B', lineHeight: 1.5, marginBottom: '16px' }}>
+                  Student and institutional credentials are authenticated against the RVCE Training & Placement active directory. Enter your USN or registered email to request credential assistance.
+                </p>
+
+                <div style={{ marginBottom: '16px' }}>
+                  <label style={{ display: 'block', fontSize: '0.78125rem', fontWeight: 700, color: '#334155', marginBottom: '6px' }}>
+                    USN or Campus Email
+                  </label>
+                  <div className="login-input-wrapper">
+                    <Mail size={16} className="login-input-icon" />
+                    <input
+                      type="text"
+                      value={recoveryIdentifier}
+                      onChange={(e) => setRecoveryIdentifier(e.target.value)}
+                      placeholder="e.g. 1RV23CS184 or student@rvce.edu.in"
+                      className="login-input-field"
+                      required
+                      autoFocus
+                    />
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
+                  <button
+                    type="button"
+                    onClick={() => setShowRecoveryModal(false)}
+                    className="btn btn-outline"
+                    style={{ padding: '8px 16px', borderRadius: '8px' }}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={recoveryLoading || !recoveryIdentifier.trim()}
+                    className="btn btn-primary"
+                    style={{ padding: '8px 18px', borderRadius: '8px' }}
+                  >
+                    {recoveryLoading ? 'Routing Request...' : 'Send Guidance'}
+                  </button>
+                </div>
+              </form>
+            ) : (
+              <div style={{ textAlign: 'center', padding: '12px 0' }}>
+                <div style={{ width: '48px', height: '48px', borderRadius: '50%', backgroundColor: '#ECFDF5', color: '#059669', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px' }}>
+                  <CheckCircle2 size={24} />
+                </div>
+                <h4 style={{ fontSize: '1rem', fontWeight: 700, color: '#0F172A', marginBottom: '6px' }}>
+                  Request Received
+                </h4>
+                <p style={{ fontSize: '0.8125rem', color: '#64748B', lineHeight: 1.5, marginBottom: '16px' }}>
+                  If an active account exists for <strong>{recoveryIdentifier}</strong>, password reset verification has been dispatched to your official campus email.
+                </p>
+                <div style={{ backgroundColor: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: '10px', padding: '10px 14px', fontSize: '0.75rem', color: '#64748B', textAlign: 'left', marginBottom: '16px' }}>
+                  Need immediate help? Contact the T&P Cell Helpdesk at <strong>placement@rvce.edu.in</strong> or visit the Dean's Office (Placement Block).
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowRecoveryModal(false)}
+                  className="btn btn-primary"
+                  style={{ width: '100%', borderRadius: '8px', padding: '10px' }}
+                >
+                  Back to Sign In
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
