@@ -157,6 +157,12 @@ export default function StudentProfile({ onNavigate }) {
     return name.slice(0, 2).toUpperCase();
   };
 
+  const getSkillScore = (score) => {
+    if (score === undefined || score === null) return 85;
+    const num = Number(score);
+    return num <= 1 ? Math.round(num * 100) : Math.round(num);
+  };
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', paddingBottom: '60px' }}>
       {/* Top Banner Card */}
@@ -314,12 +320,15 @@ export default function StudentProfile({ onNavigate }) {
                 </span>
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '10px' }}>
-                {skills.slice(0, 6).map((s, idx) => (
-                  <div key={idx} style={{ padding: '10px 12px', backgroundColor: '#F8FAFC', borderRadius: '10px', border: '1px solid #E2E8F0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span style={{ fontSize: '0.8125rem', fontWeight: 700, color: '#334155' }}>{s.skill_name}</span>
-                    <span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#4F46E5' }}>{s.score}%</span>
-                  </div>
-                ))}
+                {skills.slice(0, 6).map((s, idx) => {
+                  const scoreVal = getSkillScore(s.score);
+                  return (
+                    <div key={idx} style={{ padding: '10px 12px', backgroundColor: '#F8FAFC', borderRadius: '10px', border: '1px solid #E2E8F0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{ fontSize: '0.8125rem', fontWeight: 700, color: '#334155' }}>{s.skill_name}</span>
+                      <span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#4F46E5' }}>{scoreVal}%</span>
+                    </div>
+                  );
+                })}
               </div>
             </div>
 
@@ -427,28 +436,33 @@ export default function StudentProfile({ onNavigate }) {
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '18px' }}>
-              {skills.map((s, idx) => (
-                <div key={idx} style={{ padding: '18px', borderRadius: '16px', backgroundColor: '#F8FAFC', border: '1px solid #E2E8F0' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-                    <div style={{ fontSize: '0.9375rem', fontWeight: 800, color: '#0F172A' }}>{s.skill_name}</div>
-                    <span style={{ fontSize: '0.8125rem', fontWeight: 800, color: '#4F46E5', backgroundColor: '#EEF2FF', padding: '3px 8px', borderRadius: '999px' }}>
-                      {s.score}%
-                    </span>
-                  </div>
-                  
-                  {/* Progress Bar */}
-                  <div style={{ width: '100%', height: '8px', borderRadius: '999px', backgroundColor: '#E2E8F0', overflow: 'hidden', marginBottom: '10px' }}>
-                    <div style={{ width: `${s.score}%`, height: '100%', borderRadius: '999px', background: 'linear-gradient(90deg, #4F46E5 0%, #7C3AED 100%)' }} />
-                  </div>
+              {skills.map((s, idx) => {
+                const scoreVal = getSkillScore(s.score);
+                const level = s.proficiency_level || (scoreVal >= 90 ? 'Expert' : scoreVal >= 80 ? 'Advanced' : 'Proficient');
+                const levelColor = scoreVal >= 90 ? '#059669' : scoreVal >= 80 ? '#4F46E5' : '#0284C7';
+                return (
+                  <div key={idx} style={{ padding: '18px', borderRadius: '16px', backgroundColor: '#F8FAFC', border: '1px solid #E2E8F0' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+                      <div style={{ fontSize: '0.9375rem', fontWeight: 800, color: '#0F172A' }}>{s.skill_name}</div>
+                      <span style={{ fontSize: '0.8125rem', fontWeight: 800, color: '#4F46E5', backgroundColor: '#EEF2FF', padding: '3px 8px', borderRadius: '999px' }}>
+                        {scoreVal}%
+                      </span>
+                    </div>
+                    
+                    {/* Progress Bar */}
+                    <div style={{ width: '100%', height: '8px', borderRadius: '999px', backgroundColor: '#E2E8F0', overflow: 'hidden', marginBottom: '10px' }}>
+                      <div style={{ width: `${scoreVal}%`, height: '100%', borderRadius: '999px', background: 'linear-gradient(90deg, #4F46E5 0%, #7C3AED 100%)' }} />
+                    </div>
 
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.71875rem', color: '#64748B' }}>
-                    <span>Category: {s.category || 'Core Skill'}</span>
-                    <span style={{ color: s.score >= 85 ? '#059669' : '#4F46E5', fontWeight: 700 }}>
-                      {s.score >= 90 ? 'Expert' : s.score >= 80 ? 'Advanced' : 'Proficient'}
-                    </span>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.71875rem', color: '#64748B' }}>
+                      <span>Category: {s.category || 'Core Skill'}</span>
+                      <span style={{ color: levelColor, fontWeight: 700 }}>
+                        {level}
+                      </span>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </div>

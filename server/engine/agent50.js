@@ -212,9 +212,13 @@ export class Agent50Engine {
                     : found.proficiency_level === 'Intermediate' ? 0.75 
                     : 0.55;
 
+                const rawScore = (found.score !== undefined && found.score !== null && !isNaN(Number(found.score)))
+                    ? (Number(found.score) > 1 ? Number(found.score) / 100 : Number(found.score))
+                    : profMultiplier;
+
                 const verifiedBonus = found.verified ? 1.05 : 1.0;
                 const matchTypeMultiplier = matchResult.matchType === 'exact' ? 1.0 : 0.95;
-                const calculatedProfScore = Math.min(1.0, (found.score || profMultiplier) * verifiedBonus * matchTypeMultiplier);
+                const calculatedProfScore = Math.min(1.0, rawScore * verifiedBonus * matchTypeMultiplier);
 
                 earnedSkillPoints += calculatedProfScore;
 

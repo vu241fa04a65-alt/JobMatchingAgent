@@ -110,10 +110,12 @@ router.post('/', authenticateToken, requireRole(['T_AND_P']), denyHODMutation, a
         // 4. Default baseline skills
         const defaultSkills = branch === 'CSE' || branch === 'ISE' ? ['Python', 'Data Structures', 'SQL', 'Algorithms', 'Java'] : branch === 'ECE' ? ['C++', 'Embedded C', 'VLSI', 'Verilog', 'MATLAB'] : ['AutoCAD', 'SolidWorks', 'Python', 'MATLAB'];
         for (const sk of defaultSkills) {
+            const randomScore = Math.floor(Math.random() * (95 - 80 + 1)) + 80;
+            const prof = randomScore >= 90 ? 'Expert' : 'Advanced';
             await db.run(`
                 INSERT INTO student_skills (id, student_id, skill_name, category, proficiency_level, score, verified)
-                VALUES (?, ?, ?, 'Engineering', 'Advanced', 0.85, 1)
-            `, ['sk_' + crypto.randomBytes(6).toString('hex'), studentId, sk]);
+                VALUES (?, ?, ?, 'Engineering', ?, ?, 1)
+            `, ['sk_' + crypto.randomBytes(6).toString('hex'), studentId, sk, prof, randomScore]);
         }
 
         res.status(201).json({
@@ -166,7 +168,16 @@ router.get('/:id', authenticateToken, async (req, res) => {
 
         const realStudentId = student.id;
 
-        const skills = await db.query('SELECT * FROM student_skills WHERE student_id = ? ORDER BY score DESC', [realStudentId]);
+        const rawSkills = await db.query('SELECT * FROM student_skills WHERE student_id = ? ORDER BY score DESC', [realStudentId]);
+        const skills = rawSkills.map(sk => {
+            const raw = Number(sk.score);
+            const scorePct = raw <= 1 ? Math.round(raw * 100) : Math.round(raw);
+            return {
+                ...sk,
+                score: scorePct,
+                proficiency_level: scorePct >= 90 ? 'Expert' : scorePct >= 80 ? 'Advanced' : 'Proficient'
+            };
+        });
         const projects = await db.query('SELECT * FROM student_projects WHERE student_id = ?', [realStudentId]);
         const parsedProjects = projects.map(p => {
             let techStack = [];

@@ -124,11 +124,13 @@ export async function seedDatabase(force = false) {
         );
 
         // Skills
-        for (const sk of s.skills) {
-            const prof = s.cgpa > 9.0 ? 'Expert' : s.cgpa > 8.0 ? 'Advanced' : 'Intermediate';
-            const score = prof === 'Expert' ? 0.92 : prof === 'Advanced' ? 0.85 : 0.72;
+        for (let i = 0; i < s.skills.length; i++) {
+            const sk = s.skills[i];
+            // Random score between 80% and 95% for every skill
+            const scoreVal = Math.floor(Math.random() * (95 - 80 + 1)) + 80;
+            const prof = scoreVal >= 90 ? 'Expert' : 'Advanced';
             await db.run(`INSERT INTO student_skills (id, student_id, skill_name, category, proficiency_level, score, verified) VALUES (?, ?, ?, 'Engineering', ?, ?, 1)`,
-                [`sk_${s.id}_${sk.replace(/\s+/g, '')}`, s.id, sk, prof, score]
+                [`sk_${s.id}_${sk.replace(/\s+/g, '')}`, s.id, sk, prof, scoreVal]
             );
         }
 
