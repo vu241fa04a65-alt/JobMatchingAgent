@@ -259,37 +259,39 @@ export default function StudentApplications({ onNavigate, onPrepareRole }) {
                   key={app.id}
                   className="card"
                   style={{
-                    padding: '20px 24px',
-                    display: 'flex',
+                    padding: '18px 24px',
+                    display: 'grid',
+                    gridTemplateColumns: '290px 1fr 160px',
                     alignItems: 'center',
-                    justifyContent: 'space-between',
-                    gap: '20px',
+                    gap: '24px',
                     border: isInterview ? '1.5px solid #C7D2FE' : isOffer ? '1.5px solid #A7F3D0' : '1px solid #E2E8F0',
                     cursor: 'pointer',
                     transition: 'transform 0.15s ease, box-shadow 0.15s ease'
                   }}
                   onClick={() => setSelectedApp(app)}
                 >
-                  {/* Left: Logo & Job details */}
-                  <div style={{ display: 'flex', gap: '16px', alignItems: 'center', minWidth: '220px' }}>
+                  {/* Left: Logo & Job details (Strictly 290px aligned) */}
+                  <div style={{ display: 'flex', gap: '14px', alignItems: 'center', width: '290px', overflow: 'hidden' }}>
                     <div style={{
-                      width: '48px',
-                      height: '48px',
+                      width: '46px',
+                      height: '46px',
                       borderRadius: '12px',
                       backgroundColor: '#F8FAFC',
                       border: '1px solid #E2E8F0',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      padding: '8px',
+                      padding: '7px',
                       flexShrink: 0
                     }}>
                       <img src={app.company_logo} alt={app.company_name} style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} />
                     </div>
 
-                    <div>
-                      <h3 style={{ fontSize: '0.9375rem', fontWeight: 800, color: '#0F172A' }}>{app.job_title}</h3>
-                      <div style={{ fontSize: '0.78125rem', color: '#64748B', display: 'flex', alignItems: 'center', gap: '6px', marginTop: '2px' }}>
+                    <div style={{ minWidth: 0, flex: 1 }}>
+                      <h3 style={{ fontSize: '0.9375rem', fontWeight: 800, color: '#0F172A', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                        {app.job_title}
+                      </h3>
+                      <div style={{ fontSize: '0.78125rem', color: '#64748B', display: 'flex', alignItems: 'center', gap: '6px', marginTop: '3px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                         <span style={{ fontWeight: 600, color: '#334155' }}>{app.company_name}</span>
                         <span>•</span>
                         <span>{app.role_type}</span>
@@ -299,25 +301,26 @@ export default function StudentApplications({ onNavigate, onPrepareRole }) {
                     </div>
                   </div>
 
-                  {/* Center: Stage Step Progress Bar */}
-                  <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
+                  {/* Center: Stage Step Progress Bar (Strictly centered in 1fr) */}
+                  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%' }}>
                     <StageProgressBar
                       currentStage={app.stage_progress || (isOffer ? 4 : isInterview ? 3 : 2)}
                       status={app.status}
                     />
                   </div>
 
-                  {/* Right: Date & Details action */}
-                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '8px', minWidth: '140px' }}>
-                    <div style={{ fontSize: '0.6875rem', color: '#64748B', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                      <Calendar size={12} />
-                      <span>Applied {app.applied_at ? app.applied_at.split(' ')[0] : '12 Aug 2026'}</span>
+                  {/* Right: Date & Details action (Strictly 160px aligned) */}
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '6px', width: '160px' }}>
+                    <div style={{ fontSize: '0.72rem', color: '#64748B', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                      <Calendar size={13} color="#94A3B8" />
+                      <span>Applied {app.applied_at ? app.applied_at.split(' ')[0] : '2026-08-12'}</span>
                     </div>
 
                     {isInterview ? (
                       <button
                         onClick={(e) => { e.stopPropagation(); setSelectedApp(app); }}
                         className="btn btn-primary btn-sm"
+                        style={{ padding: '6px 14px', borderRadius: '10px', fontSize: '0.78125rem', fontWeight: 700 }}
                       >
                         <Video size={13} />
                         <span>Interview Details</span>
@@ -326,7 +329,7 @@ export default function StudentApplications({ onNavigate, onPrepareRole }) {
                       <button
                         onClick={(e) => { e.stopPropagation(); setSelectedApp(app); }}
                         className="btn btn-outline btn-sm"
-                        style={{ fontSize: '0.75rem' }}
+                        style={{ padding: '6px 14px', borderRadius: '10px', fontSize: '0.78125rem', fontWeight: 600 }}
                       >
                         <span>View Status</span>
                         <ChevronRight size={13} />
