@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
 import { db } from '../db/database.js';
 import { authenticateToken, requireRole, denyHODMutation } from '../middleware/auth.js';
+import { syncBus } from '../services/syncBus.js';
 
 const router = express.Router();
 
@@ -117,6 +118,15 @@ router.post('/', authenticateToken, requireRole(['T_AND_P']), denyHODMutation, a
                 VALUES (?, ?, ?, 'Engineering', ?, ?, 1)
             `, ['sk_' + crypto.randomBytes(6).toString('hex'), studentId, sk, prof, randomScore]);
         }
+
+        syncBus.broadcast('STUDENT_CREATED', {
+            id: studentId,
+            user_id: userId,
+            usn: cleanUSN,
+            full_name: full_name.trim(),
+            branch: branch.toUpperCase(),
+            cgpa: numCgpa
+        });
 
         res.status(201).json({
             message: 'Student account and academic profile created successfully!',
@@ -282,6 +292,7 @@ router.put('/profile', authenticateToken, denyHODMutation, async (req, res) => {
         }
 
         const { full_name, bio, linkedin_url, github_url, phone, avatar_url, preferred_roles, preferred_locations } = req.body;
+        const cleanVal = (v) => (v === undefined ? null : v);
 
         await db.run(
             `UPDATE people_students 
@@ -292,7 +303,7 @@ router.put('/profile', authenticateToken, denyHODMutation, async (req, res) => {
                  phone = COALESCE(?, phone),
                  avatar_url = COALESCE(?, avatar_url)
              WHERE id = ?`,
-            [full_name, bio, linkedin_url, github_url, phone, avatar_url, studentId]
+            [cleanVal(full_name), cleanVal(bio), cleanVal(linkedin_url), cleanVal(github_url), cleanVal(phone), cleanVal(avatar_url), studentId]
         );
 
         if (userId) {
@@ -301,7 +312,7 @@ router.put('/profile', authenticateToken, denyHODMutation, async (req, res) => {
                  SET full_name = COALESCE(?, full_name),
                      avatar_url = COALESCE(?, avatar_url)
                  WHERE id = ?`,
-                [full_name, avatar_url, userId]
+                [cleanVal(full_name), cleanVal(avatar_url), userId]
             );
         }
 
@@ -315,6 +326,18 @@ router.put('/profile', authenticateToken, denyHODMutation, async (req, res) => {
                     preferred_locations = COALESCE(excluded.preferred_locations, preferred_locations)
             `, [studentId, preferred_roles ? JSON.stringify(preferred_roles) : null, preferred_locations ? JSON.stringify(preferred_locations) : null]);
         }
+
+        // Broadcast real-time profile update
+        syncBus.broadcast('STUDENT_PROFILE_UPDATED', {
+            student_id: studentId,
+            user_id: userId,
+            full_name,
+            bio,
+            linkedin_url,
+            github_url,
+            phone,
+            avatar_url
+        });
 
         res.json({ 
             message: 'Profile updated successfully!',

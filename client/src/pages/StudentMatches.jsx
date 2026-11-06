@@ -17,8 +17,10 @@ import RadialGauge from '../components/RadialGauge';
 import DonutChart from '../components/DonutChart';
 import CompanyLogo from '../components/CompanyLogo';
 import confetti from 'canvas-confetti';
+import { useDataSync } from '../context/SyncContext';
 
 export default function StudentMatches({ onSelectJob, onViewJob, onNavigate }) {
+  const { syncVersion, notifyMutation } = useDataSync();
   const selectJob = onSelectJob || onViewJob;
   const navigateTo = onNavigate || (() => {});
   const [activeTab, setActiveTab] = useState('recommended'); // 'recommended', 'all_eligible', 'closing_soon'
@@ -61,7 +63,7 @@ export default function StudentMatches({ onSelectJob, onViewJob, onNavigate }) {
       }
     }
     fetchMatches();
-  }, []);
+  }, [syncVersion]);
 
   const handleApply = async (jobId, jobTitle) => {
     setApplyingJobId(jobId);
@@ -78,6 +80,7 @@ export default function StudentMatches({ onSelectJob, onViewJob, onNavigate }) {
 
       if (res.ok) {
         setAppliedMap(prev => ({ ...prev, [jobId]: 'UNDER_REVIEW' }));
+        notifyMutation('APPLICATION_CREATED', { job_id: jobId, title: jobTitle });
         // celebrate
         try {
           confetti({ particleCount: 60, spread: 60, origin: { y: 0.7 } });

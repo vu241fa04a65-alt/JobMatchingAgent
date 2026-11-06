@@ -26,9 +26,11 @@ import {
 } from 'lucide-react';
 import DonutChart from '../components/DonutChart';
 import { useAuth } from '../context/AuthContext';
+import { useDataSync } from '../context/SyncContext';
 
 export default function TPStudents({ onNavigate }) {
   const { user } = useAuth();
+  const { syncVersion, notifyMutation } = useDataSync();
   const isHOD = user?.role === 'HOD';
 
   const [students, setStudents] = useState([]);
@@ -77,7 +79,7 @@ export default function TPStudents({ onNavigate }) {
 
   useEffect(() => {
     loadStudents();
-  }, []);
+  }, [syncVersion]);
 
   const handleOpenProfile = async (std) => {
     setSelectedStudent(std);
@@ -127,6 +129,7 @@ export default function TPStudents({ onNavigate }) {
         graduation_year: '2027',
         password: 'Student@123'
       });
+      notifyMutation('STUDENT_CREATED', { usn: newStudent.usn });
       await loadStudents();
       alert('Student account successfully created!');
     } catch (err) {

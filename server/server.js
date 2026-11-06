@@ -18,6 +18,8 @@ import institutionRoutes from './routes/institution.js';
 import agentopsRoutes from './routes/agentops.js';
 import santraAiRoutes from './routes/santraAi.js';
 import companiesRoutes from './routes/companies.js';
+import syncRoutes from './routes/sync.js';
+import notificationsRoutes from './routes/notifications.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -94,6 +96,8 @@ app.use('/api/institution', institutionRoutes);
 app.use('/api/agentops', agentopsRoutes);
 app.use('/api/santra-ai', santraAiRoutes);
 app.use('/api/companies', companiesRoutes);
+app.use('/api/sync', syncRoutes);
+app.use('/api/notifications', notificationsRoutes);
 
 // Static uploads (uploaded company logos & documents)
 app.use('/uploads', express.static(UPLOADS_DIR));

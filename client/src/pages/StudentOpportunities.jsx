@@ -19,10 +19,12 @@ import {
   BookOpen
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useDataSync } from '../context/SyncContext';
 import CompanyLogo from '../components/CompanyLogo';
 
 export default function StudentOpportunities({ onViewJob, onApplyJob, onPrepareRole }) {
   const { user } = useAuth();
+  const { syncVersion, notifyMutation } = useDataSync();
   const [opportunities, setOpportunities] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
@@ -104,7 +106,7 @@ export default function StudentOpportunities({ onViewJob, onApplyJob, onPrepareR
       }
     }
     loadData();
-  }, []);
+  }, [syncVersion]);
 
   const toggleBookmark = (id, e) => {
     if (e) e.stopPropagation();
@@ -145,11 +147,7 @@ export default function StudentOpportunities({ onViewJob, onApplyJob, onPrepareR
       if (res.ok) {
         const nextApplied = [...appliedJobIds, job.id];
         setAppliedJobIds(nextApplied);
-        try {
-          localStorage.setItem('jobmatch_applied_job_ids', JSON.stringify(nextApplied));
-        } catch {
-          // Ignore
-        }
+        notifyMutation('APPLICATION_CREATED', { job_id: job.id });
         setApplySuccessMsg(`Application for ${job.title} at ${job.company_name} submitted successfully!`);
         setTimeout(() => setApplySuccessMsg(null), 4500);
       } else {

@@ -101,9 +101,10 @@ export class SQLiteDatabase {
     async query(sql, params = []) {
         await this.ensureReady();
         try {
+            const cleanParams = Array.isArray(params) ? params.map(v => v === undefined ? null : v) : params;
             const stmt = this.db.prepare(sql);
-            if (params && params.length > 0) {
-                stmt.bind(params);
+            if (cleanParams && cleanParams.length > 0) {
+                stmt.bind(cleanParams);
             }
             const rows = [];
             while (stmt.step()) {
@@ -120,9 +121,10 @@ export class SQLiteDatabase {
     async get(sql, params = []) {
         await this.ensureReady();
         try {
+            const cleanParams = Array.isArray(params) ? params.map(v => v === undefined ? null : v) : params;
             const stmt = this.db.prepare(sql);
-            if (params && params.length > 0) {
-                stmt.bind(params);
+            if (cleanParams && cleanParams.length > 0) {
+                stmt.bind(cleanParams);
             }
             let row = null;
             if (stmt.step()) {
@@ -139,10 +141,11 @@ export class SQLiteDatabase {
     async run(sql, params = []) {
         await this.ensureReady();
         try {
-            if (!params || params.length === 0) {
+            const cleanParams = Array.isArray(params) ? params.map(v => v === undefined ? null : v) : params;
+            if (!cleanParams || cleanParams.length === 0) {
                 this.db.run(sql);
             } else {
-                this.db.run(sql, params);
+                this.db.run(sql, cleanParams);
             }
             this.schedulePersist();
 
@@ -163,6 +166,53 @@ export class SQLiteDatabase {
             console.error('Run Error:', sql, err);
             return Promise.reject(err);
         }
+    }
+
+    prepare(sql) {
+        const self = this;
+        const sanitize = (args) => {
+            const raw = args.length === 1 && Array.isArray(args[0]) ? args[0] : args;
+            return raw.map(v => v === undefined ? null : v);
+        };
+        return {
+            get: (...args) => {
+                const cleanParams = sanitize(args);
+                const stmt = self.db.prepare(sql);
+                if (cleanParams.length > 0) stmt.bind(cleanParams);
+                let row = null;
+                if (stmt.step()) row = stmt.getAsObject();
+                stmt.free();
+                return row;
+            },
+            all: (...args) => {
+                const cleanParams = sanitize(args);
+                const stmt = self.db.prepare(sql);
+                if (cleanParams.length > 0) stmt.bind(cleanParams);
+                const rows = [];
+                while (stmt.step()) rows.push(stmt.getAsObject());
+                stmt.free();
+                return rows;
+            },
+            run: (...args) => {
+                const cleanParams = sanitize(args);
+                if (cleanParams.length === 0) {
+                    self.db.run(sql);
+                } else {
+                    self.db.run(sql, cleanParams);
+                }
+                self.schedulePersist();
+                let lastID = null;
+                let changes = 0;
+                try {
+                    const res = self.db.exec("SELECT last_insert_rowid() as id, changes() as changes");
+                    if (res && res.length > 0 && res[0].values && res[0].values.length > 0) {
+                        lastID = res[0].values[0][0];
+                        changes = res[0].values[0][1];
+                    }
+                } catch (e) {}
+                return { lastInsertRowid: lastID, changes };
+            }
+        };
     }
 
     async ensureReady() {

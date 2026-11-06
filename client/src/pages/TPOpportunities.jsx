@@ -22,9 +22,11 @@ import {
 import { useAuth } from '../context/AuthContext';
 import CompanyLogo from '../components/CompanyLogo';
 import CompanyLogoUpload from '../components/CompanyLogoUpload';
+import { useDataSync } from '../context/SyncContext';
 
 export default function TPOpportunities({ onNavigate, onViewCandidates, onSelectJobForCandidates }) {
   const { user } = useAuth();
+  const { syncVersion, notifyMutation } = useDataSync();
   const isHOD = user?.role === 'HOD';
 
   // Active Tab: 'drives' (Opportunities) or 'companies' (Company Directory)
@@ -139,7 +141,32 @@ export default function TPOpportunities({ onNavigate, onViewCandidates, onSelect
   useEffect(() => {
     loadJobs();
     loadCompanies();
-  }, []);
+  }, [syncVersion]);
+
+  const handleToggleJobStatus = async (jobId, currentStatus) => {
+    if (isHOD) return;
+    const newStatus = currentStatus === 'ACTIVE' ? 'CLOSED' : 'ACTIVE';
+    try {
+      const token = localStorage.getItem('jobmatch_token');
+      const res = await fetch(`/api/jobs/${jobId}/status`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ status: newStatus })
+      });
+      if (res.ok) {
+        notifyMutation('JOB_STATUS_CHANGED', { job_id: jobId, status: newStatus });
+        await loadJobs();
+      } else {
+        const err = await res.json();
+        alert(err.error || 'Failed to update job status');
+      }
+    } catch (e) {
+      console.error('Error updating job status:', e);
+    }
+  };
 
   const handleAnalyzeJD = async () => {
     if (!rawJdText || !rawJdText.trim()) {
@@ -215,6 +242,7 @@ export default function TPOpportunities({ onNavigate, onViewCandidates, onSelect
 
       await Promise.all([loadJobs(), loadCompanies()]);
       setShowModal(false);
+      notifyMutation('JOB_CREATED', { title: formData.title });
       setFeedback('New Company Opportunity successfully structured and published!');
     } catch (err) {
       setFeedback(err.message);
@@ -244,6 +272,7 @@ export default function TPOpportunities({ onNavigate, onViewCandidates, onSelect
 
       await Promise.all([loadCompanies(), loadJobs()]);
       setShowAddCompanyModal(false);
+      notifyMutation('COMPANY_CREATED', { name: companyFormData.name });
       setCompanyFormData({
         name: '',
         tier: 'Tier 1',
@@ -303,6 +332,7 @@ export default function TPOpportunities({ onNavigate, onViewCandidates, onSelect
       await Promise.all([loadCompanies(), loadJobs()]);
       setShowEditCompanyModal(false);
       setEditingCompany(null);
+      notifyMutation('COMPANY_UPDATED', { company_id: editingCompany.id });
       setFeedback(`Company "${data.company?.name || 'Company'}" updated successfully!`);
     } catch (err) {
       setCompanyFeedback(err.message);
@@ -516,7 +546,12 @@ export default function TPOpportunities({ onNavigate, onViewCandidates, onSelect
                     </div>
                   </div>
 
-                  <span className="badge badge-purple">{job.role_type}</span>
+                  <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+                    <span className={job.status === 'CLOSED' ? 'badge' : 'badge badge-green'} style={job.status === 'CLOSED' ? { backgroundColor: '#F1F5F9', color: '#64748B' } : {}}>
+                      {job.status === 'CLOSED' ? 'Closed' : 'Active'}
+                    </span>
+                    <span className="badge badge-purple">{job.role_type}</span>
+                  </div>
                 </div>
 
                 {/* Package & Eligibility */}
@@ -549,20 +584,37 @@ export default function TPOpportunities({ onNavigate, onViewCandidates, onSelect
                   <span>Deadline: {job.deadline_date}</span>
                 </div>
 
-                <button
-                  onClick={() => {
-                    const handler = onViewCandidates || onSelectJobForCandidates;
-                    if (typeof handler === 'function') {
-                      handler(job.id);
-                    } else if (typeof onNavigate === 'function') {
-                      onNavigate('tp-candidate-ranking');
-                    }
-                  }}
-                  className="btn btn-primary btn-sm"
-                >
-                  <Sparkles size={13} />
-                  <span>Rank Candidates</span>
-                </button>
+                <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                  {!isHOD && (
+                    <button
+                      onClick={() => handleToggleJobStatus(job.id, job.status || 'ACTIVE')}
+                      className="btn btn-outline btn-sm"
+                      style={{
+                        fontSize: '0.75rem',
+                        padding: '4px 10px',
+                        color: job.status === 'CLOSED' ? '#059669' : '#DC2626',
+                        borderColor: job.status === 'CLOSED' ? '#86EFAC' : '#FECACA'
+                      }}
+                    >
+                      {job.status === 'CLOSED' ? 'Reopen' : 'Close'}
+                    </button>
+                  )}
+
+                  <button
+                    onClick={() => {
+                      const handler = onViewCandidates || onSelectJobForCandidates;
+                      if (typeof handler === 'function') {
+                        handler(job.id);
+                      } else if (typeof onNavigate === 'function') {
+                        onNavigate('tp-candidate-ranking');
+                      }
+                    }}
+                    className="btn btn-primary btn-sm"
+                  >
+                    <Sparkles size={13} />
+                    <span>Rank Candidates</span>
+                  </button>
+                </div>
               </div>
             </div>
           ))}

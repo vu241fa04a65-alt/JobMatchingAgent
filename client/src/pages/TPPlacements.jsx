@@ -23,9 +23,11 @@ import {
 import DonutChart from '../components/DonutChart';
 import CompanyLogo from '../components/CompanyLogo';
 import { useAuth } from '../context/AuthContext';
+import { useDataSync } from '../context/SyncContext';
 
 export default function TPPlacements({ onNavigate }) {
   const { user } = useAuth();
+  const { syncVersion, notifyMutation } = useDataSync();
   const isHOD = user?.role === 'HOD';
 
   const [data, setData] = useState(null);
@@ -79,7 +81,7 @@ export default function TPPlacements({ onNavigate }) {
 
   useEffect(() => {
     loadData();
-  }, []);
+  }, [syncVersion]);
 
   const handleOpenStageModal = (app) => {
     setSelectedApp(app);
@@ -131,6 +133,7 @@ export default function TPPlacements({ onNavigate }) {
 
       if (res.ok) {
         setSelectedApp(null);
+        notifyMutation('APPLICATION_STAGE_UPDATED', { application_id: selectedApp.id, stage: stageForm.stage });
         await loadData();
         alert('Candidate placement lifecycle stage successfully updated!');
       } else {

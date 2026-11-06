@@ -3,6 +3,8 @@ import crypto from 'crypto';
 import { db } from '../db/database.js';
 import { authenticateToken, requireRole, denyHODMutation } from '../middleware/auth.js';
 import { JDAnalyzer } from '../engine/jdAnalyzer.js';
+import { syncBus } from '../services/syncBus.js';
+import { dispatchNotification } from './notifications.js';
 
 const router = express.Router();
 
@@ -181,13 +183,172 @@ router.post('/create', authenticateToken, requireRole(['T_AND_P']), denyHODMutat
             deadline_date || new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
         ]);
 
-        res.json({
+        // 1. Dispatch in-app notification to all eligible students
+        await dispatchNotification({
+            userId: null,
+            roleTarget: 'STUDENT',
+            title: `New Placement Drive: ${company_name || 'Partner Company'}`,
+            message: `New opening for ${title} (${ctcDisplay}) has been published. Check your eligibility and apply!`,
+            type: 'DRIVE',
+            linkView: 'student-opportunities'
+        });
+
+        // 2. Broadcast real-time event to all connected dashboards
+        syncBus.broadcast('JOB_CREATED', {
+            job_id: jobId,
+            company_id: targetCompanyId,
+            title,
+            company_name,
+            ctc_display: ctcDisplay,
+            location: location || 'Bengaluru, India'
+        });
+
+        res.status(201).json({
             message: 'Company opportunity created successfully',
-            job_id: jobId
+            job_id: jobId,
+            job: {
+                id: jobId,
+                company_id: targetCompanyId,
+                title,
+                ctc_display: ctcDisplay
+            }
         });
     } catch (err) {
         console.error('Error creating job opening:', err);
         res.status(500).json({ error: 'Server error creating opportunity' });
+    }
+});
+
+// Update Job Opening (T&P Only, HOD blocked)
+router.put('/:id', authenticateToken, requireRole(['T_AND_P']), denyHODMutation, async (req, res) => {
+    try {
+        const jobId = req.params.id;
+        const job = await db.get('SELECT * FROM placement_job_openings WHERE id = ?', [jobId]);
+        if (!job) {
+            return res.status(404).json({ error: 'Job opening not found' });
+        }
+
+        const {
+            title, role_type, work_mode, location, ctc_min, ctc_max, min_cgpa,
+            max_backlogs, eligible_branches, eligible_grad_years, description,
+            responsibilities, required_skills, preferred_skills, deadline_date, status
+        } = req.body;
+
+        const ctcDisplay = (ctc_min || ctc_max) ? `₹ ${ctc_min || job.ctc_min} - ${ctc_max || job.ctc_max} LPA` : job.ctc_display;
+
+        await db.run(`
+            UPDATE placement_job_openings
+            SET title = COALESCE(?, title),
+                role_type = COALESCE(?, role_type),
+                work_mode = COALESCE(?, work_mode),
+                location = COALESCE(?, location),
+                ctc_min = COALESCE(?, ctc_min),
+                ctc_max = COALESCE(?, ctc_max),
+                ctc_display = COALESCE(?, ctc_display),
+                min_cgpa = COALESCE(?, min_cgpa),
+                max_backlogs = COALESCE(?, max_backlogs),
+                eligible_branches = COALESCE(?, eligible_branches),
+                eligible_grad_years = COALESCE(?, eligible_grad_years),
+                description = COALESCE(?, description),
+                responsibilities = COALESCE(?, responsibilities),
+                required_skills = COALESCE(?, required_skills),
+                preferred_skills = COALESCE(?, preferred_skills),
+                deadline_date = COALESCE(?, deadline_date),
+                status = COALESCE(?, status)
+            WHERE id = ?
+        `, [
+            title, role_type, work_mode, location, ctc_min, ctc_max, ctcDisplay, min_cgpa, max_backlogs,
+            eligible_branches ? JSON.stringify(eligible_branches) : null,
+            eligible_grad_years ? JSON.stringify(eligible_grad_years) : null,
+            description,
+            responsibilities ? JSON.stringify(responsibilities) : null,
+            required_skills ? JSON.stringify(required_skills) : null,
+            preferred_skills ? JSON.stringify(preferred_skills) : null,
+            deadline_date, status, jobId
+        ]);
+
+        syncBus.broadcast('JOB_UPDATED', {
+            job_id: jobId,
+            title: title || job.title,
+            status: status || job.status
+        });
+
+        res.json({
+            message: 'Opportunity updated successfully',
+            job_id: jobId
+        });
+    } catch (err) {
+        console.error('Error updating job opening:', err);
+        res.status(500).json({ error: 'Failed to update opportunity' });
+    }
+});
+
+// Update Job Status / Close Job (T&P Only, HOD blocked)
+router.put('/:id/status', authenticateToken, requireRole(['T_AND_P']), denyHODMutation, async (req, res) => {
+    try {
+        const jobId = req.params.id;
+        const { status } = req.body;
+        if (!status) {
+            return res.status(400).json({ error: 'Status is required (ACTIVE, CLOSED, DRAFT)' });
+        }
+
+        const job = await db.get(`
+            SELECT j.*, c.name as company_name 
+            FROM placement_job_openings j 
+            JOIN placement_companies c ON j.company_id = c.id 
+            WHERE j.id = ?
+        `, [jobId]);
+
+        if (!job) {
+            return res.status(404).json({ error: 'Job opening not found' });
+        }
+
+        await db.run('UPDATE placement_job_openings SET status = ? WHERE id = ?', [status, jobId]);
+
+        syncBus.broadcast('JOB_STATUS_CHANGED', {
+            job_id: jobId,
+            status,
+            title: job.title,
+            company_name: job.company_name
+        });
+
+        res.json({
+            message: `Opportunity status updated to ${status}`,
+            job_id: jobId,
+            status
+        });
+    } catch (err) {
+        console.error('Error updating job status:', err);
+        res.status(500).json({ error: 'Failed to update opportunity status' });
+    }
+});
+
+// Soft-Delete / Close Job (T&P Only)
+router.delete('/:id', authenticateToken, requireRole(['T_AND_P']), denyHODMutation, async (req, res) => {
+    try {
+        const jobId = req.params.id;
+        const job = await db.get('SELECT id, title FROM placement_job_openings WHERE id = ?', [jobId]);
+        if (!job) {
+            return res.status(404).json({ error: 'Job opening not found' });
+        }
+
+        // Soft-delete by setting status = 'CLOSED' to preserve application history
+        await db.run('UPDATE placement_job_openings SET status = "CLOSED" WHERE id = ?', [jobId]);
+
+        syncBus.broadcast('JOB_STATUS_CHANGED', {
+            job_id: jobId,
+            status: 'CLOSED',
+            title: job.title
+        });
+
+        res.json({
+            message: 'Opportunity closed successfully',
+            job_id: jobId,
+            status: 'CLOSED'
+        });
+    } catch (err) {
+        console.error('Error closing job opening:', err);
+        res.status(500).json({ error: 'Failed to close opportunity' });
     }
 });
 

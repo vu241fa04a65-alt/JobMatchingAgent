@@ -11,7 +11,7 @@
     "server": "node server/server.js",
     "client": "npm run dev --prefix client",
     "seed": "node server/db/seed.js",
-    "test": "node server/tests/production_audit.js && node server/tests/security_and_engine.test.js && node server/tests/companies.test.js",
+    "test": "node server/tests/production_audit.js && node server/tests/security_and_engine.test.js && node server/tests/companies.test.js && node server/tests/sync_and_consistency.test.js",
     "test:security": "node server/tests/security_and_engine.test.js"
   },
   "engines": {

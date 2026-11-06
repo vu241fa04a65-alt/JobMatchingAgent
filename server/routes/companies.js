@@ -5,6 +5,8 @@ import fs from 'fs';
 import { fileURLToPath } from 'url';
 import { db } from '../db/database.js';
 import { authenticateToken, requireRole, denyHODMutation } from '../middleware/auth.js';
+import { syncBus } from '../services/syncBus.js';
+import { dispatchNotification } from './notifications.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -216,6 +218,13 @@ router.post('/', authenticateToken, requireRole(['T_AND_P']), denyHODMutation, a
 
         const created = await db.get('SELECT * FROM placement_companies WHERE id = ?', [companyId]);
 
+        // Broadcast company registered event
+        syncBus.broadcast('COMPANY_UPDATED', {
+            company_id: companyId,
+            name: created.name,
+            action: 'CREATED'
+        });
+
         res.status(201).json({
             message: 'Company registered successfully!',
             company: created
@@ -298,6 +307,14 @@ router.put('/:id', authenticateToken, requireRole(['T_AND_P']), denyHODMutation,
         );
 
         const updated = await db.get('SELECT * FROM placement_companies WHERE id = ?', [companyId]);
+
+        // Broadcast company update event
+        syncBus.broadcast('COMPANY_UPDATED', {
+            company_id: companyId,
+            name: updated.name,
+            logo_url: updated.logo_url,
+            action: 'UPDATED'
+        });
 
         res.json({
             message: 'Company updated successfully!',

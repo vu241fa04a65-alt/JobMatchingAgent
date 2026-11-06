@@ -15,9 +15,11 @@ import {
 import DonutChart from '../components/DonutChart';
 import RadialGauge from '../components/RadialGauge';
 import { useAuth } from '../context/AuthContext';
+import { useDataSync } from '../context/SyncContext';
 
 export default function TPDashboard({ onNavigate, onSelectStudent }) {
   const { user } = useAuth();
+  const { syncVersion } = useDataSync();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -41,7 +43,7 @@ export default function TPDashboard({ onNavigate, onSelectStudent }) {
       }
     }
     loadMetrics();
-  }, []);
+  }, [syncVersion]);
 
   if (loading) {
     return (

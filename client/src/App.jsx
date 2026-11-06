@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { SyncProvider } from './context/SyncContext';
 import TopNavbar from './components/TopNavbar';
 import Sidebar from './components/Sidebar';
 import SantraAIChat from './components/SantraAIChat';
@@ -313,7 +314,9 @@ function MainApp() {
 export default function App() {
   return (
     <AuthProvider>
-      <MainApp />
+      <SyncProvider>
+        <MainApp />
+      </SyncProvider>
     </AuthProvider>
   );
 }

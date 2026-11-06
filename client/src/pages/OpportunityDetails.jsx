@@ -20,9 +20,11 @@ import {
 } from 'lucide-react';
 import RadialGauge from '../components/RadialGauge';
 import CompanyLogo from '../components/CompanyLogo';
+import { useDataSync } from '../context/SyncContext';
 import confetti from 'canvas-confetti';
 
 export default function OpportunityDetails({ jobId, onBack, onNavigate, onPrepareRole }) {
+  const { syncVersion, notifyMutation } = useDataSync();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('match_overview');
@@ -78,7 +80,7 @@ export default function OpportunityDetails({ jobId, onBack, onNavigate, onPrepar
       }
     }
     loadDeepDive();
-  }, [jobId]);
+  }, [jobId, syncVersion]);
 
   const handleApply = async () => {
     setApplying(true);
@@ -94,6 +96,7 @@ export default function OpportunityDetails({ jobId, onBack, onNavigate, onPrepar
       });
       if (res.ok) {
         setApplied(true);
+        notifyMutation('APPLICATION_CREATED', { job_id: jobId });
         try {
           confetti({ particleCount: 70, spread: 80, origin: { y: 0.6 } });
         } catch (e) {}

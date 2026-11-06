@@ -25,9 +25,11 @@ import {
   FolderGit2
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useDataSync } from '../context/SyncContext';
 
 export default function StudentProfile({ onNavigate }) {
   const { user } = useAuth();
+  const { syncVersion, notifyMutation } = useDataSync();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('overview');
@@ -76,7 +78,7 @@ export default function StudentProfile({ onNavigate }) {
 
   useEffect(() => {
     loadProfile();
-  }, []);
+  }, [syncVersion]);
 
   const handleImageUpload = (e) => {
     const file = e.target.files?.[0];
@@ -105,6 +107,7 @@ export default function StudentProfile({ onNavigate }) {
 
       if (res.ok) {
         setShowEditModal(false);
+        notifyMutation('STUDENT_PROFILE_UPDATED', editForm);
         await loadProfile();
       } else {
         alert('Failed to update profile');

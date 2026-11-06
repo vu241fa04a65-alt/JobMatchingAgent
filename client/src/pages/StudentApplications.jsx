@@ -21,12 +21,15 @@ import {
 import DonutChart from '../components/DonutChart';
 import StageProgressBar from '../components/StageProgressBar';
 import CompanyLogo from '../components/CompanyLogo';
+import { useDataSync } from '../context/SyncContext';
 
 export default function StudentApplications({ onNavigate, onPrepareRole }) {
+  const { syncVersion, notifyMutation } = useDataSync();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('all');
   const [selectedApp, setSelectedApp] = useState(null);
+  const [actionLoading, setActionLoading] = useState(false);
 
   useEffect(() => {
     async function loadApps() {
@@ -46,7 +49,62 @@ export default function StudentApplications({ onNavigate, onPrepareRole }) {
       }
     }
     loadApps();
-  }, []);
+  }, [syncVersion]);
+
+  const handleWithdraw = async (appId) => {
+    if (!window.confirm('Are you sure you want to withdraw this application? This action will notify the placement cell.')) {
+      return;
+    }
+    setActionLoading(true);
+    try {
+      const token = localStorage.getItem('jobmatch_token');
+      const res = await fetch(`/api/applications/${appId}/withdraw`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+        },
+        body: JSON.stringify({ reason: 'Candidate voluntarily withdrew.' })
+      });
+      if (res.ok) {
+        notifyMutation('APPLICATION_WITHDRAWN', { application_id: appId });
+        setSelectedApp(null);
+      } else {
+        const err = await res.json();
+        alert(err.error || 'Failed to withdraw application');
+      }
+    } catch (err) {
+      console.error('Error withdrawing application:', err);
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleRespondOffer = async (appId, decision) => {
+    setActionLoading(true);
+    try {
+      const token = localStorage.getItem('jobmatch_token');
+      const res = await fetch(`/api/applications/${appId}/respond-offer`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+        },
+        body: JSON.stringify({ decision })
+      });
+      if (res.ok) {
+        notifyMutation('OFFER_STATUS_UPDATED', { application_id: appId, decision });
+        setSelectedApp(null);
+      } else {
+        const err = await res.json();
+        alert(err.error || 'Failed to submit offer response');
+      }
+    } catch (err) {
+      console.error('Error responding to offer:', err);
+    } finally {
+      setActionLoading(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -72,12 +130,22 @@ export default function StudentApplications({ onNavigate, onPrepareRole }) {
     switch (status) {
       case 'OFFER_RECEIVED':
         return <span className="badge badge-green" style={{ fontSize: '0.75rem', padding: '4px 10px' }}>Offer Received</span>;
+      case 'OFFER_ACCEPTED':
+      case 'SELECTED':
+        return <span className="badge badge-green" style={{ fontSize: '0.75rem', padding: '4px 10px' }}>Offer Accepted ✓</span>;
+      case 'OFFER_DECLINED':
+        return <span className="badge badge-gray" style={{ fontSize: '0.75rem', padding: '4px 10px' }}>Offer Declined</span>;
       case 'INTERVIEW_SCHEDULED':
         return <span className="badge badge-purple" style={{ fontSize: '0.75rem', padding: '4px 10px' }}>Interview Scheduled</span>;
+      case 'SHORTLISTED':
+        return <span className="badge badge-blue" style={{ fontSize: '0.75rem', padding: '4px 10px' }}>Shortlisted</span>;
       case 'UNDER_REVIEW':
       case 'APPLIED':
         return <span className="badge badge-blue" style={{ fontSize: '0.75rem', padding: '4px 10px' }}>Under Review</span>;
+      case 'WITHDRAWN':
+        return <span className="badge badge-gray" style={{ fontSize: '0.75rem', padding: '4px 10px' }}>Withdrawn</span>;
       case 'NOT_SELECTED':
+      case 'REJECTED':
         return <span className="badge badge-red" style={{ fontSize: '0.75rem', padding: '4px 10px' }}>Not Selected</span>;
       default:
         return <span className="badge badge-gray" style={{ fontSize: '0.75rem', padding: '4px 10px' }}>{status}</span>;
@@ -551,7 +619,42 @@ export default function StudentApplications({ onNavigate, onPrepareRole }) {
             </div>
 
             {/* Action Buttons */}
-            <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end', borderTop: '1px solid #F1F5F9', paddingTop: '18px' }}>
+            <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end', alignItems: 'center', borderTop: '1px solid #F1F5F9', paddingTop: '18px', flexWrap: 'wrap' }}>
+              {['APPLIED', 'UNDER_REVIEW', 'SHORTLISTED'].includes(selectedApp.status) && (
+                <button
+                  type="button"
+                  disabled={actionLoading}
+                  onClick={() => handleWithdraw(selectedApp.id)}
+                  className="btn btn-outline"
+                  style={{ color: '#DC2626', borderColor: '#FECACA', marginRight: 'auto' }}
+                >
+                  {actionLoading ? 'Processing...' : 'Withdraw Application'}
+                </button>
+              )}
+
+              {selectedApp.status === 'OFFER_RECEIVED' && (
+                <div style={{ display: 'flex', gap: '10px', marginRight: 'auto' }}>
+                  <button
+                    type="button"
+                    disabled={actionLoading}
+                    onClick={() => handleRespondOffer(selectedApp.id, 'ACCEPTED')}
+                    className="btn btn-primary"
+                    style={{ backgroundColor: '#059669', borderColor: '#059669' }}
+                  >
+                    Accept Formal Offer
+                  </button>
+                  <button
+                    type="button"
+                    disabled={actionLoading}
+                    onClick={() => handleRespondOffer(selectedApp.id, 'DECLINED')}
+                    className="btn btn-outline"
+                    style={{ color: '#DC2626', borderColor: '#FECACA' }}
+                  >
+                    Decline Offer
+                  </button>
+                </div>
+              )}
+
               {onPrepareRole && (
                 <button
                   onClick={() => {

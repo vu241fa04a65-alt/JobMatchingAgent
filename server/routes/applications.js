@@ -2,6 +2,8 @@ import express from 'express';
 import crypto from 'crypto';
 import { db } from '../db/database.js';
 import { authenticateToken, requireRole, denyHODMutation } from '../middleware/auth.js';
+import { syncBus } from '../services/syncBus.js';
+import { dispatchNotification } from './notifications.js';
 
 const router = express.Router();
 
@@ -88,7 +90,7 @@ router.get('/all', authenticateToken, requireRole(['T_AND_P', 'HOD']), async (re
         const applications = await db.query(`
             SELECT a.*, s.full_name as student_name, s.usn as student_usn, s.branch as student_branch, s.cgpa as student_cgpa,
                    j.title as job_title, j.location as job_location, j.ctc_display,
-                   c.name as company_name, c.tier as company_tier,
+                   c.name as company_name, c.tier as company_tier, c.logo_url as company_logo,
                    i.round_name, i.scheduled_time, i.mode as interview_mode, i.status as interview_status,
                    o.offered_ctc, o.student_decision
             FROM placement_drive_applications a
@@ -169,7 +171,47 @@ router.post('/apply', authenticateToken, denyHODMutation, async (req, res) => {
             VALUES (?, ?, ?, 'UNDER_REVIEW', 'APPLIED', 1, ?, ?, CURRENT_TIMESTAMP, 'Application submitted successfully.')
         `, [appId, targetStudentId, job_opening_id, JSON.stringify(stageHistory), JSON.stringify(roundsConfig)]);
 
-        res.json({
+        // 1. Dispatch in-app notification to student
+        const student = await db.get('SELECT user_id, full_name FROM people_students WHERE id = ?', [targetStudentId]);
+        const jobDetails = await db.get(`
+            SELECT j.title as job_title, c.name as company_name 
+            FROM placement_job_openings j 
+            JOIN placement_companies c ON j.company_id = c.id 
+            WHERE j.id = ?
+        `, [job_opening_id]);
+
+        if (student?.user_id) {
+            await dispatchNotification({
+                userId: student.user_id,
+                roleTarget: 'STUDENT',
+                title: `Application Submitted: ${jobDetails?.company_name || 'Opportunity'}`,
+                message: `You successfully applied for ${jobDetails?.job_title} at ${jobDetails?.company_name}. Profile queued for review.`,
+                type: 'APPLICATION',
+                linkView: 'student-applications'
+            });
+        }
+
+        // 2. Dispatch notification to T&P Cell
+        await dispatchNotification({
+            userId: null,
+            roleTarget: 'T_AND_P',
+            title: `New Candidate Application: ${student?.full_name || 'Student'}`,
+            message: `${student?.full_name || 'A candidate'} applied for ${jobDetails?.job_title} at ${jobDetails?.company_name}.`,
+            type: 'DRIVE',
+            linkView: 'tp-placements'
+        });
+
+        // 3. Real-time broadcast across all open dashboards
+        syncBus.broadcast('APPLICATION_CREATED', {
+            application_id: appId,
+            student_id: targetStudentId,
+            job_opening_id,
+            job_title: jobDetails?.job_title,
+            company_name: jobDetails?.company_name,
+            student_name: student?.full_name
+        });
+
+        res.status(201).json({
             message: 'Application submitted successfully! Your profile has been sent to the recruiter.',
             application_id: appId
         });
@@ -247,14 +289,30 @@ router.put('/:id/stage', authenticateToken, requireRole(['T_AND_P']), denyHODMut
             `, [offId, appId, parseFloat(offer.ctc), app.job_title, offer.joining_date || '2027-07-01']);
         }
 
-        // Notify Student
+        // 1. Dispatch in-app notification to Student
         if (app.student_user_id) {
-            const notifId = 'notif_' + crypto.randomBytes(6).toString('hex');
-            await db.run(`
-                INSERT INTO system_notifications (id, user_id, role_target, title, message, type, is_read, link_view)
-                VALUES (?, ?, 'STUDENT', ?, ?, 'DRIVE', 0, 'student-applications')
-            `, [notifId, app.student_user_id, `Application Update: ${app.company_name}`, `Your application for ${app.job_title} has advanced to: ${newStageTitle}.`]);
+            await dispatchNotification({
+                userId: app.student_user_id,
+                roleTarget: 'STUDENT',
+                title: `Application Update: ${app.company_name}`,
+                message: `Your application for ${app.job_title} has advanced to: ${newStageTitle}.`,
+                type: stage === 'OFFER' ? 'OFFER' : stage.startsWith('TECH') || stage === 'CODING' || stage === 'HR' ? 'INTERVIEW' : 'APPLICATION',
+                linkView: 'student-applications'
+            });
         }
+
+        // 2. Real-time broadcast to all connected dashboards
+        syncBus.broadcast('APPLICATION_STAGE_UPDATED', {
+            application_id: appId,
+            student_id: app.student_id,
+            job_opening_id: app.job_opening_id,
+            stage,
+            status: status || 'UNDER_REVIEW',
+            progress: progress || 2,
+            student_name: app.student_name,
+            job_title: app.job_title,
+            company_name: app.company_name
+        });
 
         res.json({
             message: `Candidate application successfully advanced to ${newStageTitle}.`,
@@ -265,6 +323,239 @@ router.put('/:id/stage', authenticateToken, requireRole(['T_AND_P']), denyHODMut
     } catch (err) {
         console.error('Error updating application stage:', err);
         res.status(500).json({ error: 'Failed to update candidate application stage' });
+    }
+});
+
+// Withdraw application (Student or Authorized T&P)
+router.post('/:id/withdraw', authenticateToken, denyHODMutation, async (req, res) => {
+    try {
+        const appId = req.params.id;
+        const app = await db.get(`
+            SELECT a.*, s.user_id as student_user_id, s.full_name as student_name, j.title as job_title, c.name as company_name
+            FROM placement_drive_applications a
+            JOIN people_students s ON a.student_id = s.id
+            JOIN placement_job_openings j ON a.job_opening_id = j.id
+            JOIN placement_companies c ON j.company_id = c.id
+            WHERE a.id = ?
+        `, [appId]);
+
+        if (!app) {
+            return res.status(404).json({ error: 'Application record not found' });
+        }
+
+        // Student authorization check
+        if (req.user.role_name === 'STUDENT') {
+            const selfStudent = await getSelfStudent(req.user.id);
+            if (!selfStudent || selfStudent.id !== app.student_id) {
+                return res.status(403).json({ error: 'Unauthorized: You can only withdraw your own applications.' });
+            }
+        }
+
+        let stageHistory = [];
+        try {
+            stageHistory = typeof app.stage_history === 'string' ? JSON.parse(app.stage_history) : (app.stage_history || []);
+        } catch {
+            stageHistory = [];
+        }
+
+        stageHistory.push({
+            stage: 'WITHDRAWN',
+            title: 'Application Withdrawn',
+            timestamp: new Date().toISOString(),
+            status: 'WITHDRAWN',
+            notes: req.body.reason || 'Candidate voluntarily withdrew application from placement drive.'
+        });
+
+        await db.run(`
+            UPDATE placement_drive_applications 
+            SET status = 'WITHDRAWN', current_stage = 'WITHDRAWN', stage_history = ?, notes = ?, updated_at = CURRENT_TIMESTAMP
+            WHERE id = ?
+        `, [JSON.stringify(stageHistory), req.body.reason || 'Withdrawn by candidate.', appId]);
+
+        // Notify T&P Admin
+        await dispatchNotification({
+            userId: null,
+            roleTarget: 'T_AND_P',
+            title: `Application Withdrawn: ${app.student_name}`,
+            message: `${app.student_name} has withdrawn their application for ${app.job_title} at ${app.company_name}.`,
+            type: 'APPLICATION',
+            linkView: 'tp-placements'
+        });
+
+        // Real-time broadcast
+        syncBus.broadcast('APPLICATION_WITHDRAWN', {
+            application_id: appId,
+            student_id: app.student_id,
+            job_opening_id: app.job_opening_id,
+            student_name: app.student_name,
+            job_title: app.job_title,
+            company_name: app.company_name
+        });
+
+        res.json({
+            message: 'Application withdrawn successfully.',
+            application_id: appId,
+            status: 'WITHDRAWN'
+        });
+    } catch (err) {
+        console.error('Error withdrawing application:', err);
+        res.status(500).json({ error: 'Failed to withdraw application' });
+    }
+});
+
+// Student Offer Decision (Accept / Decline)
+router.post('/:id/respond-offer', authenticateToken, denyHODMutation, async (req, res) => {
+    try {
+        const appId = req.params.id;
+        const decision = (req.body.decision || 'ACCEPTED').toUpperCase(); // 'ACCEPTED' or 'DECLINED'
+
+        const app = await db.get(`
+            SELECT a.*, s.user_id as student_user_id, s.full_name as student_name, j.title as job_title, c.name as company_name
+            FROM placement_drive_applications a
+            JOIN people_students s ON a.student_id = s.id
+            JOIN placement_job_openings j ON a.job_opening_id = j.id
+            JOIN placement_companies c ON j.company_id = c.id
+            WHERE a.id = ?
+        `, [appId]);
+
+        if (!app) {
+            return res.status(404).json({ error: 'Application record not found' });
+        }
+
+        if (req.user.role_name === 'STUDENT') {
+            const selfStudent = await getSelfStudent(req.user.id);
+            if (!selfStudent || selfStudent.id !== app.student_id) {
+                return res.status(403).json({ error: 'Unauthorized: You can only respond to your own offers.' });
+            }
+        }
+
+        const newStatus = decision === 'ACCEPTED' ? 'OFFER_ACCEPTED' : 'OFFER_DECLINED';
+
+        // Update placement_offers
+        await db.run(`
+            UPDATE placement_offers 
+            SET student_decision = ? 
+            WHERE application_id = ?
+        `, [decision, appId]);
+
+        // Update placement_drive_applications
+        await db.run(`
+            UPDATE placement_drive_applications 
+            SET status = ?, current_stage = ?, updated_at = CURRENT_TIMESTAMP
+            WHERE id = ?
+        `, [newStatus, decision === 'ACCEPTED' ? 'OFFER' : 'REJECTED', appId]);
+
+        // If accepted, mark student readiness as Placed
+        if (decision === 'ACCEPTED') {
+            await db.run(`
+                UPDATE placement_readiness_summary 
+                SET status = 'Placement Ready' 
+                WHERE student_id = ?
+            `, [app.student_id]);
+        }
+
+        // Notify T&P
+        await dispatchNotification({
+            userId: null,
+            roleTarget: 'T_AND_P',
+            title: `Offer ${decision === 'ACCEPTED' ? 'Accepted' : 'Declined'}: ${app.student_name}`,
+            message: `${app.student_name} has ${decision.toLowerCase()} the offer for ${app.job_title} at ${app.company_name}.`,
+            type: 'OFFER',
+            linkView: 'tp-placements'
+        });
+
+        // Real-time broadcast
+        syncBus.broadcast('OFFER_STATUS_UPDATED', {
+            application_id: appId,
+            student_id: app.student_id,
+            decision,
+            status: newStatus
+        });
+
+        res.json({
+            message: `Offer ${decision.toLowerCase()} successfully.`,
+            application_id: appId,
+            status: newStatus,
+            decision
+        });
+    } catch (err) {
+        console.error('Error responding to offer:', err);
+        res.status(500).json({ error: 'Failed to process offer decision' });
+    }
+});
+
+// Explicit Interview Scheduling endpoint (T&P Authorized)
+router.post('/:id/schedule-interview', authenticateToken, requireRole(['T_AND_P']), denyHODMutation, async (req, res) => {
+    try {
+        const appId = req.params.id;
+        const { round_name, scheduled_time, mode, meeting_link, interviewer_name, notes } = req.body;
+
+        const app = await db.get(`
+            SELECT a.*, s.user_id as student_user_id, s.full_name as student_name, j.title as job_title, c.name as company_name
+            FROM placement_drive_applications a
+            JOIN people_students s ON a.student_id = s.id
+            JOIN placement_job_openings j ON a.job_opening_id = j.id
+            JOIN placement_companies c ON j.company_id = c.id
+            WHERE a.id = ?
+        `, [appId]);
+
+        if (!app) {
+            return res.status(404).json({ error: 'Application record not found' });
+        }
+
+        const intId = 'int_' + crypto.randomBytes(6).toString('hex');
+        await db.run(`
+            INSERT INTO placement_interviews (id, application_id, round_name, scheduled_time, mode, meeting_link, interviewer_name, status, feedback)
+            VALUES (?, ?, ?, ?, ?, ?, ?, 'SCHEDULED', ?)
+        `, [
+            intId, 
+            appId, 
+            round_name || 'Technical Round 1', 
+            scheduled_time || '15 Sep 2026, 10:00 AM IST', 
+            mode || 'Google Meet (Virtual)', 
+            meeting_link || 'https://meet.google.com/rvc-job-match', 
+            interviewer_name || 'Technical Evaluation Panel', 
+            notes || ''
+        ]);
+
+        await db.run(`
+            UPDATE placement_drive_applications
+            SET status = 'INTERVIEW_SCHEDULED', current_stage = 'TECHNICAL_1', stage_progress = 3, updated_at = CURRENT_TIMESTAMP
+            WHERE id = ?
+        `, [appId]);
+
+        // Notify student
+        if (app.student_user_id) {
+            await dispatchNotification({
+                userId: app.student_user_id,
+                roleTarget: 'STUDENT',
+                title: `Interview Scheduled: ${app.company_name}`,
+                message: `An interview for ${app.job_title} has been scheduled for ${scheduled_time || 'Upcoming date'}. Mode: ${mode || 'Virtual'}.`,
+                type: 'INTERVIEW',
+                linkView: 'student-applications'
+            });
+        }
+
+        // Real-time broadcast
+        syncBus.broadcast('APPLICATION_STAGE_UPDATED', {
+            application_id: appId,
+            student_id: app.student_id,
+            status: 'INTERVIEW_SCHEDULED',
+            stage: 'TECHNICAL_1',
+            progress: 3,
+            round_name,
+            scheduled_time
+        });
+
+        res.json({
+            message: 'Interview successfully scheduled and student notified.',
+            interview_id: intId,
+            application_id: appId,
+            status: 'INTERVIEW_SCHEDULED'
+        });
+    } catch (err) {
+        console.error('Error scheduling interview:', err);
+        res.status(500).json({ error: 'Failed to schedule interview' });
     }
 });
 

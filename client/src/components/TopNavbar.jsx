@@ -1,37 +1,67 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Search, Bell, CheckCheck } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useDataSync } from '../context/SyncContext';
 
 export default function TopNavbar({ onSearch }) {
   const { user } = useAuth();
+  const { syncVersion } = useDataSync();
   const [showNotifications, setShowNotifications] = useState(false);
   const dropdownRef = useRef(null);
 
-  const initialNotifications = [
-    { id: 1, title: 'Drive Update', desc: 'Google SWE Technical Round 1 evaluation slots finalized', time: '2 hours ago', unread: true },
-    { id: 2, title: 'New Matched Opening', desc: 'Microsoft SDE drive is now accepting candidate profiles', time: '1 day ago', unread: true },
-    { id: 3, title: 'Readiness Milestone', desc: 'Placement readiness score calculated by Agent 50', time: '3 days ago', unread: false }
-  ];
+  const [notifications, setNotifications] = useState([]);
+  const [unreadCount, setUnreadCount] = useState(0);
 
-  const [notifications, setNotifications] = useState(() => {
+  const loadNotifications = useCallback(async () => {
     try {
-      const saved = localStorage.getItem('jobmatch_notifications_state');
-      if (saved) return JSON.parse(saved);
-    } catch {
-      // Fallback
+      const token = localStorage.getItem('jobmatch_token');
+      if (!token) return;
+      const res = await fetch('/api/notifications', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setNotifications(data.notifications || []);
+        setUnreadCount(data.unread_count || 0);
+      }
+    } catch (err) {
+      console.warn('Failed to fetch real-time notifications:', err);
     }
-    return initialNotifications;
-  });
+  }, []);
 
-  const unreadCount = notifications.filter(n => n.unread).length;
+  useEffect(() => {
+    loadNotifications();
+  }, [loadNotifications, syncVersion]);
 
-  const handleMarkAllRead = () => {
-    const updated = notifications.map(n => ({ ...n, unread: false }));
-    setNotifications(updated);
+  const handleMarkAllRead = async () => {
     try {
-      localStorage.setItem('jobmatch_notifications_state', JSON.stringify(updated));
-    } catch {
-      // Ignore
+      const token = localStorage.getItem('jobmatch_token');
+      if (token) {
+        await fetch('/api/notifications/read-all', {
+          method: 'PUT',
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+      }
+      setNotifications(prev => prev.map(n => ({ ...n, unread: false, is_read: true })));
+      setUnreadCount(0);
+    } catch (err) {
+      console.error('Error marking all notifications read:', err);
+    }
+  };
+
+  const handleMarkItemRead = async (id) => {
+    try {
+      const token = localStorage.getItem('jobmatch_token');
+      if (token) {
+        await fetch(`/api/notifications/${id}/read`, {
+          method: 'PUT',
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+      }
+      setNotifications(prev => prev.map(n => n.id === id ? { ...n, unread: false, is_read: true } : n));
+      setUnreadCount(prev => Math.max(0, prev - 1));
+    } catch (err) {
+      console.error('Error marking notification read:', err);
     }
   };
 
@@ -174,17 +204,25 @@ export default function TopNavbar({ onSearch }) {
               </div>
               
               <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', maxHeight: '320px', overflowY: 'auto' }}>
-                {notifications.map((n) => (
-                  <div 
-                    key={n.id} 
-                    style={{ 
-                      padding: '10px 12px', 
-                      borderRadius: '12px', 
-                      backgroundColor: n.unread ? '#F8FAFC' : 'transparent', 
-                      border: n.unread ? '1px solid #EEF2FF' : '1px solid transparent',
-                      borderLeft: n.unread ? '3.5px solid #4F46E5' : '1px solid transparent'
-                    }}
-                  >
+                {notifications.length === 0 ? (
+                  <div style={{ padding: '24px 12px', textAlign: 'center', color: '#94A3B8', fontSize: '0.8125rem' }}>
+                    No notifications yet. You're all caught up!
+                  </div>
+                ) : (
+                  notifications.map((n) => (
+                    <div 
+                      key={n.id} 
+                      onClick={() => handleMarkItemRead(n.id)}
+                      style={{ 
+                        padding: '10px 12px', 
+                        borderRadius: '12px', 
+                        backgroundColor: n.unread ? '#F8FAFC' : 'transparent', 
+                        border: n.unread ? '1px solid #EEF2FF' : '1px solid transparent',
+                        borderLeft: n.unread ? '3.5px solid #4F46E5' : '1px solid transparent',
+                        cursor: 'pointer',
+                        transition: 'background-color 0.15s ease'
+                      }}
+                    >
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                       <div style={{ fontSize: '0.8125rem', fontWeight: 700, color: '#0F172A' }}>{n.title}</div>
                       {n.unread && (
@@ -194,7 +232,8 @@ export default function TopNavbar({ onSearch }) {
                     <div style={{ fontSize: '0.75rem', color: '#64748B', marginTop: '3px', lineHeight: 1.4 }}>{n.desc}</div>
                     <div style={{ fontSize: '0.6875rem', color: '#94A3B8', marginTop: '6px' }}>{n.time}</div>
                   </div>
-                ))}
+                  ))
+                )}
               </div>
             </div>
           )}

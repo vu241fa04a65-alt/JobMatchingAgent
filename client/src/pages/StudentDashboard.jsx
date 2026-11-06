@@ -4,9 +4,11 @@ import RadialGauge from '../components/RadialGauge';
 import DonutChart from '../components/DonutChart';
 import RadarChart from '../components/RadarChart';
 import { useAuth } from '../context/AuthContext';
+import { useDataSync } from '../context/SyncContext';
 
 export default function StudentDashboard({ onNavigate, onSelectJob }) {
   const { user } = useAuth();
+  const { syncVersion } = useDataSync();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -35,7 +37,7 @@ export default function StudentDashboard({ onNavigate, onSelectJob }) {
       }
     }
     loadDashboard();
-  }, []);
+  }, [syncVersion]);
 
   if (loading) {
     return (
