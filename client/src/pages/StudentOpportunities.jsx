@@ -19,6 +19,7 @@ import {
   BookOpen
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import CompanyLogo from '../components/CompanyLogo';
 
 export default function StudentOpportunities({ onViewJob, onApplyJob, onPrepareRole }) {
   const { user } = useAuth();
@@ -534,24 +535,12 @@ export default function StudentOpportunities({ onViewJob, onApplyJob, onPrepareR
                   {/* Card Top: Company Logo + Title + Bookmark */}
                   <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '14px', marginBottom: '14px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                      <div style={{
-                        width: '46px',
-                        height: '46px',
-                        borderRadius: '12px',
-                        backgroundColor: '#F8FAFC',
-                        border: '1px solid #E2E8F0',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        padding: '6px',
-                        flexShrink: 0
-                      }}>
-                        {job.company_logo ? (
-                          <img src={job.company_logo} alt={job.company_name} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
-                        ) : (
-                          <Building2 size={22} color="#4F46E5" />
-                        )}
-                      </div>
+                      <CompanyLogo 
+                        src={job.company_logo} 
+                        name={job.company_name} 
+                        size={46} 
+                        borderRadius="12px" 
+                      />
                       <div>
                         <h3 style={{ fontSize: '1.0625rem', fontWeight: 800, color: '#0F172A', marginBottom: '3px', lineHeight: 1.2 }}>
                           {job.title}

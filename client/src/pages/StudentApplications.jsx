@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import DonutChart from '../components/DonutChart';
 import StageProgressBar from '../components/StageProgressBar';
+import CompanyLogo from '../components/CompanyLogo';
 
 export default function StudentApplications({ onNavigate, onPrepareRole }) {
   const [data, setData] = useState(null);
@@ -272,20 +273,12 @@ export default function StudentApplications({ onNavigate, onPrepareRole }) {
                 >
                   {/* Left: Logo & Job details (Strictly 290px aligned) */}
                   <div style={{ display: 'flex', gap: '14px', alignItems: 'center', width: '290px', overflow: 'hidden' }}>
-                    <div style={{
-                      width: '46px',
-                      height: '46px',
-                      borderRadius: '12px',
-                      backgroundColor: '#F8FAFC',
-                      border: '1px solid #E2E8F0',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      padding: '7px',
-                      flexShrink: 0
-                    }}>
-                      <img src={app.company_logo} alt={app.company_name} style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} />
-                    </div>
+                    <CompanyLogo
+                      src={app.company_logo}
+                      name={app.company_name}
+                      size={46}
+                      borderRadius="12px"
+                    />
 
                     <div style={{ minWidth: 0, flex: 1 }}>
                       <h3 style={{ fontSize: '0.9375rem', fontWeight: 800, color: '#0F172A', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
@@ -398,9 +391,12 @@ export default function StudentApplications({ onNavigate, onPrepareRole }) {
             {/* Modal Header */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '20px', borderBottom: '1px solid #F1F5F9', paddingBottom: '16px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-                <div style={{ width: '48px', height: '48px', borderRadius: '12px', backgroundColor: '#F8FAFC', border: '1px solid #E2E8F0', padding: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <img src={selectedApp.company_logo} alt="" style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} />
-                </div>
+                <CompanyLogo
+                  src={selectedApp.company_logo}
+                  name={selectedApp.company_name}
+                  size={48}
+                  borderRadius="12px"
+                />
                 <div>
                   <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#0F172A', lineHeight: 1.2 }}>
                     {selectedApp.job_title}

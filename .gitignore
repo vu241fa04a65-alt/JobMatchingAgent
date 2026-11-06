@@ -38,3 +38,8 @@ original images/
 extracted_ui_images/
 del logo.png
 tcs logo.webp
+
+# User uploads (keep directory with .gitkeep, ignore uploaded binary files)
+server/uploads/*
+!server/uploads/.gitkeep
+!server/uploads/company-logos/.gitkeep

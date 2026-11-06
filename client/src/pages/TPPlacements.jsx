@@ -21,6 +21,7 @@ import {
   Search
 } from 'lucide-react';
 import DonutChart from '../components/DonutChart';
+import CompanyLogo from '../components/CompanyLogo';
 import { useAuth } from '../context/AuthContext';
 
 export default function TPPlacements({ onNavigate }) {
@@ -323,8 +324,18 @@ export default function TPPlacements({ onNavigate }) {
                     <div style={{ fontSize: '0.6875rem', color: '#64748B' }}>{app.student_usn} • {app.student_branch} (CGPA: {app.student_cgpa})</div>
                   </td>
                   <td>
-                    <div style={{ fontWeight: 700, color: '#334155', fontSize: '0.8125rem' }}>{app.company_name}</div>
-                    <div style={{ fontSize: '0.6875rem', color: '#64748B' }}>{app.job_title} • <span style={{ color: '#059669', fontWeight: 600 }}>{app.ctc_display}</span></div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <CompanyLogo
+                        src={app.company_logo}
+                        name={app.company_name}
+                        size={32}
+                        borderRadius="8px"
+                      />
+                      <div>
+                        <div style={{ fontWeight: 700, color: '#334155', fontSize: '0.8125rem' }}>{app.company_name}</div>
+                        <div style={{ fontSize: '0.6875rem', color: '#64748B' }}>{app.job_title} • <span style={{ color: '#059669', fontWeight: 600 }}>{app.ctc_display}</span></div>
+                      </div>
+                    </div>
                   </td>
                   <td>
                     <span className="badge badge-purple" style={{ fontSize: '0.75rem', padding: '4px 8px' }}>

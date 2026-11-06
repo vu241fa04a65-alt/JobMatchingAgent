@@ -17,10 +17,15 @@ import preparationRoutes from './routes/preparation.js';
 import institutionRoutes from './routes/institution.js';
 import agentopsRoutes from './routes/agentops.js';
 import santraAiRoutes from './routes/santraAi.js';
+import companiesRoutes from './routes/companies.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const CLIENT_DIST = path.join(__dirname, '../client/dist');
+const UPLOADS_DIR = path.join(__dirname, 'uploads');
+if (!fs.existsSync(UPLOADS_DIR)) {
+  fs.mkdirSync(UPLOADS_DIR, { recursive: true });
+}
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -88,6 +93,11 @@ app.use('/api/preparation', preparationRoutes);
 app.use('/api/institution', institutionRoutes);
 app.use('/api/agentops', agentopsRoutes);
 app.use('/api/santra-ai', santraAiRoutes);
+app.use('/api/companies', companiesRoutes);
+
+// Static uploads (uploaded company logos & documents)
+app.use('/uploads', express.static(UPLOADS_DIR));
+app.use('/api/uploads', express.static(UPLOADS_DIR));
 
 // Static assets from built frontend (client/dist)
 if (fs.existsSync(CLIENT_DIST)) {

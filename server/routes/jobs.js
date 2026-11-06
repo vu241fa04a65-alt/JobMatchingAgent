@@ -127,24 +127,28 @@ router.post('/analyze-jd', authenticateToken, async (req, res) => {
 router.post('/create', authenticateToken, requireRole(['T_AND_P']), denyHODMutation, async (req, res) => {
     try {
         const {
-            company_id, company_name, title, role_type, work_mode, location,
+            company_id, company_name, company_logo, logo_url, title, role_type, work_mode, location,
             ctc_min, ctc_max, min_cgpa, max_backlogs, eligible_branches,
             eligible_grad_years, description, responsibilities, required_skills,
             preferred_skills, deadline_date
         } = req.body;
 
         let targetCompanyId = company_id;
+        const targetLogo = logo_url || company_logo || null;
 
         // If new company name provided, create company or lookup
         if (!targetCompanyId && company_name) {
-            const existingComp = await db.get('SELECT id FROM placement_companies WHERE LOWER(name) = LOWER(?)', [company_name.trim()]);
+            const existingComp = await db.get('SELECT id, logo_url FROM placement_companies WHERE LOWER(name) = LOWER(?)', [company_name.trim()]);
             if (existingComp) {
                 targetCompanyId = existingComp.id;
+                if (targetLogo) {
+                    await db.run('UPDATE placement_companies SET logo_url = ? WHERE id = ?', [targetLogo, existingComp.id]);
+                }
             } else {
                 targetCompanyId = 'comp_' + crypto.randomBytes(4).toString('hex');
                 await db.run(
-                    `INSERT INTO placement_companies (id, name, tier, industry, headquarters, description) VALUES (?, ?, 'Tier 1', 'Technology', ?, 'Innovative tech organization.')`,
-                    [targetCompanyId, company_name.trim(), location || 'Bengaluru, India']
+                    `INSERT INTO placement_companies (id, name, tier, industry, headquarters, description, logo_url) VALUES (?, ?, 'Tier 1', 'Technology', ?, 'Innovative tech organization.', ?)`,
+                    [targetCompanyId, company_name.trim(), location || 'Bengaluru, India', targetLogo]
                 );
             }
         }

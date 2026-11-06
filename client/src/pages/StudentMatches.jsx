@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import RadialGauge from '../components/RadialGauge';
 import DonutChart from '../components/DonutChart';
+import CompanyLogo from '../components/CompanyLogo';
 import confetti from 'canvas-confetti';
 
 export default function StudentMatches({ onSelectJob, onViewJob, onNavigate }) {
@@ -252,20 +253,12 @@ export default function StudentMatches({ onSelectJob, onViewJob, onNavigate }) {
 
                   {/* Left: Company Logo + Title + Tags */}
                   <div style={{ display: 'flex', gap: '16px', alignItems: 'flex-start', flex: 1 }}>
-                    <div style={{
-                      width: '52px',
-                      height: '52px',
-                      borderRadius: '12px',
-                      backgroundColor: '#F8FAFC',
-                      border: '1px solid #E2E8F0',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      padding: '8px',
-                      flexShrink: 0
-                    }}>
-                      <img src={job.company_logo} alt={job.company_name} style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} />
-                    </div>
+                    <CompanyLogo
+                      src={job.company_logo}
+                      name={job.company_name}
+                      size={52}
+                      borderRadius="12px"
+                    />
 
                     <div style={{ flex: 1 }}>
                       <h3

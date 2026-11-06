@@ -19,6 +19,7 @@ import {
   BookOpen
 } from 'lucide-react';
 import RadialGauge from '../components/RadialGauge';
+import CompanyLogo from '../components/CompanyLogo';
 import confetti from 'canvas-confetti';
 
 export default function OpportunityDetails({ jobId, onBack, onNavigate, onPrepareRole }) {
@@ -144,20 +145,12 @@ export default function OpportunityDetails({ jobId, onBack, onNavigate, onPrepar
       <div className="card" style={{ padding: '24px 28px' }}>
         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '24px' }}>
           <div style={{ display: 'flex', gap: '18px', alignItems: 'center' }}>
-            <div style={{
-              width: '60px',
-              height: '60px',
-              borderRadius: '14px',
-              backgroundColor: '#F8FAFC',
-              border: '1px solid #E2E8F0',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              padding: '10px',
-              flexShrink: 0
-            }}>
-              <img src={job.company_logo} alt={job.company_name} style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} />
-            </div>
+            <CompanyLogo
+              src={job.company_logo}
+              name={job.company_name}
+              size={60}
+              borderRadius="14px"
+            />
 
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
