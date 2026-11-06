@@ -331,6 +331,122 @@ export class SantraAiService {
   }
 
   /**
+   * Detects whether user message is requesting a learning roadmap or skill preparation steps
+   */
+  isRoadmapQuery(query) {
+    if (!query) return false;
+    const q = query.toLowerCase();
+    return (
+      q.includes('road map') ||
+      q.includes('roadmap') ||
+      q.includes('how to learn') ||
+      q.includes('how can i learn') ||
+      q.includes('steps to learn') ||
+      q.includes('study plan') ||
+      q.includes('guide to learn') ||
+      q.includes('how to prepare for') ||
+      q.includes('preparation steps') ||
+      q.includes('learning path') ||
+      q.includes('how to master') ||
+      (q.includes('learn ') && (q.includes('step') || q.includes('give me') || q.includes('how')))
+    );
+  }
+
+  /**
+   * Generates a structured, placement-oriented learning roadmap with steps
+   */
+  generateSkillRoadmap(userMessage, user = null) {
+    const q = (userMessage || '').toLowerCase();
+    let skill = 'this skill';
+    
+    if (q.includes('power bi') || q.includes('powerbi')) skill = 'Power BI';
+    else if (q.includes('docker')) skill = 'Docker';
+    else if (q.includes('kubernetes')) skill = 'Kubernetes';
+    else if (q.includes('aws') || q.includes('cloud')) skill = 'AWS Cloud Solutions';
+    else if (q.includes('react')) skill = 'React';
+    else if (q.includes('system design')) skill = 'System Design';
+    else if (q.includes('sql') || q.includes('database')) skill = 'SQL & Database Optimization';
+    else if (q.includes('python')) skill = 'Python for Engineering & Data';
+    else if (q.includes('dsa') || q.includes('algorithm') || q.includes('data structure')) skill = 'Data Structures & Algorithms';
+    else if (q.includes('machine learning') || q.includes('aiml') || q.includes('ai/ml')) skill = 'Applied Machine Learning';
+    else {
+      const match = userMessage.match(/(?:learn|roadmap for|study|master|guide for)\s+([a-zA-Z0-9+#.\s]+?)(?:\s+give|\s+roadmap|\s+please|\s*$|\?)/i);
+      if (match && match[1]) skill = match[1].trim();
+      else skill = 'Technical Placement Competency';
+    }
+
+    if (skill.toLowerCase() === 'power bi') {
+      return `Here is a structured, 4-step roadmap to master Power BI for your campus placements and data analytics roles:
+
+Step 1: Foundations & Power Query ETL
+• Install Power BI Desktop (free) and connect to data sources including Excel, CSV, and SQL databases.
+• Master Power Query transformations: handling missing values, unpivoting columns, data type conversions, and merging datasets.
+• Understand schema hygiene and data profiling to prepare clean datasets for analytical modeling.
+
+Step 2: Data Modeling & DAX Measures
+• Design clean Star Schemas (Fact tables vs Dimension tables) and configure 1-to-many relationships.
+• Master essential DAX calculated columns and explicit measures using CALCULATE, SUMX, RELATED, and FILTER.
+• Implement Time Intelligence functions (YTD, QTD, MoM growth, and moving averages) frequently tested in placement interviews.
+
+Step 3: Interactive Dashboards & Visualizations
+• Design executive KPI cards, drill-through reports, custom tooltips, slicers, and conditional formatting.
+• Implement dynamic bookmarks, visual interactions, and report navigation for intuitive stakeholder UX.
+• Publish reports to Power BI Service, configure scheduled refreshes, and create role-based row-level security (RLS).
+
+Step 4: Portfolio Project & Placement Interview Prep
+• Build an end-to-end Sales or HR analytics dashboard with real-world data and showcase it on GitHub or NovyPro.
+• Practice top technical interview questions: DAX Row Context vs Filter Context, CALCULATE filter transition, and DirectQuery vs Import mode.
+• Add Power BI to your resume to remediate analytics skill gaps and maximize your Agent 50 match percentage for top company drives.`;
+    }
+
+    if (skill.toLowerCase() === 'docker') {
+      return `Here is a structured, 4-step roadmap to master Docker for your campus placements and DevOps/Backend roles:
+
+Step 1: Container Fundamentals & Docker CLI
+• Understand containerization vs virtualization, namespaces, cgroups, and Docker architecture (daemon, client, registry).
+• Learn core Docker commands: run, ps, exec, logs, stop, rm, rmi, and volume inspect.
+• Run existing images from Docker Hub (PostgreSQL, Redis, Nginx) and configure port forwarding and environment variables.
+
+Step 2: Dockerfiles & Custom Image Building
+• Write efficient Dockerfiles using lightweight base images (Alpine, distroless), COPY, WORKDIR, ENV, and EXPOSE.
+• Master multi-stage builds to optimize image size and prevent build dependencies from reaching production.
+• Learn .dockerignore best practices and layer caching to speed up CI/CD build pipelines.
+
+Step 3: Multi-Container Orchestration with Docker Compose
+• Define multi-service stacks in docker-compose.yml (e.g. Node/Python Backend, PostgreSQL database, and Redis cache).
+• Configure named volumes for data persistence and custom bridge networks for isolated container communication.
+• Implement health checks, restart policies, and environment file (.env) management.
+
+Step 4: Real-World Project & Placement Interview Prep
+• Containerize a full-stack project from your resume and publish the multi-container configuration on GitHub.
+• Practice top placement interview questions: CMD vs ENTRYPOINT, Docker volumes vs bind mounts, and container security best practices.
+• Bridge backend infrastructure skill gaps to elevate your Agent 50 match score for tier-1 engineering drives.`;
+    }
+
+    return `Here is a structured, 4-step roadmap to master ${skill} for your campus placement preparation:
+
+Step 1: Foundations & Core Concepts
+• Set up the official development environment, essential tools, and verify installation.
+• Master foundational syntax, architecture principles, and core building blocks through hands-on exercises.
+• Complete interactive beginner exercises to establish strong baseline conceptual clarity.
+
+Step 2: Practical Implementation & Feature Mastery
+• Build intermediate feature modules applying design patterns and industry coding conventions.
+• Learn error handling, debugging techniques, unit testing, and performance optimization.
+• Explore ecosystem libraries, package managers, and community best practices.
+
+Step 3: Real-World Portfolio Project
+• Architect an end-to-end industry-grade project solving a realistic business or technical problem.
+• Document your architecture, API contracts, and trade-offs in a professional GitHub README.
+• Deploy the application or publish live artifacts to showcase directly to campus recruiters.
+
+Step 4: Placement Interview Preparation
+• Practice top company interview questions, conceptual edge cases, and live whiteboard coding challenges.
+• Review past placement interview experiences for target companies looking for ${skill}.
+• Add ${skill} to your JobMatch AI profile to bridge skill gaps and boost your Agent 50 candidate ranking.`;
+  }
+
+  /**
    * Execute chat completion via Groq API with robust fallback
    */
   async generateChatResponse(userMessage, conversationHistory = [], user = null) {
@@ -351,14 +467,21 @@ export class SantraAiService {
     const systemPrompt = `You are ${rolePersona}
 
 CRITICAL OPERATIONAL RULES:
-1. Grounding: Answer ONLY using information supplied in the authorized JobMatch AI context below.
-2. Role Perspective:
-   - For T&P: You are talking to a Training & Placement Officer. Answer institutional questions about all registered students, readiness cohorts, candidate rankings, skill gaps, companies, and placement analytics using the provided data.
-   - For HOD: You are talking to the Head of Department. Answer department-level questions about students, readiness, skill gaps, and placements. Enforce read-only permissions (cannot mutate or send broadcasts).
-   - For Student: Answer about the student's own matches, Agent 50 scores, skills, readiness, applications, and interview schedule.
-3. Out of Scope: If the question asks about general world trivia, celebrities, history, or anything not present in JobMatch AI, respond: "I can only help with information available in JobMatch AI, and that information is not available in the application."
-4. Absolute Ban on "TL;DR": NEVER mention, write, output, or use the word or acronym "TL;DR", "TL:DR", or "TLDR" anywhere in your response. Simply give the direct summary sentence immediately followed by key points.
-5. Response Format:
+1. Grounding & Role Scope:
+   - For database inquiries (student profiles, Agent 50 scores, match percentages, applicant statuses, rankings, campus drives, and departmental metrics): Ground your answers strictly in the authorized JobMatch AI context provided below. Quote exact Agent 50 scores without inventing data.
+   - For Skill Learning Roadmaps & Placement Preparation: You ARE fully authorized and expected to act as an expert placement career mentor. When asked for a roadmap, learning path, study plan, or steps to master a technical skill or tool (e.g. Power BI, Docker, React, AWS, SQL, Python, System Design, DSA, etc.), provide an actionable, structured, step-by-step roadmap tailored for campus placements and technical interviews.
+2. Roadmap Response Structure (MANDATORY when asked for a roadmap or steps to learn a skill):
+   - Direct introductory sentence stating what the roadmap covers and how it boosts campus placement readiness.
+   - Deliver clear, sequential steps (Step 1, Step 2, Step 3, Step 4) taking the student from fundamentals to interview readiness:
+     • Step 1: Foundations & Core Concepts (What to learn, environment setup, syntax/interface basics)
+     • Step 2: Intermediate Implementation & Tool Mastery (Hands-on techniques, core features, best practices)
+     • Step 3: Real-World Portfolio Project (Industry-level project to showcase on GitHub/resume)
+     • Step 4: Placement Interview Preparation (Top technical interview questions, practical challenges, and placement tips)
+   - Include 2-3 specific, actionable bullet points under each step.
+   - Connect it back to the student's placement readiness score and target company drives.
+3. Out of Scope Guardrail: ONLY refuse queries completely unrelated to campus placements, careers, jobs, skills, education, and technical learning (e.g. celebrity gossip, entertainment pop culture, non-career trivia, general politics). For these non-career topics ONLY, respond: "I can only help with information available in JobMatch AI, and that information is not available in the application."
+4. Absolute Ban on "TL;DR": NEVER mention, write, output, or use the word or acronym "TL;DR", "TL:DR", or "TLDR" anywhere in your response. Simply give the direct summary sentence immediately followed by key points or steps.
+5. Standard Response Format (for non-roadmap metric queries):
    [Direct 1-2 sentence answer to the user's question]
    
    Key points:
@@ -395,7 +518,12 @@ ${roleContext}`;
       try {
         const reply = await this._callGroq(model, formattedMessages);
         if (reply && reply.trim().length > 0) {
-          return this.sanitizeResponse(reply);
+          const sanitized = this.sanitizeResponse(reply);
+          // Safety intercept: If student asked for a roadmap but LLM produced an out-of-scope refusal
+          if (this.isRoadmapQuery(userMessage) && (sanitized.includes("information is not available") || sanitized.includes("only help with information available"))) {
+            return this.generateSkillRoadmap(userMessage, user);
+          }
+          return sanitized;
         }
       } catch (err) {
         lastError = err;
@@ -404,6 +532,12 @@ ${roleContext}`;
     }
 
     console.error('SantraAI: All candidate Groq models failed. Last error:', lastError?.message);
+
+    // If Groq fails and it's a roadmap query, serve the expert built-in roadmap seamlessly
+    if (this.isRoadmapQuery(userMessage)) {
+      return this.generateSkillRoadmap(userMessage, user);
+    }
+
     return "SantraAI is currently unable to process your request. Please try again in a moment.";
   }
 

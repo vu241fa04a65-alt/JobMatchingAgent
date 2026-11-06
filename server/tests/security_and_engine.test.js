@@ -213,6 +213,21 @@ async function runTests() {
   assert(santraRes.status === 200 && Boolean(santraData.reply), 'SantraAI successfully returns response using live Groq model');
   assert(!santraData.reply.toLowerCase().includes('tl;dr'), 'SantraAI response adheres to TL;DR ban rule');
 
+  // SantraAI Skill Learning Roadmap Test
+  console.log('Testing SantraAI skill learning roadmap response with steps...');
+  const roadmapRes = await fetch(`${BASE_URL}/api/santra-ai/chat`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${student1Token}`
+    },
+    body: JSON.stringify({ message: 'to learn power bi give me road map' })
+  });
+  const roadmapData = await roadmapRes.json();
+  assert(roadmapRes.status === 200 && Boolean(roadmapData.reply), 'SantraAI successfully returns response for roadmap query');
+  assert(roadmapData.reply.toLowerCase().includes('step 1') || roadmapData.reply.toLowerCase().includes('step'), 'SantraAI roadmap response contains structured learning steps');
+  assert(!roadmapData.reply.includes('information is not available'), 'SantraAI does not produce out-of-scope refusal for roadmap query');
+
   console.log('\n====================================================');
   console.log(`🎉 TEST EXECUTION COMPLETED: ${passed} PASSED, ${failed} FAILED`);
   console.log('====================================================');

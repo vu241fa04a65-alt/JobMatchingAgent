@@ -138,7 +138,26 @@ export default function SantraAIChat() {
     ]);
   };
 
-  // Helper to render formatted text with bullets and bolding
+  // Helper to format inline markdown bold (**bold**) and inline code (`code`)
+  const formatInlineText = (str) => {
+    if (!str) return '';
+    const parts = str.split(/(\*\*[^*]+\*\*|`[^`]+`)/g);
+    return parts.map((part, i) => {
+      if (part.startsWith('**') && part.endsWith('**')) {
+        return <strong key={i} style={{ color: '#0F172A', fontWeight: 700 }}>{part.slice(2, -2)}</strong>;
+      }
+      if (part.startsWith('`') && part.endsWith('`')) {
+        return (
+          <code key={i} style={{ backgroundColor: '#F1F5F9', color: '#4F46E5', padding: '1px 5px', borderRadius: '4px', fontSize: '0.85em', fontFamily: 'monospace' }}>
+            {part.slice(1, -1)}
+          </code>
+        );
+      }
+      return part;
+    });
+  };
+
+  // Helper to render formatted text with steps, bullets and bolding
   const renderMessageContent = (text) => {
     // Strip any possible prefix headers in case they slipped through
     const cleaned = text
@@ -150,22 +169,67 @@ export default function SantraAIChat() {
     const lines = cleaned.split('\n');
     return lines.map((line, idx) => {
       const trimmed = line.trim();
+      
+      // Step Header rendering (e.g. "Step 1: ...", "**Step 1:** ...")
+      const stepMatch = trimmed.match(/^(\*{0,2})(Step \d+[:\s][^\*]*)\1(.*)/i);
+      if (stepMatch) {
+        const fullStep = (stepMatch[2] + (stepMatch[3] || '')).replace(/\*\*/g, '').trim();
+        const stepNum = fullStep.match(/\d+/)?.[0] || '•';
+        const stepTitle = fullStep.replace(/^Step \d+[:\s]*/i, '');
+        return (
+          <div 
+            key={idx} 
+            style={{ 
+              fontWeight: 700, 
+              color: '#1E1B4B', 
+              marginTop: '12px', 
+              marginBottom: '6px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              fontSize: '0.875rem'
+            }}
+          >
+            <span style={{ 
+              backgroundColor: '#EEF2FF', 
+              color: '#4F46E5', 
+              fontSize: '0.72rem', 
+              fontWeight: 800, 
+              padding: '2px 8px', 
+              borderRadius: '999px',
+              letterSpacing: '0.04em',
+              textTransform: 'uppercase'
+            }}>
+              Step {stepNum}
+            </span>
+            <span>{stepTitle}</span>
+          </div>
+        );
+      }
+
       if (trimmed.startsWith('Key points:') || trimmed.startsWith('**Key points:**')) {
         return (
-          <div key={idx} style={{ fontWeight: 700, color: '#334155', marginTop: '6px', marginBottom: '3px' }}>
+          <div key={idx} style={{ fontWeight: 700, color: '#334155', marginTop: '8px', marginBottom: '4px' }}>
             Key points:
           </div>
         );
       }
+
       if (trimmed.startsWith('•') || trimmed.startsWith('-') || trimmed.startsWith('*')) {
+        const bulletText = trimmed.replace(/^[•\-*]\s*/, '');
         return (
-          <div key={idx} style={{ display: 'flex', alignItems: 'flex-start', gap: '6px', margin: '3px 0', paddingLeft: '4px' }}>
-            <span style={{ color: '#6366F1', fontWeight: 800 }}>•</span>
-            <span style={{ flex: 1 }}>{trimmed.replace(/^[•\-*]\s*/, '')}</span>
+          <div key={idx} style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', margin: '4px 0', paddingLeft: '4px', lineHeight: 1.55 }}>
+            <span style={{ color: '#6366F1', fontWeight: 800, marginTop: '2px', fontSize: '0.85rem' }}>•</span>
+            <span style={{ flex: 1, fontSize: '0.84375rem', color: '#334155' }}>{formatInlineText(bulletText)}</span>
           </div>
         );
       }
-      return <div key={idx} style={{ minHeight: trimmed ? 'auto' : '6px' }}>{line}</div>;
+
+      return (
+        <div key={idx} style={{ minHeight: trimmed ? 'auto' : '6px', fontSize: '0.84375rem', color: '#1E293B', lineHeight: 1.6 }}>
+          {formatInlineText(line)}
+        </div>
+      );
     });
   };
 
