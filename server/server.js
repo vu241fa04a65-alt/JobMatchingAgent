@@ -55,7 +55,7 @@ app.use(cors({
     // Allow non-browser requests (e.g. mobile apps, curl, server-to-server, same-origin)
     if (!origin) return callback(null, true);
 
-    if (allowedOriginsSet.has(origin)) {
+    if (allowedOriginsSet.has(origin) || origin.endsWith('.onrender.com')) {
       return callback(null, true);
     }
 
